@@ -1,0 +1,179 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { 
+  ArrowLeft, 
+  ExternalLink,
+  Cloud,
+  Map,
+  FileText,
+  MessageSquare,
+  Camera,
+  Compass,
+  Settings,
+  BookOpen
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+const LINKS = [
+  {
+    category: "Weather & Airspace",
+    items: [
+      {
+        icon: Cloud,
+        title: "Weather Forecast",
+        description: "Local weather conditions",
+        url: "https://weather.com",
+        color: "text-blue-400 bg-blue-500/20"
+      },
+      {
+        icon: Map,
+        title: "Airspace Check",
+        description: "Verify flight restrictions",
+        url: "https://www.casa.gov.au/knowyourdrone",
+        color: "text-cyan-400 bg-cyan-500/20"
+      }
+    ]
+  },
+  {
+    category: "SiteSee Resources",
+    items: [
+      {
+        icon: FileText,
+        title: "Mission Planning Guide",
+        description: "Official documentation",
+        url: "#",
+        color: "text-emerald-400 bg-emerald-500/20"
+      },
+      {
+        icon: MessageSquare,
+        title: "Support Channel",
+        description: "Get help from the team",
+        url: "#",
+        color: "text-violet-400 bg-violet-500/20"
+      }
+    ]
+  },
+  {
+    category: "Tools",
+    items: [
+      {
+        icon: Camera,
+        title: "Nomacs Image Viewer",
+        description: "EXIF data & image review",
+        url: "https://nomacs.org",
+        color: "text-amber-400 bg-amber-500/20"
+      },
+      {
+        icon: Compass,
+        title: "Sun Position Calculator",
+        description: "Plan for optimal lighting",
+        url: "https://www.suncalc.org",
+        color: "text-orange-400 bg-orange-500/20"
+      }
+    ]
+  },
+  {
+    category: "Quick Reference",
+    items: [
+      {
+        icon: Settings,
+        title: "Camera Settings Cheat Sheet",
+        description: "Common configuration presets",
+        url: "#",
+        color: "text-slate-400 bg-slate-500/20"
+      },
+      {
+        icon: BookOpen,
+        title: "Pilot Handbook",
+        description: "Complete operations manual",
+        url: "#",
+        color: "text-pink-400 bg-pink-500/20"
+      }
+    ]
+  }
+];
+
+const LinkCard = ({ item, index }) => {
+  const Icon = item.icon;
+  
+  return (
+    <motion.a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileTap={{ scale: 0.98 }}
+      className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all duration-200"
+    >
+      <div className={cn(
+        "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
+        item.color
+      )}>
+        <Icon className="w-6 h-6" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-white">{item.title}</p>
+        <p className="text-sm text-slate-400">{item.description}</p>
+      </div>
+      <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+    </motion.a>
+  );
+};
+
+export default function ToolsLinks() {
+  let itemIndex = 0;
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
+      <div className="max-w-lg mx-auto px-5 py-6 pb-20">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <Link to={createPageUrl('Home')}>
+            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-slate-800">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+          <div className="flex-1">
+            <h1 className="text-lg font-semibold">Tools & Links</h1>
+            <p className="text-sm text-slate-400">Useful resources</p>
+          </div>
+        </div>
+        
+        {/* Categories */}
+        <div className="space-y-8">
+          {LINKS.map((category, catIndex) => (
+            <div key={catIndex}>
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-1"
+              >
+                {category.category}
+              </motion.h2>
+              <div className="space-y-2">
+                {category.items.map((item) => (
+                  <LinkCard key={itemIndex} item={item} index={itemIndex++} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Footer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-xs text-slate-600 mt-10"
+        >
+          Links open in new tab
+        </motion.p>
+      </div>
+    </div>
+  );
+}
