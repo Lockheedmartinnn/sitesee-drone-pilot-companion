@@ -87,13 +87,15 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-                <Compass className="w-6 h-6 text-white" />
-              </div>
+            <div className="flex flex-col gap-3">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+                alt="SiteSee"
+                className="h-8"
+              />
               <div>
                 <h1 className="font-bold text-white">Pilot Companion</h1>
-                <p className="text-xs text-slate-400">SiteSee</p>
+                <p className="text-xs text-slate-400">Field Operations Guide</p>
               </div>
             </div>
           </div>
