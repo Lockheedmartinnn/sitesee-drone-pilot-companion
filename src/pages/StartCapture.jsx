@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -31,6 +33,7 @@ import ProgressBar from '@/components/ProgressBar';
 import ChecklistItem from '@/components/ChecklistItem';
 import Timer from '@/components/Timer';
 import InfoCard from '@/components/InfoCard';
+import PostMissionForm from '@/components/PostMissionForm';
 import { cn } from '@/lib/utils';
 
 const STEPS = [
@@ -121,6 +124,13 @@ export default function StartCapture() {
   const [checkedItems, setCheckedItems] = useState({});
   const [gpsTimerComplete, setGpsTimerComplete] = useState(false);
   const [finalDecision, setFinalDecision] = useState(null);
+  const [showPostMissionForm, setShowPostMissionForm] = useState(false);
+  const [missionComplete, setMissionComplete] = useState(false);
+  
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
   
   const config = STEP_CONFIGS[currentStep];
   
@@ -144,6 +154,29 @@ export default function StartCapture() {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
     }
+  };
+  
+  const handleDecision = (decision) => {
+    setFinalDecision(decision);
+    setShowPostMissionForm(true);
+  };
+  
+  const handlePostMissionSubmit = async (data) => {
+    try {
+      await base44.entities.MissionLog.create({
+        ...data,
+        pilot_name: user?.full_name || user?.email || 'Unknown',
+      });
+      setMissionComplete(true);
+    } catch (error) {
+      console.error('Failed to submit mission log:', error);
+      setMissionComplete(true);
+    }
+  };
+  
+  const handleCancelForm = () => {
+    setShowPostMissionForm(false);
+    setFinalDecision(null);
   };
 
   return (
@@ -210,24 +243,24 @@ export default function StartCapture() {
             )}
             
             {/* Step 6: Final Decision */}
-            {currentStep === 6 && finalDecision === null && allItemsChecked && (
+            {currentStep === 6 && finalDecision === null && !showPostMissionForm && allItemsChecked && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-6"
               >
                 <InfoCard variant="info" title="Final Decision">
-                  <p className="mb-4">Based on your QC checks, would you leave the site confident in the data quality?</p>
+                  <p className="mb-4">Based on your QC checks, would you leave the site confident this capture will pass?</p>
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => setFinalDecision('yes')}
+                      onClick={() => handleDecision('yes')}
                       className="flex-1 bg-emerald-500 hover:bg-emerald-600"
                     >
                       <CheckCircle2 className="w-4 h-4 mr-2" />
                       Yes
                     </Button>
                     <Button
-                      onClick={() => setFinalDecision('no')}
+                      onClick={() => handleDecision('no')}
                       variant="outline"
                       className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10"
                     >
@@ -239,19 +272,29 @@ export default function StartCapture() {
               </motion.div>
             )}
             
-            {finalDecision === 'no' && (
+            {/* Post-Mission Form */}
+            {currentStep === 6 && showPostMissionForm && !missionComplete && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6"
               >
-                <InfoCard variant="warning" title="Review Required">
-                  <p>Identify which checks failed and consider re-flying the affected components before leaving.</p>
-                </InfoCard>
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold">Mission Log</h3>
+                  <p className="text-slate-400 text-sm mt-1">
+                    {finalDecision === 'yes' 
+                      ? 'Quick completion form — helps us improve training'
+                      : 'Help us understand what happened'}
+                  </p>
+                </div>
+                <PostMissionForm
+                  outcome={finalDecision === 'yes' ? 'success' : 'issue_flagged'}
+                  onSubmit={handlePostMissionSubmit}
+                  onCancel={handleCancelForm}
+                />
               </motion.div>
             )}
             
-            {finalDecision === 'yes' && (
+            {missionComplete && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -314,7 +357,7 @@ export default function StartCapture() {
       </div>
       
       {/* Navigation Footer */}
-      {!(currentStep === 6 && finalDecision === 'yes') && (
+      {!(currentStep === 6 && (missionComplete || showPostMissionForm)) && (
         <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-5 py-4">
           <div className="max-w-lg mx-auto flex gap-3">
             <Button
