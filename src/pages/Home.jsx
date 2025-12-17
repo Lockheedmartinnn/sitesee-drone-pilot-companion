@@ -13,8 +13,8 @@ import ActionButton from '@/components/ActionButton';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
-      <div className="max-w-lg mx-auto px-5 py-8 pb-20">
+    <div className="min-h-screen text-white">
+      <div className="max-w-lg mx-auto px-5 py-8 pb-20 lg:px-8">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
