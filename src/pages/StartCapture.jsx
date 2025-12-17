@@ -157,7 +157,11 @@ export default function StartCapture() {
             </Button>
           </Link>
           <div className="flex-1">
-            <h1 className="text-lg font-semibold">Capture Workflow</h1>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+              alt="SiteSee"
+              className="h-6"
+            />
           </div>
         </div>
         

@@ -7,8 +7,7 @@ import {
   BookOpen, 
   PlayCircle, 
   Map, 
-  ExternalLink,
-  Compass
+  ExternalLink
 } from 'lucide-react';
 import ActionButton from '@/components/ActionButton';
 
@@ -22,11 +21,13 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-10"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 mb-4 shadow-xl shadow-blue-500/20">
-            <Compass className="w-8 h-8 text-white" />
-          </div>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+            alt="SiteSee Logo"
+            className="h-12 mx-auto mb-6"
+          />
           <h1 className="text-3xl font-bold tracking-tight">Pilot Companion</h1>
-          <p className="text-slate-400 mt-2">SiteSee Field Operations Guide</p>
+          <p className="text-slate-400 mt-2">Field Operations Guide</p>
         </motion.div>
 
         {/* Primary Action */}

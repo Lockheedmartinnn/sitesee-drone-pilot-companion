@@ -138,9 +138,16 @@ export default function ToolsLinks() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold">Tools & Links</h1>
-            <p className="text-sm text-slate-400">Useful resources</p>
+          <div className="flex-1 flex items-center gap-3">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+              alt="SiteSee"
+              className="h-6"
+            />
+            <div>
+              <h1 className="text-lg font-semibold">Tools & Links</h1>
+              <p className="text-sm text-slate-400">Useful resources</p>
+            </div>
           </div>
         </div>
         
