@@ -10,7 +10,11 @@ import {
   User, 
   ClipboardList, 
   LogOut,
-  Compass
+  Compass,
+  BarChart3,
+  MapPin,
+  Settings,
+  Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -28,6 +32,13 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
     { name: 'Mission History', href: createPageUrl('MissionHistory'), icon: ClipboardList },
+  ];
+  
+  const dashboards = [
+    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
+    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
+    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
+    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
   ];
   
   const isActive = (href) => {
@@ -120,27 +131,59 @@ export default function Layout({ children, currentPageName }) {
           )}
           
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                    active
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                  )}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
+          <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
+            <div className="space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                      active
+                        ? "bg-blue-500/20 text-blue-400"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+            
+            <div>
+              <div className="px-4 mb-2">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Dashboards
+                </h3>
+              </div>
+              <div className="space-y-1">
+                {dashboards.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                        active
+                          ? "bg-blue-500/20 text-blue-400"
+                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </nav>
           
           {/* Logout */}

@@ -33,7 +33,7 @@ import ProgressBar from '@/components/ProgressBar';
 import ChecklistItem from '@/components/ChecklistItem';
 import Timer from '@/components/Timer';
 import InfoCard from '@/components/InfoCard';
-import PostMissionForm from '@/components/PostMissionForm';
+import MissionLogForm from '@/components/MissionLogForm';
 import { cn } from '@/lib/utils';
 
 const STEPS = [
@@ -165,7 +165,7 @@ export default function StartCapture() {
     try {
       await base44.entities.MissionLog.create({
         ...data,
-        pilot_name: user?.full_name || user?.email || 'Unknown',
+        pilot_id: user?.email || 'Unknown',
       });
       setMissionComplete(true);
     } catch (error) {
@@ -286,8 +286,7 @@ export default function StartCapture() {
                       : 'Help us understand what happened'}
                   </p>
                 </div>
-                <PostMissionForm
-                  outcome={finalDecision === 'yes' ? 'success' : 'issue_flagged'}
+                <MissionLogForm
                   onSubmit={handlePostMissionSubmit}
                   onCancel={handleCancelForm}
                 />
