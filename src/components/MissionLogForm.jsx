@@ -29,6 +29,8 @@ export default function MissionLogForm({ onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
     country: '',
     region: '',
+    latitude: '',
+    longitude: '',
     customer: '',
     pilot_group: '',
     site_type: '',
@@ -126,6 +128,32 @@ export default function MissionLogForm({ onSubmit, onCancel }) {
             onChange={(e) => setFormData({ ...formData, region: e.target.value })}
             className="bg-slate-900/50 border-slate-700"
             placeholder="e.g. Nairobi"
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label className="text-slate-400">Latitude</Label>
+          <Input
+            type="number"
+            step="any"
+            value={formData.latitude}
+            onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+            className="bg-slate-900/50 border-slate-700"
+            placeholder="e.g. -1.2921"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label className="text-slate-400">Longitude</Label>
+          <Input
+            type="number"
+            step="any"
+            value={formData.longitude}
+            onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+            className="bg-slate-900/50 border-slate-700"
+            placeholder="e.g. 36.8219"
           />
         </div>
       </div>
