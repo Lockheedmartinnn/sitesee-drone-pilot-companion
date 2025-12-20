@@ -89,6 +89,47 @@ export default function PortfolioOverview() {
       .slice(-30);
   }, [filteredMissions]);
   
+  const failuresByReason = useMemo(() => {
+    const failures = filteredMissions.filter(m => m.outcome === 'Fail' || m.outcome === 'Rework');
+    const byReason = {};
+    failures.forEach(m => {
+      if (m.primary_flag_reason) {
+        if (!byReason[m.primary_flag_reason]) {
+          byReason[m.primary_flag_reason] = { reason: m.primary_flag_reason, count: 0, missions: [] };
+        }
+        byReason[m.primary_flag_reason].count++;
+        byReason[m.primary_flag_reason].missions.push(m);
+      }
+    });
+    return Object.values(byReason).sort((a, b) => b.count - a.count);
+  }, [filteredMissions]);
+  
+  const weatherImpact = useMemo(() => {
+    const byWeather = {};
+    filteredMissions.forEach(m => {
+      const weather = m.weather_condition || 'Unknown';
+      if (!byWeather[weather]) byWeather[weather] = { weather, total: 0, failed: 0 };
+      byWeather[weather].total++;
+      if (m.outcome === 'Fail' || m.outcome === 'Rework') byWeather[weather].failed++;
+    });
+    return Object.values(byWeather)
+      .map(d => ({ weather: d.weather, rate: d.total ? ((d.failed / d.total) * 100).toFixed(1) : 0, total: d.total }))
+      .sort((a, b) => b.total - a.total);
+  }, [filteredMissions]);
+  
+  const siteTypePerformance = useMemo(() => {
+    const bySite = {};
+    filteredMissions.forEach(m => {
+      const site = m.site_type || 'Unknown';
+      if (!bySite[site]) bySite[site] = { site, total: 0, pass: 0 };
+      bySite[site].total++;
+      if (m.outcome === 'Pass') bySite[site].pass++;
+    });
+    return Object.values(bySite)
+      .map(d => ({ site: d.site, rate: d.total ? ((d.pass / d.total) * 100).toFixed(1) : 0, total: d.total }))
+      .sort((a, b) => b.total - a.total);
+  }, [filteredMissions]);
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
