@@ -17,6 +17,8 @@ export default function PortfolioOverview() {
     drone_model: 'all'
   });
   
+  const [expandedSection, setExpandedSection] = useState(null);
+  
   const { data: missions = [], isLoading } = useQuery({
     queryKey: ['allMissions'],
     queryFn: () => base44.entities.MissionLog.list('-created_date', 1000),
