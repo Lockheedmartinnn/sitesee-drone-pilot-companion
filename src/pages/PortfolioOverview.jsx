@@ -260,24 +260,115 @@ export default function PortfolioOverview() {
               </PieChart>
             </ResponsiveContainer>
           </motion.div>
-          
+
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-            <h3 className="font-semibold mb-4">Top 5 Flag Reasons</h3>
-            <div className="space-y-3">
-              {topFlagReasons.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="flex-1 bg-slate-700/50 rounded-lg p-3">
-                    <p className="text-sm text-slate-300">{item.reason}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-lg bg-red-500/20 flex items-center justify-center">
-                    <span className="text-lg font-bold text-red-400">{item.count}</span>
-                  </div>
+            <h3 className="font-semibold mb-4">Weather Impact on Failures</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={weatherImpact}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="weather" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
+                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }} />
+                <Bar dataKey="rate" fill="#f59e0b" />
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </div>
+
+        {/* Expandable Sections */}
+        <div className="space-y-4 mt-6">
+          {/* Failure Reasons Breakdown */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <button
+              onClick={() => setExpandedSection(expandedSection === 'failures' ? null : 'failures')}
+              className="w-full flex items-center justify-between p-6 hover:bg-slate-700/30 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+                <div className="text-left">
+                  <h3 className="font-semibold">Failure Reasons Breakdown</h3>
+                  <p className="text-sm text-slate-400">Top {Math.min(5, failuresByReason.length)} issues impacting quality</p>
                 </div>
-              ))}
-              {topFlagReasons.length === 0 && (
-                <p className="text-center text-slate-500 py-8">No flagged missions</p>
+              </div>
+              {expandedSection === 'failures' ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+            </button>
+            <AnimatePresence>
+              {expandedSection === 'failures' && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-slate-700/50"
+                >
+                  <div className="p-6 space-y-4">
+                    {failuresByReason.slice(0, 5).map((item, idx) => (
+                      <div key={idx} className="bg-slate-700/30 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-slate-200">{item.reason}</h4>
+                          <div className="px-3 py-1 bg-red-500/20 rounded-lg">
+                            <span className="text-red-400 font-bold">{item.count} missions</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          {item.missions.slice(0, 3).map((mission, midx) => (
+                            <div key={midx} className="text-xs text-slate-400 flex items-center gap-2">
+                              <MapPin className="w-3 h-3" />
+                              <span>{mission.country || 'Unknown'} - {mission.region || 'Unknown'}</span>
+                              <span className="text-slate-600">•</span>
+                              <span>{mission.pilot_group || 'Unknown Group'}</span>
+                            </div>
+                          ))}
+                          {item.missions.length > 3 && (
+                            <p className="text-xs text-slate-500 italic">+ {item.missions.length - 3} more...</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Site Type Performance */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <button
+              onClick={() => setExpandedSection(expandedSection === 'sites' ? null : 'sites')}
+              className="w-full flex items-center justify-between p-6 hover:bg-slate-700/30 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Wrench className="w-5 h-5 text-blue-400" />
+                <div className="text-left">
+                  <h3 className="font-semibold">Site Type Performance</h3>
+                  <p className="text-sm text-slate-400">Success rates by site type</p>
+                </div>
+              </div>
+              {expandedSection === 'sites' ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+            </button>
+            <AnimatePresence>
+              {expandedSection === 'sites' && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-slate-700/50"
+                >
+                  <div className="p-6">
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={siteTypePerformance}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="site" stroke="#94a3b8" />
+                        <YAxis stroke="#94a3b8" />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }} />
+                        <Bar dataKey="rate" fill="#10b981" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
         
