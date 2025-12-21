@@ -390,7 +390,77 @@ export default function PortfolioOverview() {
               )}
             </AnimatePresence>
           </motion.div>
-        </div>
+
+          {/* Failure Rate vs Reason Correlation */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <button
+              onClick={() => setExpandedSection(expandedSection === 'correlation' ? null : 'correlation')}
+              className="w-full flex items-center justify-between p-6 hover:bg-slate-700/30 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-purple-400" />
+                <div className="text-left">
+                  <h3 className="font-semibold">Failure Rate vs Reason Correlation</h3>
+                  <p className="text-sm text-slate-400">Analyze which reasons lead to highest failure rates</p>
+                </div>
+              </div>
+              {expandedSection === 'correlation' ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+            </button>
+            <AnimatePresence>
+              {expandedSection === 'correlation' && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-t border-slate-700/50"
+                >
+                  <div className="p-6 space-y-6">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={failureReasonCorrelation} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis type="number" stroke="#94a3b8" label={{ value: 'Failure Rate (%)', position: 'insideBottom', offset: -5 }} />
+                        <YAxis type="category" dataKey="reason" stroke="#94a3b8" width={150} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                          formatter={(value, name, props) => {
+                            if (name === 'rate') return [`${value}%`, 'Failure Rate'];
+                            return [value, name];
+                          }}
+                          labelFormatter={(label, payload) => {
+                            if (payload && payload[0]) {
+                              return payload[0].payload.fullReason;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Bar dataKey="rate" fill="#a855f7" />
+                      </BarChart>
+                    </ResponsiveContainer>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {failureReasonCorrelation.slice(0, 6).map((item, idx) => (
+                        <div key={idx} className="bg-slate-700/30 rounded-xl p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-sm text-slate-200 flex-1">{item.fullReason}</h4>
+                            <div className="ml-2 px-2 py-1 bg-purple-500/20 rounded text-xs font-bold text-purple-400">
+                              {item.rate}%
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs text-slate-400">
+                            <span>{item.failed} failed</span>
+                            <span className="text-slate-600">•</span>
+                            <span>{item.total} total</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+          </div>
         
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mt-6">
           <h3 className="font-semibold mb-4">Failure Rate Over Time (Last 30 Days)</h3>
