@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import ChatWidget from '@/components/ChatWidget';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -206,6 +207,9 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </div>
       </div>
-    </div>
-  );
-}
+
+      {/* Chat Widget */}
+      <ChatWidget />
+      </div>
+      );
+      }
