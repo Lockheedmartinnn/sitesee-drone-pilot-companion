@@ -130,6 +130,26 @@ export default function PortfolioOverview() {
       .sort((a, b) => b.total - a.total);
   }, [filteredMissions]);
   
+  const failureReasonCorrelation = useMemo(() => {
+    const byReason = {};
+    filteredMissions.forEach(m => {
+      const reason = m.primary_flag_reason || 'No reason specified';
+      if (!byReason[reason]) byReason[reason] = { reason, total: 0, failed: 0 };
+      byReason[reason].total++;
+      if (m.outcome === 'Fail' || m.outcome === 'Rework') byReason[reason].failed++;
+    });
+    return Object.values(byReason)
+      .map(d => ({ 
+        reason: d.reason.length > 20 ? d.reason.substring(0, 20) + '...' : d.reason,
+        fullReason: d.reason,
+        rate: d.total ? ((d.failed / d.total) * 100).toFixed(1) : 0,
+        failed: d.failed,
+        total: d.total 
+      }))
+      .sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate))
+      .slice(0, 10);
+  }, [filteredMissions]);
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
