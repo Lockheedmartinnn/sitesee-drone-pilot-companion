@@ -499,6 +499,58 @@ export default function PortfolioOverview() {
           </div>
         
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mt-6">
+          <h3 className="font-semibold mb-4">Mission Sites Map</h3>
+          <div className="h-[500px] rounded-lg overflow-hidden">
+            <MapContainer center={[12.8797, 121.7740]} zoom={6} style={{ height: '100%', width: '100%' }}>
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {mapMarkers.map((marker, idx) => (
+                <CircleMarker
+                  key={idx}
+                  center={[marker.lat, marker.lng]}
+                  radius={6}
+                  pathOptions={{
+                    fillColor: marker.outcome === 'Pass' ? '#10b981' : marker.outcome === 'Rework' ? '#f59e0b' : '#ef4444',
+                    fillOpacity: 0.8,
+                    color: '#fff',
+                    weight: 1
+                  }}
+                >
+                  <Popup>
+                    <div className="text-sm">
+                      <p className="font-semibold">{marker.site}</p>
+                      <p className="text-xs text-gray-600">{marker.region}</p>
+                      <p className={`text-xs font-bold ${
+                        marker.outcome === 'Pass' ? 'text-green-600' : 
+                        marker.outcome === 'Rework' ? 'text-amber-600' : 'text-red-600'
+                      }`}>
+                        {marker.outcome}
+                      </p>
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              ))}
+            </MapContainer>
+          </div>
+          <div className="flex items-center gap-6 mt-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+              <span className="text-slate-400">Pass</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+              <span className="text-slate-400">Rework</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <span className="text-slate-400">Fail</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mt-6">
           <h3 className="font-semibold mb-4">Failure Rate Over Time (Last 30 Days)</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={timelineData}>
