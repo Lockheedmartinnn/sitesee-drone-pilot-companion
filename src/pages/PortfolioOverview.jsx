@@ -4,6 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { Loader2, TrendingUp, AlertTriangle, CheckCircle2, Filter, ChevronDown, ChevronUp, MapPin, Users, Wrench } from 'lucide-react';
+import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -104,17 +106,38 @@ export default function PortfolioOverview() {
     return Object.values(byReason).sort((a, b) => b.count - a.count);
   }, [filteredMissions]);
   
-  const weatherImpact = useMemo(() => {
-    const byWeather = {};
+  const locationFailures = useMemo(() => {
+    const byRegion = {};
     filteredMissions.forEach(m => {
-      const weather = m.weather_condition || 'Unknown';
-      if (!byWeather[weather]) byWeather[weather] = { weather, total: 0, failed: 0 };
-      byWeather[weather].total++;
-      if (m.outcome === 'Fail' || m.outcome === 'Rework') byWeather[weather].failed++;
+      const region = m.region || 'Unknown';
+      if (!byRegion[region]) byRegion[region] = { region, total: 0, failed: 0, missions: [] };
+      byRegion[region].total++;
+      if (m.outcome === 'Fail' || m.outcome === 'Rework') {
+        byRegion[region].failed++;
+        byRegion[region].missions.push(m);
+      }
     });
-    return Object.values(byWeather)
-      .map(d => ({ weather: d.weather, rate: d.total ? ((d.failed / d.total) * 100).toFixed(1) : 0, total: d.total }))
-      .sort((a, b) => b.total - a.total);
+    return Object.values(byRegion)
+      .map(d => ({ 
+        region: d.region, 
+        rate: d.total ? ((d.failed / d.total) * 100).toFixed(1) : 0, 
+        failed: d.failed,
+        total: d.total,
+        missions: d.missions
+      }))
+      .sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
+  }, [filteredMissions]);
+  
+  const mapMarkers = useMemo(() => {
+    return filteredMissions
+      .filter(m => m.latitude && m.longitude)
+      .map(m => ({
+        lat: m.latitude,
+        lng: m.longitude,
+        outcome: m.outcome,
+        site: m.notes || 'Unknown Site',
+        region: m.region
+      }));
   }, [filteredMissions]);
   
   const siteTypePerformance = useMemo(() => {
@@ -282,16 +305,29 @@ export default function PortfolioOverview() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-            <h3 className="font-semibold mb-4">Weather Impact on Failures</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={weatherImpact}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="weather" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }} />
-                <Bar dataKey="rate" fill="#f59e0b" />
-              </BarChart>
-            </ResponsiveContainer>
+            <h3 className="font-semibold mb-4">Location-Based Failure Analysis</h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-3">
+                {locationFailures.slice(0, 5).map((item, idx) => (
+                  <div key={idx} className="bg-slate-700/30 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-red-400" />
+                        <span className="font-semibold text-slate-200">{item.region}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-400">{item.failed}/{item.total} failed</span>
+                        <div className={`px-3 py-1 rounded-lg ${parseFloat(item.rate) > 10 ? 'bg-red-500/20' : 'bg-amber-500/20'}`}>
+                          <span className={`font-bold ${parseFloat(item.rate) > 10 ? 'text-red-400' : 'text-amber-400'}`}>
+                            {item.rate}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
 
