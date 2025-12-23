@@ -71,16 +71,28 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
               <span>{format(new Date(mission.mission_date || mission.created_date), 'MMM d, yyyy • h:mm a')}</span>
             </div>
             
-            {mission.customer && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <span>Customer: {mission.customer}</span>
+            {mission.notes && (
+              <div className="text-sm text-slate-300 font-medium">
+                {mission.notes}
               </div>
             )}
             
-            {mission.country_location && (
+            {(mission.region || mission.country) && (
               <div className="flex items-center gap-2 text-sm text-slate-400">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>{mission.country_location}</span>
+                <span>{[mission.region, mission.country].filter(Boolean).join(', ')}</span>
+              </div>
+            )}
+            
+            {mission.customer && (
+              <div className="text-sm text-slate-400">
+                Customer: {mission.customer}
+              </div>
+            )}
+            
+            {mission.pilot_group && (
+              <div className="text-sm text-slate-400">
+                Pilot Group: {mission.pilot_group}
               </div>
             )}
           </div>

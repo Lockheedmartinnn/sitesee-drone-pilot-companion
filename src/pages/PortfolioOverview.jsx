@@ -9,6 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { format, startOfYear, endOfYear, startOfMonth, endOfMonth } from 'date-fns';
 
 export default function PortfolioOverview() {
   const [filters, setFilters] = useState({
@@ -16,7 +17,9 @@ export default function PortfolioOverview() {
     region: 'all',
     customer: 'all',
     pilot_group: 'all',
-    drone_model: 'all'
+    drone_model: 'all',
+    dateRange: 'all',
+    year: 'all'
   });
   
   const [expandedSection, setExpandedSection] = useState(null);
@@ -33,6 +36,28 @@ export default function PortfolioOverview() {
       if (filters.customer !== 'all' && m.customer !== filters.customer) return false;
       if (filters.pilot_group !== 'all' && m.pilot_group !== filters.pilot_group) return false;
       if (filters.drone_model !== 'all' && m.drone_model !== filters.drone_model) return false;
+      
+      // Date filters
+      const missionDate = new Date(m.mission_date || m.created_date);
+      if (filters.year !== 'all') {
+        const year = parseInt(filters.year);
+        if (missionDate.getFullYear() !== year) return false;
+      }
+      if (filters.dateRange !== 'all') {
+        const now = new Date();
+        let startDate;
+        if (filters.dateRange === 'thisMonth') {
+          startDate = startOfMonth(now);
+        } else if (filters.dateRange === 'lastMonth') {
+          startDate = startOfMonth(new Date(now.getFullYear(), now.getMonth() - 1));
+        } else if (filters.dateRange === 'last3Months') {
+          startDate = new Date(now.getFullYear(), now.getMonth() - 3);
+        } else if (filters.dateRange === 'last6Months') {
+          startDate = new Date(now.getFullYear(), now.getMonth() - 6);
+        }
+        if (startDate && missionDate < startDate) return false;
+      }
+      
       return true;
     });
   }, [missions, filters]);
@@ -42,7 +67,11 @@ export default function PortfolioOverview() {
     regions: [...new Set(missions.map(m => m.region).filter(Boolean))],
     customers: [...new Set(missions.map(m => m.customer).filter(Boolean))],
     pilot_groups: [...new Set(missions.map(m => m.pilot_group).filter(Boolean))],
-    drone_models: [...new Set(missions.map(m => m.drone_model).filter(Boolean))]
+    drone_models: [...new Set(missions.map(m => m.drone_model).filter(Boolean))],
+    years: [...new Set(missions.map(m => {
+      const date = new Date(m.mission_date || m.created_date);
+      return date.getFullYear();
+    }))].sort((a, b) => b - a)
   }), [missions]);
   
   const stats = useMemo(() => {
@@ -195,7 +224,7 @@ export default function PortfolioOverview() {
             <Filter className="w-4 h-4 text-slate-400" />
             <h3 className="font-semibold">Filters</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400 text-xs">Country</Label>
               <Select value={filters.country} onValueChange={(v) => setFilters({...filters, country: v})}>
@@ -253,6 +282,33 @@ export default function PortfolioOverview() {
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   {uniqueValues.drone_models.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Year</Label>
+              <Select value={filters.year} onValueChange={(v) => setFilters({...filters, year: v})}>
+                <SelectTrigger className="bg-slate-900/50 border-slate-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  {uniqueValues.years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Date Range</Label>
+              <Select value={filters.dateRange} onValueChange={(v) => setFilters({...filters, dateRange: v})}>
+                <SelectTrigger className="bg-slate-900/50 border-slate-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="thisMonth">This Month</SelectItem>
+                  <SelectItem value="lastMonth">Last Month</SelectItem>
+                  <SelectItem value="last3Months">Last 3 Months</SelectItem>
+                  <SelectItem value="last6Months">Last 6 Months</SelectItem>
                 </SelectContent>
               </Select>
             </div>
