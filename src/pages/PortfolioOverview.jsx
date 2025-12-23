@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { getMissionQueryFilter, filterMissionsByRole, hasPermission, PERMISSIONS } from '@/utils/rbac';
+import { getMissionQueryFilter, filterMissionsByRole, hasPermission, PERMISSIONS } from '@/components/rbac';
 import RoleGuard from '@/components/RoleGuard';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { Loader2, TrendingUp, AlertTriangle, CheckCircle2, Filter, ChevronDown, ChevronUp, MapPin, Users, Wrench } from 'lucide-react';

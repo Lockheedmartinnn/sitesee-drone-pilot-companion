@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { getMissionQueryFilter, filterMissionsByRole } from '@/utils/rbac';
+import { getMissionQueryFilter, filterMissionsByRole } from '@/components/rbac';
 import { 
   CheckCircle2, 
   AlertTriangle, 

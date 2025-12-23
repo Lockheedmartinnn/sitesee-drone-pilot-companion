@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { isCompanyAssigned, hasPermission, PERMISSIONS } from '@/utils/rbac';
+import { isCompanyAssigned, hasPermission, PERMISSIONS } from '@/components/rbac';
 import CompanyAssignment from '@/components/CompanyAssignment';
 import { 
   Menu, 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { hasPermission } from '@/utils/rbac';
+import { hasPermission } from '@/components/rbac';
 import { AlertCircle } from 'lucide-react';
 
 /**
