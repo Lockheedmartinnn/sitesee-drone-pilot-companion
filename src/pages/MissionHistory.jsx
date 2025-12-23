@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { getMissionQueryFilter, filterMissionsByRole } from '@/utils/rbac';
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -212,13 +213,13 @@ export default function MissionHistory() {
   });
   
   const { data: missions = [], isLoading } = useQuery({
-    queryKey: ['missionHistory', user?.email],
+    queryKey: ['missionHistory', user?.email, user?.company_id],
     queryFn: async () => {
       if (!user) return [];
-      return await base44.entities.MissionLog.filter(
-        { created_by: user.email },
-        '-created_date'
-      );
+      const filter = getMissionQueryFilter(user) || {};
+      filter.created_by = user.email;
+      const allMissions = await base44.entities.MissionLog.filter(filter, '-created_date');
+      return filterMissionsByRole(allMissions, user);
     },
     enabled: !!user,
   });

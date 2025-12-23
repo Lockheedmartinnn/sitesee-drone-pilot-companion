@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { isCompanyAssigned, hasPermission, PERMISSIONS } from '@/utils/rbac';
+import CompanyAssignment from '@/components/CompanyAssignment';
 import { 
   Menu, 
   X, 
@@ -36,11 +38,11 @@ export default function Layout({ children, currentPageName }) {
   ];
   
   const dashboards = [
-    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
-    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
-    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
-    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
-  ];
+    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3, permission: PERMISSIONS.VIEW_COMPANY_DASHBOARDS },
+    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin, permission: PERMISSIONS.VIEW_REGIONAL_DASHBOARDS },
+    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings, permission: PERMISSIONS.VIEW_COMPANY_DASHBOARDS },
+    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users, permission: PERMISSIONS.VIEW_COMPANY_DASHBOARDS },
+  ].filter(item => !item.permission || hasPermission(user, item.permission));
   
   const isActive = (href) => {
     return location.pathname === href || location.pathname === href + '.html';
@@ -49,6 +51,11 @@ export default function Layout({ children, currentPageName }) {
   const handleLogout = async () => {
     await base44.auth.logout();
   };
+  
+  // Check if user needs company assignment
+  if (user && !isCompanyAssigned(user)) {
+    return <CompanyAssignment user={user} onAssigned={() => window.location.reload()} />;
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950">
