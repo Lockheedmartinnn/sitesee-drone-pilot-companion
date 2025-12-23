@@ -7,10 +7,22 @@ import { Loader2, Plane, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function EquipmentCorrelation() {
-  const { data: missions = [], isLoading } = useQuery({
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const permissions = useAccessControl(user);
+
+  const { data: allMissions = [], isLoading } = useQuery({
     queryKey: ['allMissions'],
     queryFn: () => base44.entities.MissionLog.list('-created_date', 1000),
   });
+
+  const missions = useMemo(() => {
+    if (!user) return [];
+    return filterMissionsByAccess(allMissions, permissions, user.email);
+  }, [allMissions, permissions, user]);
   
   const droneStats = useMemo(() => {
     const byDrone = {};
