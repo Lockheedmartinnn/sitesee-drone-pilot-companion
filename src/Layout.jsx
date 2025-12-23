@@ -14,7 +14,8 @@ import {
   BarChart3,
   MapPin,
   Settings,
-  Users
+  Users,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';

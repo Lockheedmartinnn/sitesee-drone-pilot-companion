@@ -1,3 +1,4 @@
+import Billing from './pages/Billing';
 import EquipmentCorrelation from './pages/EquipmentCorrelation';
 import Home from './pages/Home';
 import LocationQuality from './pages/LocationQuality';
@@ -11,11 +12,11 @@ import Scenarios from './pages/Scenarios';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
-import Billing from './pages/Billing';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Billing": Billing,
     "EquipmentCorrelation": EquipmentCorrelation,
     "Home": Home,
     "LocationQuality": LocationQuality,
@@ -29,7 +30,6 @@ export const PAGES = {
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
-    "Billing": Billing,
 }
 
 export const pagesConfig = {
