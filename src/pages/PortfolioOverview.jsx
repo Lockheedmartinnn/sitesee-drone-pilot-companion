@@ -634,5 +634,6 @@ export default function PortfolioOverview() {
         </motion.div>
       </div>
     </div>
+    </RoleGuard>
   );
 }
