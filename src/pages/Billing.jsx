@@ -125,10 +125,10 @@ export default function Billing() {
 
         {/* Subscription Status Card */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-          <Card className="bg-slate-800/50 border-slate-700/50">
+          <Card className="bg-slate-800/50 border-slate-700/50 text-white">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <CreditCard className="w-5 h-5 text-blue-400" />
                   Subscription Status
                 </CardTitle>
@@ -147,11 +147,11 @@ export default function Billing() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm text-slate-400 mb-1">Current Plan</p>
-                  <p className="text-2xl font-bold capitalize">{company.subscription_tier}</p>
+                  <p className="text-2xl font-bold text-white capitalize">{company.subscription_tier}</p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-400 mb-1">Monthly Total</p>
-                  <p className="text-2xl font-bold">${monthlyTotal.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-white">${monthlyTotal.toFixed(2)}</p>
                   <p className="text-xs text-slate-500 mt-1">
                     ${company.base_price} base + {Math.max(0, activeUsers.length - company.included_pilots)} additional pilots × ${company.price_per_pilot}
                   </p>
@@ -186,9 +186,9 @@ export default function Billing() {
 
         {/* Active Users Card */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <Card className="bg-slate-800/50 border-slate-700/50">
+          <Card className="bg-slate-800/50 border-slate-700/50 text-white">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Users className="w-5 h-5 text-purple-400" />
                 Active Users ({activeUsers.length})
               </CardTitle>
@@ -197,7 +197,7 @@ export default function Billing() {
               <div className="mb-4 p-3 bg-slate-700/30 rounded-lg">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-400">Included pilots:</span>
-                  <span className="font-semibold">{company.included_pilots}</span>
+                  <span className="font-semibold text-white">{company.included_pilots}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm mt-2">
                   <span className="text-slate-400">Additional pilots:</span>
@@ -217,7 +217,7 @@ export default function Billing() {
                         </span>
                       </div>
                       <div>
-                        <p className="text-sm font-medium">{u.full_name || 'Unnamed User'}</p>
+                        <p className="text-sm font-medium text-white">{u.full_name || 'Unnamed User'}</p>
                         <p className="text-xs text-slate-500">{u.email}</p>
                       </div>
                     </div>
