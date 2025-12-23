@@ -84,6 +84,13 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
                 <span>{[mission.region, mission.country].filter(Boolean).join(', ')}</span>
               </div>
             )}
+
+            {(mission.latitude && mission.longitude) && (
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>{mission.latitude.toFixed(6)}, {mission.longitude.toFixed(6)}</span>
+              </div>
+            )}
             
             {mission.customer && (
               <div className="text-sm text-slate-400">
