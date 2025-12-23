@@ -17,20 +17,42 @@ export default function Billing() {
   const { data: company, isLoading: loadingCompany } = useQuery({
     queryKey: ['company', user?.company_id],
     queryFn: async () => {
-      if (!user?.company_id) return null;
+      if (!user?.company_id) {
+        // Return dummy data for demo
+        return {
+          company_name: 'Demo Company Inc.',
+          pilot_group: 'demo_group',
+          subscription_status: 'trial',
+          subscription_tier: 'pro',
+          base_price: 29,
+          price_per_pilot: 10,
+          included_pilots: 2,
+          billing_email: user?.email || 'billing@demo.com',
+          trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+          current_period_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+        };
+      }
       const companies = await base44.entities.Company.filter({ id: user.company_id });
       return companies[0] || null;
     },
-    enabled: !!user?.company_id,
+    enabled: !!user,
   });
 
   const { data: allUsers = [], isLoading: loadingUsers } = useQuery({
     queryKey: ['companyUsers', user?.company_id],
     queryFn: async () => {
-      if (!user?.company_id) return [];
+      if (!user?.company_id) {
+        // Return dummy users for demo
+        return [
+          { id: '1', full_name: 'John Pilot', email: 'john@demo.com', access_level: 'pilot', is_active: true },
+          { id: '2', full_name: 'Sarah Manager', email: 'sarah@demo.com', access_level: 'manager', is_active: true },
+          { id: '3', full_name: 'Mike Head Pilot', email: 'mike@demo.com', access_level: 'head_pilot', is_active: true },
+          { id: '4', full_name: 'Lisa Drone Operator', email: 'lisa@demo.com', access_level: 'pilot', is_active: true }
+        ];
+      }
       return await base44.entities.User.filter({ company_id: user.company_id });
     },
-    enabled: !!user?.company_id,
+    enabled: !!user,
   });
 
   const activeUsers = useMemo(() => {
