@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import { Building2, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { getEmailDomain } from './rbac';
 
 export default function CompanyAssignment({ user, onAssigned }) {
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
@@ -16,11 +17,28 @@ export default function CompanyAssignment({ user, onAssigned }) {
     queryFn: () => base44.entities.Company.filter({ status: 'active' }),
   });
   
+  // Auto-assign based on email domain
+  useEffect(() => {
+    if (user && companies.length > 0 && !selectedCompanyId) {
+      const emailDomain = getEmailDomain(user.email);
+      if (emailDomain) {
+        const matchingCompany = companies.find(c => 
+          c.email_domains && c.email_domains.includes(emailDomain)
+        );
+        if (matchingCompany) {
+          setSelectedCompanyId(matchingCompany.company_id);
+          // Auto-assign with ADMIN role for matched domain
+          assignMutation.mutate({ companyId: matchingCompany.company_id, role: 'ADMIN' });
+        }
+      }
+    }
+  }, [user, companies]);
+  
   const assignMutation = useMutation({
-    mutationFn: async (companyId) => {
+    mutationFn: async ({ companyId, role = 'PILOT' }) => {
       await base44.auth.updateMe({
         company_id: companyId,
-        role: 'PILOT', // Default role
+        role: role,
         active: true
       });
     },
@@ -32,7 +50,7 @@ export default function CompanyAssignment({ user, onAssigned }) {
   
   const handleAssign = () => {
     if (selectedCompanyId) {
-      assignMutation.mutate(selectedCompanyId);
+      assignMutation.mutate({ companyId: selectedCompanyId, role: 'ADMIN' });
     }
   };
   
