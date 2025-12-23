@@ -12,6 +12,11 @@ const ACCESS_LEVELS = [
   { value: 'admin', label: 'Admin', color: 'text-red-400' }
 ];
 
+const ADMIN_TYPES = [
+  { value: 'admin1', label: 'Admin 1 (40 sites)', pilotGroups: ['wavecon', 'sitesee'] },
+  { value: 'admin2', label: 'Admin 2 (203 sites)', pilotGroups: ['QNSI'] }
+];
+
 const COMPANIES = [
   { value: 'wavecon', label: 'Wavecon' },
   { value: 'sitesee', label: 'SiteSee' },
@@ -31,14 +36,17 @@ export default function AccessLevelTester({ user }) {
   const [testLevel, setTestLevel] = useState(null);
   const [testCompany, setTestCompany] = useState(null);
   const [testPilotId, setTestPilotId] = useState(null);
+  const [testAdminType, setTestAdminType] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('test_access_level');
     const storedCompany = localStorage.getItem('test_company');
     const storedPilotId = localStorage.getItem('test_pilot_id');
+    const storedAdminType = localStorage.getItem('test_admin_type');
     if (stored) setTestLevel(stored);
     if (storedCompany) setTestCompany(storedCompany);
     if (storedPilotId) setTestPilotId(storedPilotId);
+    if (storedAdminType) setTestAdminType(storedAdminType);
   }, []);
 
   const handleLevelChange = (level) => {
@@ -65,18 +73,26 @@ export default function AccessLevelTester({ user }) {
     window.location.reload();
   };
 
+  const handleAdminTypeChange = (adminType) => {
+    setTestAdminType(adminType);
+    localStorage.setItem('test_admin_type', adminType);
+    window.location.reload();
+  };
+
   const clearTest = () => {
     setTestLevel(null);
     setTestCompany(null);
     setTestPilotId(null);
+    setTestAdminType(null);
     localStorage.removeItem('test_access_level');
     localStorage.removeItem('test_company');
     localStorage.removeItem('test_pilot_id');
+    localStorage.removeItem('test_admin_type');
     window.location.reload();
   };
 
   const currentLevel = ACCESS_LEVELS.find(l => l.value === (testLevel || user?.access_level || 'pilot'));
-  const isTestMode = testLevel || testCompany || testPilotId;
+  const isTestMode = testLevel || testCompany || testPilotId || testAdminType;
   const currentCompany = testCompany || user?.company || 'wavecon';
   const availablePilotIds = PILOT_IDS[currentCompany] || [];
 
@@ -130,8 +146,27 @@ export default function AccessLevelTester({ user }) {
                 </Select>
               </div>
 
-              <div>
-                <label className="text-xs text-slate-400 mb-1.5 block">Test Pilot ID</label>
+              {testLevel === 'admin' && (
+                <div>
+                  <label className="text-xs text-slate-400 mb-1.5 block">Admin Type</label>
+                  <Select value={testAdminType || 'admin1'} onValueChange={handleAdminTypeChange}>
+                    <SelectTrigger className="bg-slate-800 border-slate-700">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ADMIN_TYPES.map(admin => (
+                        <SelectItem key={admin.value} value={admin.value}>
+                          {admin.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {testLevel !== 'admin' && (
+                <div>
+                  <label className="text-xs text-slate-400 mb-1.5 block">Test Pilot ID</label>
                 <Select value={testPilotId || user?.pilot_id || availablePilotIds[0]} onValueChange={handlePilotIdChange}>
                   <SelectTrigger className="bg-slate-800 border-slate-700">
                     <SelectValue />
@@ -144,7 +179,8 @@ export default function AccessLevelTester({ user }) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+                </div>
+              )}
 
               {isTestMode && (
                 <Button onClick={clearTest} variant="outline" className="w-full border-red-500/50 text-red-400 hover:bg-red-500/10">
