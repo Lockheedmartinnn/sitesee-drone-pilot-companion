@@ -38,6 +38,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
     { name: 'Mission History', href: createPageUrl('MissionHistory'), icon: ClipboardList },
   ];
+
+  const adminNavigation = permissions.canManageCompany ? [
+    { name: 'Billing', href: createPageUrl('Billing'), icon: CreditCard },
+  ] : [];
   
   const dashboards = permissions.canViewDashboards ? [
     { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
@@ -189,9 +193,41 @@ export default function Layout({ children, currentPageName }) {
                 })}
               </div>
             </div>
-          </nav>
-          
-          {/* Logout */}
+
+            {adminNavigation.length > 0 && (
+              <div>
+                <div className="px-4 mb-2">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Management
+                  </h3>
+                </div>
+                <div className="space-y-1">
+                  {adminNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                          active
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        )}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="font-medium">{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            </nav>
+
+            {/* Logout */}
           <div className="p-4 border-t border-slate-800">
             <Button
               variant="ghost"
