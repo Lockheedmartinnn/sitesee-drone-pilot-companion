@@ -39,16 +39,12 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Mission History', href: createPageUrl('MissionHistory'), icon: ClipboardList },
   ];
   
-  const dashboards = [
-    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3, minLevel: 'manager' },
-    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin, minLevel: 'manager' },
-    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings, minLevel: 'manager' },
-    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users, minLevel: 'head_pilot' },
-  ].filter(item => {
-    if (!item.minLevel) return true;
-    const levels = ['pilot', 'head_pilot', 'manager', 'admin'];
-    return levels.indexOf(permissions.level) >= levels.indexOf(item.minLevel);
-  });
+  const dashboards = permissions.canViewDashboards ? [
+    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
+    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
+    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
+    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
+  ] : [];
   
   const isActive = (href) => {
     return location.pathname === href || location.pathname === href + '.html';

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { Loader2, TrendingUp, AlertTriangle, CheckCircle2, Filter, ChevronDown, ChevronUp, MapPin, Users, Wrench } from 'lucide-react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
@@ -24,10 +25,22 @@ export default function PortfolioOverview() {
   
   const [expandedSection, setExpandedSection] = useState(null);
   
-  const { data: missions = [], isLoading } = useQuery({
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const permissions = useAccessControl(user);
+
+  const { data: allMissions = [], isLoading } = useQuery({
     queryKey: ['allMissions'],
     queryFn: () => base44.entities.MissionLog.list('-created_date', 1000),
   });
+
+  const missions = useMemo(() => {
+    if (!user) return [];
+    return filterMissionsByAccess(allMissions, permissions, user.email);
+  }, [allMissions, permissions, user]);
   
   const filteredMissions = useMemo(() => {
     return missions.filter(m => {

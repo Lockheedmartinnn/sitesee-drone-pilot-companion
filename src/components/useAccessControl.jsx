@@ -33,8 +33,9 @@ export function useAccessControl(user) {
       canViewCompanyMissions: ['manager', 'admin'].includes(effectiveLevel),
       canViewAllMissions: effectiveLevel === 'admin',
       
-      // Dashboard permissions
-      canViewPortfolio: ['manager', 'admin'].includes(effectiveLevel),
+      // Dashboard permissions - Head Pilot can see dashboards but only their group data
+      canViewDashboards: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
+      canViewPortfolio: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
       canViewAnalytics: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
       
       // Management permissions
@@ -64,16 +65,15 @@ export function filterMissionsByAccess(missions, permissions, userEmail) {
   }
   
   if (permissions.canViewCompanyMissions) {
+    // Manager: see all missions from their company
     return missions.filter(m => m.company === permissions.company);
   }
   
   if (permissions.canViewTeamMissions) {
-    return missions.filter(m => 
-      m.company === permissions.company && 
-      (m.pilot_group === permissions.company || m.created_by === userEmail)
-    );
+    // Head Pilot: see missions from their pilot group
+    return missions.filter(m => m.pilot_group === permissions.company);
   }
   
-  // Pilot - only own missions
+  // Pilot: only own missions
   return missions.filter(m => m.created_by === userEmail);
 }
