@@ -2,8 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { getMissionQueryFilter, filterMissionsByRole, hasPermission, PERMISSIONS } from '@/components/rbac';
-import RoleGuard from '@/components/RoleGuard';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { Loader2, TrendingUp, AlertTriangle, CheckCircle2, Filter, ChevronDown, ChevronUp, MapPin, Users, Wrench } from 'lucide-react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
@@ -26,20 +24,9 @@ export default function PortfolioOverview() {
   
   const [expandedSection, setExpandedSection] = useState(null);
   
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-  
   const { data: missions = [], isLoading } = useQuery({
-    queryKey: ['allMissions', user?.company_id],
-    queryFn: async () => {
-      if (!user) return [];
-      const filter = getMissionQueryFilter(user) || {};
-      const allMissions = await base44.entities.MissionLog.filter(filter, '-created_date', 1000);
-      return filterMissionsByRole(allMissions, user);
-    },
-    enabled: !!user,
+    queryKey: ['allMissions'],
+    queryFn: () => base44.entities.MissionLog.list('-created_date', 1000),
   });
   
   const filteredMissions = useMemo(() => {
@@ -224,7 +211,6 @@ export default function PortfolioOverview() {
   }
   
   return (
-    <RoleGuard user={user} permission={PERMISSIONS.VIEW_COMPANY_DASHBOARDS}>
     <div className="min-h-screen text-white">
       <div className="max-w-7xl mx-auto px-5 py-8 pb-20">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -634,6 +620,5 @@ export default function PortfolioOverview() {
         </motion.div>
       </div>
     </div>
-    </RoleGuard>
   );
 }
