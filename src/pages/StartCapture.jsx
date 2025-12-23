@@ -221,7 +221,7 @@ export default function StartCapture() {
             {currentStep === 3 && (
               <div className="space-y-4">
                 <Timer 
-                  targetMinutes={2} 
+                  targetMinutes={5} 
                   onComplete={() => setGpsTimerComplete(true)}
                   label="GPS Stabilisation Timer"
                 />

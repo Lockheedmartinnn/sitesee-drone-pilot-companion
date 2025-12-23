@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export default function Timer({ 
-  targetMinutes = 2, 
+  targetMinutes = 5, 
   onComplete,
   label = "GPS Stabilisation Timer"
 }) {
