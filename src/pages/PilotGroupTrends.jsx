@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
-import { Loader2, Users, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Loader2, Users, ChevronDown, ChevronUp, User, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function PilotGroupTrends() {
@@ -42,12 +42,15 @@ export default function PilotGroupTrends() {
       // Track per-pilot stats
       const pilotId = m.pilot_id || 'Unknown';
       if (!byGroup[group].pilots[pilotId]) {
-        byGroup[group].pilots[pilotId] = { pilotId, total: 0, pass: 0, rework: 0, fail: 0 };
+        byGroup[group].pilots[pilotId] = { pilotId, total: 0, pass: 0, rework: 0, fail: 0, failedSites: [] };
       }
       byGroup[group].pilots[pilotId].total++;
       if (m.outcome === 'Pass') byGroup[group].pilots[pilotId].pass++;
       if (m.outcome === 'Rework') byGroup[group].pilots[pilotId].rework++;
-      if (m.outcome === 'Fail') byGroup[group].pilots[pilotId].fail++;
+      if (m.outcome === 'Fail') {
+        byGroup[group].pilots[pilotId].fail++;
+        byGroup[group].pilots[pilotId].failedSites.push(m);
+      }
     });
     
     return Object.values(byGroup).map(g => ({
@@ -155,37 +158,62 @@ export default function PilotGroupTrends() {
                               </div>
                               <div className="grid gap-2">
                                 {stat.pilots.map(pilot => (
-                                  <div key={pilot.pilotId} className="bg-slate-800/50 rounded-lg p-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                                        <User className="w-4 h-4 text-blue-400" />
-                                      </div>
-                                      <div>
-                                        <p className="font-medium text-sm">{pilot.pilotId}</p>
-                                        <p className="text-xs text-slate-500">{pilot.total} missions</p>
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center gap-4 text-xs">
-                                      <div className="text-center">
-                                        <p className="text-slate-500">Pass</p>
-                                        <p className="font-semibold text-emerald-400">{pilot.passRate}%</p>
-                                      </div>
-                                      <div className="text-center">
-                                        <p className="text-slate-500">Rework</p>
-                                        <p className="font-semibold text-amber-400">{pilot.reworkRate}%</p>
-                                      </div>
-                                      <div className="text-center">
-                                        <p className="text-slate-500">Fail</p>
-                                        <p className={cn(
-                                          "font-semibold",
-                                          parseFloat(pilot.failureRate) > 10 ? "text-red-400" :
-                                          parseFloat(pilot.failureRate) > 5 ? "text-amber-400" : "text-emerald-400"
-                                        )}>
-                                          {pilot.failureRate}%
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
+                                 <div key={pilot.pilotId} className="bg-slate-800/50 rounded-lg p-3">
+                                   <div className="flex items-center justify-between mb-2">
+                                     <div className="flex items-center gap-3">
+                                       <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                         <User className="w-4 h-4 text-blue-400" />
+                                       </div>
+                                       <div>
+                                         <p className="font-medium text-sm">{pilot.pilotId}</p>
+                                         <p className="text-xs text-slate-500">{pilot.total} missions</p>
+                                       </div>
+                                     </div>
+                                     <div className="flex items-center gap-4 text-xs">
+                                       <div className="text-center">
+                                         <p className="text-slate-500">Pass</p>
+                                         <p className="font-semibold text-emerald-400">{pilot.passRate}%</p>
+                                       </div>
+                                       <div className="text-center">
+                                         <p className="text-slate-500">Rework</p>
+                                         <p className="font-semibold text-amber-400">{pilot.reworkRate}%</p>
+                                       </div>
+                                       <div className="text-center">
+                                         <p className="text-slate-500">Fail</p>
+                                         <p className={cn(
+                                           "font-semibold",
+                                           parseFloat(pilot.failureRate) > 10 ? "text-red-400" :
+                                           parseFloat(pilot.failureRate) > 5 ? "text-amber-400" : "text-emerald-400"
+                                         )}>
+                                           {pilot.failureRate}%
+                                         </p>
+                                       </div>
+                                     </div>
+                                   </div>
+                                   {pilot.failedSites && pilot.failedSites.length > 0 && (
+                                     <div className="mt-3 pt-3 border-t border-slate-700/50">
+                                       <p className="text-xs text-slate-500 mb-2">Failed Sites:</p>
+                                       <div className="space-y-1">
+                                         {pilot.failedSites.map((site, sidx) => (
+                                           <div key={sidx} className="text-xs text-slate-400 flex items-start gap-2">
+                                             <span className="text-red-400">•</span>
+                                             <div>
+                                               <span>{site.region || 'Unknown region'}</span>
+                                               {site.latitude && site.longitude && (
+                                                 <span className="text-slate-500 ml-2">
+                                                   ({site.latitude.toFixed(4)}, {site.longitude.toFixed(4)})
+                                                 </span>
+                                               )}
+                                               {site.primary_flag_reason && (
+                                                 <span className="text-amber-500 ml-2">- {site.primary_flag_reason}</span>
+                                               )}
+                                             </div>
+                                           </div>
+                                         ))}
+                                       </div>
+                                     </div>
+                                   )}
+                                 </div>
                                 ))}
                               </div>
                             </div>
