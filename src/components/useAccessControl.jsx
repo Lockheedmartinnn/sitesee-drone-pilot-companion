@@ -2,6 +2,23 @@ import { useMemo } from 'react';
 
 export function useAccessControl(user) {
   return useMemo(() => {
+    if (!user) {
+      return {
+        canViewOwnMissions: true,
+        canViewTeamMissions: false,
+        canViewCompanyMissions: false,
+        canViewAllMissions: false,
+        canViewPortfolio: false,
+        canViewAnalytics: false,
+        canManageTeam: false,
+        canManageCompany: false,
+        canManageSystem: false,
+        level: 'pilot',
+        company: null,
+        isTestMode: false
+      };
+    }
+    
     // Check for test mode
     const testLevel = typeof window !== 'undefined' ? localStorage.getItem('test_access_level') : null;
     const testCompany = typeof window !== 'undefined' ? localStorage.getItem('test_company') : null;
