@@ -35,10 +35,13 @@ export function useAccessControl(user) {
       canViewCompanyMissions: ['manager', 'admin'].includes(effectiveLevel),
       canViewAllMissions: effectiveLevel === 'admin',
       
-      // Dashboard permissions - Head Pilot can see dashboards but only their group data
+      // Dashboard permissions - Head Pilot has same dashboard access as Manager
       canViewDashboards: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
       canViewPortfolio: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
       canViewAnalytics: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
+      canViewLocationQuality: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
+      canViewEquipmentCorrelation: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
+      canViewPilotGroupTrends: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
       
       // Management permissions
       canManageTeam: ['head_pilot', 'manager', 'admin'].includes(effectiveLevel),
