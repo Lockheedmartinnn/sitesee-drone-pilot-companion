@@ -25,6 +25,12 @@ export default function PilotGroupTrends() {
     if (!user) return [];
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   const groupStats = useMemo(() => {
     const byGroup = {};

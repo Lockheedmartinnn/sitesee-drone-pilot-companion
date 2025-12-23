@@ -42,6 +42,12 @@ export default function PortfolioOverview() {
     if (!user) return [];
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   const filteredMissions = useMemo(() => {
     return missions.filter(m => {
