@@ -19,6 +19,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import ChatWidget from '@/components/ChatWidget';
+import AccessLevelTester from '@/components/AccessLevelTester';
+import { useAccessControl } from '@/hooks/useAccessControl';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,6 +31,8 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me(),
   });
   
+  const permissions = useAccessControl(user);
+  
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
@@ -36,11 +40,15 @@ export default function Layout({ children, currentPageName }) {
   ];
   
   const dashboards = [
-    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
-    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
-    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
-    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
-  ];
+    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3, minLevel: 'manager' },
+    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin, minLevel: 'manager' },
+    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings, minLevel: 'manager' },
+    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users, minLevel: 'head_pilot' },
+  ].filter(item => {
+    if (!item.minLevel) return true;
+    const levels = ['pilot', 'head_pilot', 'manager', 'admin'];
+    return levels.indexOf(permissions.level) >= levels.indexOf(item.minLevel);
+  });
   
   const isActive = (href) => {
     return location.pathname === href || location.pathname === href + '.html';
@@ -210,6 +218,9 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Chat Widget */}
       <ChatWidget />
+      
+      {/* Access Level Tester */}
+      <AccessLevelTester user={user} />
       </div>
       );
       }
