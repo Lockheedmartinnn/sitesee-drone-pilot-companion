@@ -18,6 +18,7 @@ export default function PortfolioOverview() {
     region: 'all',
     customer: 'all',
     pilot_group: 'all',
+    pilot_id: 'all',
     drone_model: 'all',
     dateRange: 'all',
     year: 'all'
@@ -48,6 +49,7 @@ export default function PortfolioOverview() {
       if (filters.region !== 'all' && m.region !== filters.region) return false;
       if (filters.customer !== 'all' && m.customer !== filters.customer) return false;
       if (filters.pilot_group !== 'all' && m.pilot_group !== filters.pilot_group) return false;
+      if (filters.pilot_id !== 'all' && m.pilot_id !== filters.pilot_id) return false;
       if (filters.drone_model !== 'all' && m.drone_model !== filters.drone_model) return false;
       
       // Date filters
@@ -80,6 +82,7 @@ export default function PortfolioOverview() {
     regions: [...new Set(missions.map(m => m.region).filter(Boolean))],
     customers: [...new Set(missions.map(m => m.customer).filter(Boolean))],
     pilot_groups: [...new Set(missions.map(m => m.pilot_group).filter(Boolean))],
+    pilot_ids: [...new Set(missions.map(m => m.pilot_id).filter(Boolean))],
     drone_models: [...new Set(missions.map(m => m.drone_model).filter(Boolean))],
     years: [...new Set(missions.map(m => {
       const date = new Date(m.mission_date || m.created_date);
@@ -237,7 +240,7 @@ export default function PortfolioOverview() {
             <Filter className="w-4 h-4 text-slate-400" />
             <h3 className="font-semibold">Filters</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400 text-xs">Country</Label>
               <Select value={filters.country} onValueChange={(v) => setFilters({...filters, country: v})}>
@@ -283,6 +286,18 @@ export default function PortfolioOverview() {
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   {uniqueValues.pilot_groups.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Pilot ID</Label>
+              <Select value={filters.pilot_id} onValueChange={(v) => setFilters({...filters, pilot_id: v})}>
+                <SelectTrigger className="bg-slate-900/50 border-slate-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {uniqueValues.pilot_ids.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

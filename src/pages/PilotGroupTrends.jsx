@@ -1,12 +1,14 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
-import { Loader2, Users } from 'lucide-react';
+import { Loader2, Users, ChevronDown, ChevronUp, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function PilotGroupTrends() {
+  const [expandedGroup, setExpandedGroup] = useState(null);
+  
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
