@@ -142,10 +142,17 @@ export default function PortfolioOverview() {
     failures.forEach(m => {
       if (m.primary_flag_reason) {
         if (!byReason[m.primary_flag_reason]) {
-          byReason[m.primary_flag_reason] = { reason: m.primary_flag_reason, count: 0, missions: [] };
+          byReason[m.primary_flag_reason] = { reason: m.primary_flag_reason, count: 0, missions: [], byPilot: {} };
         }
         byReason[m.primary_flag_reason].count++;
         byReason[m.primary_flag_reason].missions.push(m);
+
+        // Group by pilot
+        const pilotId = m.pilot_id || 'Unknown Pilot';
+        if (!byReason[m.primary_flag_reason].byPilot[pilotId]) {
+          byReason[m.primary_flag_reason].byPilot[pilotId] = [];
+        }
+        byReason[m.primary_flag_reason].byPilot[pilotId].push(m);
       }
     });
     return Object.values(byReason).sort((a, b) => b.count - a.count);
@@ -450,18 +457,33 @@ export default function PortfolioOverview() {
                             <span className="text-red-400 font-bold">{item.count} missions</span>
                           </div>
                         </div>
-                        <div className="space-y-2">
-                          {item.missions.slice(0, 3).map((mission, midx) => (
-                            <div key={midx} className="text-xs text-slate-400 flex items-center gap-2">
-                              <MapPin className="w-3 h-3" />
-                              <span>{mission.country || 'Unknown'} - {mission.region || 'Unknown'}</span>
-                              <span className="text-slate-600">•</span>
-                              <span>{mission.pilot_group || 'Unknown Group'}</span>
+                        <div className="space-y-3">
+                          {Object.entries(item.byPilot).map(([pilotId, pilotMissions]) => (
+                            <div key={pilotId} className="border-l-2 border-slate-600 pl-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Users className="w-3 h-3 text-blue-400" />
+                                <span className="text-xs font-semibold text-slate-300">{pilotId}</span>
+                                <span className="text-xs text-slate-500">({pilotMissions.length} failures)</span>
+                              </div>
+                              <div className="space-y-1">
+                                {pilotMissions.slice(0, 2).map((mission, midx) => (
+                                  <div key={midx} className="text-xs text-slate-400 flex items-center gap-2 ml-5">
+                                    <MapPin className="w-3 h-3" />
+                                    <span>{mission.region || 'Unknown'}</span>
+                                    {mission.latitude && mission.longitude && (
+                                      <>
+                                        <span className="text-slate-600">•</span>
+                                        <span className="text-slate-500">{mission.latitude.toFixed(4)}, {mission.longitude.toFixed(4)}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                                {pilotMissions.length > 2 && (
+                                  <p className="text-xs text-slate-500 italic ml-5">+ {pilotMissions.length - 2} more sites...</p>
+                                )}
+                              </div>
                             </div>
                           ))}
-                          {item.missions.length > 3 && (
-                            <p className="text-xs text-slate-500 italic">+ {item.missions.length - 3} more...</p>
-                          )}
                         </div>
                       </div>
                     ))}
