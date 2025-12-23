@@ -17,7 +17,8 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
 const MissionCard = ({ mission, isOpen, onToggle }) => {
-  const isSuccess = mission.outcome === 'success';
+  const isSuccess = mission.outcome === 'success' || mission.outcome === 'Pass' || mission.outcome === 'SUCCESS';
+  const isFail = mission.outcome === 'Fail' || mission.outcome === 'FAILURE';
   
   return (
     <motion.div
@@ -27,7 +28,9 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
         "rounded-2xl border overflow-hidden transition-all duration-200",
         isSuccess 
           ? "bg-emerald-500/5 border-emerald-500/30" 
-          : "bg-amber-500/5 border-amber-500/30"
+          : isFail 
+            ? "bg-red-500/5 border-red-500/30"
+            : "bg-amber-500/5 border-amber-500/30"
       )}
     >
       <button
@@ -36,12 +39,12 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
       >
         <div className={cn(
           "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
-          isSuccess ? "bg-emerald-500/20" : "bg-amber-500/20"
+          isSuccess ? "bg-emerald-500/20" : isFail ? "bg-red-500/20" : "bg-amber-500/20"
         )}>
           {isSuccess ? (
             <CheckCircle2 className="w-6 h-6 text-emerald-400" />
           ) : (
-            <AlertTriangle className="w-6 h-6 text-amber-400" />
+            <AlertTriangle className={cn("w-6 h-6", isFail ? "text-red-400" : "text-amber-400")} />
           )}
         </div>
         
@@ -54,9 +57,11 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
               "text-xs font-semibold px-2 py-1 rounded-full",
               isSuccess 
                 ? "bg-emerald-500/20 text-emerald-400" 
-                : "bg-amber-500/20 text-amber-400"
+                : isFail
+                  ? "bg-red-500/20 text-red-400"
+                  : "bg-amber-500/20 text-amber-400"
             )}>
-              {isSuccess ? 'Success' : 'Issue Flagged'}
+              {isSuccess ? 'Success' : isFail ? 'Fail' : 'Issue Flagged'}
             </span>
           </div>
           
