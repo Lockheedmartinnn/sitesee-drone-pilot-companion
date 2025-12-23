@@ -71,12 +71,12 @@ export function filterMissionsByAccess(missions, permissions, userEmail, user) {
   }
   
   if (permissions.canViewCompanyMissions) {
-    // Manager: see all missions from their company
-    return missions.filter(m => m.company === permissions.company);
+    // Manager: see all missions from their company (pilot_group is the company identifier)
+    return missions.filter(m => m.pilot_group === permissions.company);
   }
   
   if (permissions.canViewTeamMissions) {
-    // Head Pilot: see all missions from their pilot group
+    // Head Pilot: see all missions from their pilot group (same as company)
     return missions.filter(m => m.pilot_group === permissions.company);
   }
   
