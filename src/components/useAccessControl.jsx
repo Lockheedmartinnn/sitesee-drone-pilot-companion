@@ -23,6 +23,7 @@ export function useAccessControl(user) {
     const testLevel = typeof window !== 'undefined' ? localStorage.getItem('test_access_level') : null;
     const testCompany = typeof window !== 'undefined' ? localStorage.getItem('test_company') : null;
     const testPilotId = typeof window !== 'undefined' ? localStorage.getItem('test_pilot_id') : null;
+    const testAdminType = typeof window !== 'undefined' ? localStorage.getItem('test_admin_type') : null;
     
     const effectiveLevel = testLevel || user?.access_level || 'pilot';
     const effectiveCompany = testCompany || user?.company || extractCompanyFromEmail(user?.email);
@@ -52,7 +53,8 @@ export function useAccessControl(user) {
       level: effectiveLevel,
       company: effectiveCompany,
       pilotId: effectivePilotId,
-      isTestMode: !!(testLevel || testCompany || testPilotId)
+      adminType: testAdminType,
+      isTestMode: !!(testLevel || testCompany || testPilotId || testAdminType)
     };
     
     return permissions;
@@ -67,6 +69,12 @@ function extractCompanyFromEmail(email) {
 
 export function filterMissionsByAccess(missions, permissions, userEmail, user) {
   if (permissions.canViewAllMissions) {
+    // Filter by admin type if in test mode
+    if (permissions.adminType === 'admin1') {
+      return missions.filter(m => ['wavecon', 'sitesee'].includes(m.pilot_group));
+    } else if (permissions.adminType === 'admin2') {
+      return missions.filter(m => m.pilot_group === 'QNSI');
+    }
     return missions;
   }
   
