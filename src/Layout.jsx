@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import ChatWidget from '@/components/ChatWidget';
 import AccessLevelTester from '@/components/AccessLevelTester';
-import { useAccessControl } from '@/hooks/useAccessControl';
+import { useAccessControl } from '@/components/useAccessControl';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
