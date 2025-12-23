@@ -117,7 +117,7 @@ export default function AccessLevelTester({ user }) {
               <div>
                 <label className="text-xs text-slate-400 mb-1.5 block">Test Access Level</label>
                 <Select value={testLevel || user?.access_level || 'pilot'} onValueChange={handleLevelChange}>
-                  <SelectTrigger className="bg-slate-800 border-slate-700">
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -133,7 +133,7 @@ export default function AccessLevelTester({ user }) {
               <div>
                 <label className="text-xs text-slate-400 mb-1.5 block">Test Company</label>
                 <Select value={currentCompany} onValueChange={handleCompanyChange}>
-                  <SelectTrigger className="bg-slate-800 border-slate-700">
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -150,7 +150,7 @@ export default function AccessLevelTester({ user }) {
                 <div>
                   <label className="text-xs text-slate-400 mb-1.5 block">Admin Type</label>
                   <Select value={testAdminType || 'admin1'} onValueChange={handleAdminTypeChange}>
-                    <SelectTrigger className="bg-slate-800 border-slate-700">
+                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -168,7 +168,7 @@ export default function AccessLevelTester({ user }) {
                 <div>
                   <label className="text-xs text-slate-400 mb-1.5 block">Test Pilot ID</label>
                 <Select value={testPilotId || user?.pilot_id || availablePilotIds[0]} onValueChange={handlePilotIdChange}>
-                  <SelectTrigger className="bg-slate-800 border-slate-700">
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
