@@ -19,16 +19,26 @@ const COMPANIES = [
   { value: 'globalsite', label: 'GlobalSite' }
 ];
 
+const PILOT_IDS = {
+  wavecon: ['WC-HEAD', 'WC-001', 'WC-002', 'WC-003', 'WC-004', 'WC-005'],
+  sitesee: ['SS-HEAD', 'SS-101', 'SS-102', 'SS-103', 'SS-104', 'SS-105'],
+  techops: ['TO-HEAD', 'TO-201', 'TO-202', 'TO-203', 'TO-204', 'TO-205'],
+  globalsite: ['GS-HEAD', 'GS-301', 'GS-302', 'GS-303', 'GS-304', 'GS-305']
+};
+
 export default function AccessLevelTester({ user }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [testLevel, setTestLevel] = useState(null);
   const [testCompany, setTestCompany] = useState(null);
+  const [testPilotId, setTestPilotId] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('test_access_level');
     const storedCompany = localStorage.getItem('test_company');
+    const storedPilotId = localStorage.getItem('test_pilot_id');
     if (stored) setTestLevel(stored);
     if (storedCompany) setTestCompany(storedCompany);
+    if (storedPilotId) setTestPilotId(storedPilotId);
   }, []);
 
   const handleLevelChange = (level) => {
@@ -40,19 +50,35 @@ export default function AccessLevelTester({ user }) {
   const handleCompanyChange = (company) => {
     setTestCompany(company);
     localStorage.setItem('test_company', company);
+    // Reset pilot ID when company changes
+    const defaultPilotId = PILOT_IDS[company]?.[0];
+    if (defaultPilotId) {
+      setTestPilotId(defaultPilotId);
+      localStorage.setItem('test_pilot_id', defaultPilotId);
+    }
+    window.location.reload();
+  };
+
+  const handlePilotIdChange = (pilotId) => {
+    setTestPilotId(pilotId);
+    localStorage.setItem('test_pilot_id', pilotId);
     window.location.reload();
   };
 
   const clearTest = () => {
     setTestLevel(null);
     setTestCompany(null);
+    setTestPilotId(null);
     localStorage.removeItem('test_access_level');
     localStorage.removeItem('test_company');
+    localStorage.removeItem('test_pilot_id');
     window.location.reload();
   };
 
   const currentLevel = ACCESS_LEVELS.find(l => l.value === (testLevel || user?.access_level || 'pilot'));
-  const isTestMode = testLevel || testCompany;
+  const isTestMode = testLevel || testCompany || testPilotId;
+  const currentCompany = testCompany || user?.company || 'wavecon';
+  const availablePilotIds = PILOT_IDS[currentCompany] || [];
 
   return (
     <div className="fixed bottom-6 left-6 z-50">
@@ -90,7 +116,7 @@ export default function AccessLevelTester({ user }) {
 
               <div>
                 <label className="text-xs text-slate-400 mb-1.5 block">Test Company</label>
-                <Select value={testCompany || user?.company || 'wavecon'} onValueChange={handleCompanyChange}>
+                <Select value={currentCompany} onValueChange={handleCompanyChange}>
                   <SelectTrigger className="bg-slate-800 border-slate-700">
                     <SelectValue />
                   </SelectTrigger>
@@ -98,6 +124,22 @@ export default function AccessLevelTester({ user }) {
                     {COMPANIES.map(company => (
                       <SelectItem key={company.value} value={company.value}>
                         {company.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs text-slate-400 mb-1.5 block">Test Pilot ID</label>
+                <Select value={testPilotId || user?.pilot_id || availablePilotIds[0]} onValueChange={handlePilotIdChange}>
+                  <SelectTrigger className="bg-slate-800 border-slate-700">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePilotIds.map(pilotId => (
+                      <SelectItem key={pilotId} value={pilotId}>
+                        {pilotId} {pilotId.includes('HEAD') ? '(Head Pilot)' : '(Pilot)'}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -114,7 +156,7 @@ export default function AccessLevelTester({ user }) {
 
             <div className="mt-4 pt-3 border-t border-slate-700">
               <p className="text-xs text-slate-500">
-                Real: {user?.access_level || 'pilot'} @ {user?.company || 'unknown'}
+                Real: {user?.access_level || 'pilot'} @ {user?.company || 'unknown'} ({user?.pilot_id || 'no pilot id'})
               </p>
             </div>
           </motion.div>

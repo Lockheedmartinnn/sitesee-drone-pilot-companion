@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -211,17 +212,19 @@ export default function MissionHistory() {
     queryFn: () => base44.auth.me(),
   });
   
-  const { data: missions = [], isLoading } = useQuery({
-    queryKey: ['missionHistory', user?.email],
+  const { data: allMissions = [], isLoading } = useQuery({
+    queryKey: ['missionHistory'],
     queryFn: async () => {
-      if (!user) return [];
-      return await base44.entities.MissionLog.filter(
-        { created_by: user.email },
-        '-created_date'
-      );
+      return await base44.entities.MissionLog.list('-created_date', 500);
     },
-    enabled: !!user,
   });
+
+  const permissions = useAccessControl(user);
+
+  const missions = useMemo(() => {
+    if (!user) return [];
+    return filterMissionsByAccess(allMissions, permissions, user.email, user);
+  }, [allMissions, permissions, user]);
   
   const filteredMissions = missions.filter(mission => {
     if (filter === 'all') return true;

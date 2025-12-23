@@ -22,9 +22,11 @@ export function useAccessControl(user) {
     // Check for test mode
     const testLevel = typeof window !== 'undefined' ? localStorage.getItem('test_access_level') : null;
     const testCompany = typeof window !== 'undefined' ? localStorage.getItem('test_company') : null;
+    const testPilotId = typeof window !== 'undefined' ? localStorage.getItem('test_pilot_id') : null;
     
     const effectiveLevel = testLevel || user?.access_level || 'pilot';
     const effectiveCompany = testCompany || user?.company || extractCompanyFromEmail(user?.email);
+    const effectivePilotId = testPilotId || user?.pilot_id;
     
     const permissions = {
       // View permissions
@@ -46,7 +48,8 @@ export function useAccessControl(user) {
       // Data access
       level: effectiveLevel,
       company: effectiveCompany,
-      isTestMode: !!(testLevel || testCompany)
+      pilotId: effectivePilotId,
+      isTestMode: !!(testLevel || testCompany || testPilotId)
     };
     
     return permissions;
@@ -59,7 +62,7 @@ function extractCompanyFromEmail(email) {
   return match ? match[1] : null;
 }
 
-export function filterMissionsByAccess(missions, permissions, userEmail) {
+export function filterMissionsByAccess(missions, permissions, userEmail, user) {
   if (permissions.canViewAllMissions) {
     return missions;
   }
@@ -70,10 +73,12 @@ export function filterMissionsByAccess(missions, permissions, userEmail) {
   }
   
   if (permissions.canViewTeamMissions) {
-    // Head Pilot: see missions from their pilot group
+    // Head Pilot: see all missions from their pilot group
     return missions.filter(m => m.pilot_group === permissions.company);
   }
   
-  // Pilot: only own missions
-  return missions.filter(m => m.created_by === userEmail);
+  // Pilot: only missions where they are the pilot (by pilot_id)
+  const pilotId = typeof window !== 'undefined' ? localStorage.getItem('test_pilot_id') : null;
+  const effectivePilotId = pilotId || user?.pilot_id;
+  return missions.filter(m => m.pilot_id === effectivePilotId);
 }

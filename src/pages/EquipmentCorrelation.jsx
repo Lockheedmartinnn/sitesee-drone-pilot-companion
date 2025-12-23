@@ -21,7 +21,7 @@ export default function EquipmentCorrelation() {
 
   const missions = useMemo(() => {
     if (!user) return [];
-    return filterMissionsByAccess(allMissions, permissions, user.email);
+    return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
   
   const droneStats = useMemo(() => {

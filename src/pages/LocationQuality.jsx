@@ -21,7 +21,7 @@ export default function LocationQuality() {
 
   const missions = useMemo(() => {
     if (!user) return [];
-    return filterMissionsByAccess(allMissions, permissions, user.email);
+    return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
   
   const regionStats = useMemo(() => {
