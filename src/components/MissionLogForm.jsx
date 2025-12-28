@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 const CheckboxItem = ({ label, checked, onCheckedChange }) => (
   <div className="flex items-center space-x-2">
@@ -73,7 +74,21 @@ export default function MissionLogForm({ onSubmit, onCancel }) {
     setIsSubmitting(true);
     
     try {
-      await onSubmit(formData);
+      const result = await onSubmit({ ...formData, data_source: 'manual', is_locked: false });
+      
+      // Log audit trail
+      try {
+        await base44.entities.AuditLog.create({
+          user_email: (await base44.auth.me()).email,
+          action: 'mission_log_create',
+          entity_type: 'MissionLog',
+          entity_id: result?.id || 'unknown',
+          details: `Created mission log for ${formData.region || 'unknown location'}`
+        });
+      } catch (auditError) {
+        console.error('Failed to create audit log:', auditError);
+      }
+      
       setSubmitted(true);
     } catch (error) {
       console.error('Error submitting mission log:', error);

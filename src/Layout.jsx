@@ -42,6 +42,7 @@ export default function Layout({ children, currentPageName }) {
 
   const adminNavigation = permissions.canManageCompany ? [
     { name: 'Billing', href: createPageUrl('Billing'), icon: CreditCard },
+    { name: 'Audit Log', href: createPageUrl('AuditLog'), icon: Settings },
   ] : [];
   
   const dashboards = permissions.canViewDashboards ? [
