@@ -44,6 +44,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Billing', href: createPageUrl('Billing'), icon: CreditCard },
     { name: 'Audit Log', href: createPageUrl('AuditLog'), icon: Settings },
   ] : [];
+
+  const systemNavigation = permissions.canManageSystem ? [
+    { name: 'Data Management', href: createPageUrl('MissionDataManagement'), icon: Settings },
+  ] : [];
   
   const dashboards = permissions.canViewDashboards ? [
     { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
@@ -205,6 +209,38 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 <div className="space-y-1">
                   {adminNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                          active
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        )}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="font-medium">{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {systemNavigation.length > 0 && (
+              <div>
+                <div className="px-4 mb-2">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    System
+                  </h3>
+                </div>
+                <div className="space-y-1">
+                  {systemNavigation.map((item) => {
                     const Icon = item.icon;
                     const active = isActive(item.href);
                     return (

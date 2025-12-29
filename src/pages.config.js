@@ -13,6 +13,7 @@ import Scenarios from './pages/Scenarios';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
+import MissionDataManagement from './pages/MissionDataManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
+    "MissionDataManagement": MissionDataManagement,
 }
 
 export const pagesConfig = {
