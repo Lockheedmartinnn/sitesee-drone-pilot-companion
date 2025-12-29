@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -20,8 +20,13 @@ export default function AuditLog() {
   });
 
   // Redirect non-managers away from this page
-  if (!isLoading && !permissions.canManageCompany) {
-    window.location.href = '/';
+  useEffect(() => {
+    if (!isLoading && !permissions.canManageCompany) {
+      window.location.href = '/';
+    }
+  }, [isLoading, permissions.canManageCompany]);
+
+  if (!permissions.canManageCompany) {
     return null;
   }
 
