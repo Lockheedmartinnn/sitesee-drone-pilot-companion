@@ -176,6 +176,35 @@ const MissionCard = ({ mission, isOpen, onToggle }) => {
                 </div>
               )}
               
+              {/* Failure Reason */}
+              {mission.primary_flag_reason && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-2">Failure Reason</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg">
+                      {mission.primary_flag_reason}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Secondary Factors */}
+              {mission.secondary_factors && mission.secondary_factors.length > 0 && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-2">Secondary Factors</p>
+                  <div className="flex flex-wrap gap-2">
+                    {mission.secondary_factors.map((factor, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs rounded-lg"
+                      >
+                        {factor}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               {/* Issue Categories */}
               {mission.issue_categories && mission.issue_categories.length > 0 && (
                 <div>
@@ -235,8 +264,8 @@ export default function MissionHistory() {
   
   const filteredMissions = missions.filter(mission => {
     if (filter === 'all') return true;
-    if (filter === 'success') return mission.outcome === 'success';
-    if (filter === 'issues') return mission.outcome === 'issue_flagged';
+    if (filter === 'success') return mission.outcome === 'Pass' || mission.outcome === 'SUCCESS';
+    if (filter === 'issues') return mission.outcome === 'Fail' || mission.outcome === 'Rework' || mission.flagged;
     return true;
   });
   
@@ -283,7 +312,7 @@ export default function MissionHistory() {
                   : "text-slate-400 hover:text-white hover:bg-slate-800"
               )}
             >
-              Success ({missions.filter(m => m.outcome === 'success').length})
+              Success ({missions.filter(m => m.outcome === 'Pass' || m.outcome === 'SUCCESS').length})
             </Button>
             <Button
               variant={filter === 'issues' ? 'default' : 'ghost'}
@@ -295,7 +324,7 @@ export default function MissionHistory() {
                   : "text-slate-400 hover:text-white hover:bg-slate-800"
               )}
             >
-              Issues ({missions.filter(m => m.outcome === 'issue_flagged').length})
+              Issues ({missions.filter(m => m.outcome === 'Fail' || m.outcome === 'Rework' || m.flagged).length})
             </Button>
           </div>
         </motion.div>
