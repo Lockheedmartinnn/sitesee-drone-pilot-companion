@@ -664,15 +664,29 @@ export default function PortfolioOverview() {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mt-6">
           <h3 className="font-semibold mb-4">Failure Rate Over Time (Last 30 Days)</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={timelineData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="date" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }} />
-              <Line type="monotone" dataKey="rate" stroke="#ef4444" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+          {timelineData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={timelineData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#94a3b8"
+                  tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                />
+                <YAxis stroke="#94a3b8" label={{ value: 'Failure Rate (%)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                  labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  formatter={(value) => [`${value}%`, 'Failure Rate']}
+                />
+                <Line type="monotone" dataKey="rate" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[250px] flex items-center justify-center text-slate-400">
+              <p>No timeline data available</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
