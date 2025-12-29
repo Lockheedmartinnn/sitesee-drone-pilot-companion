@@ -42,11 +42,18 @@ export default function ChatWidget() {
 
   const initConversation = async () => {
     try {
+      // Get current user data to pass role context to the agent
+      const userData = await base44.auth.me();
+      
       const conv = await base44.agents.createConversation({
         agent_name: 'SiteSeePilotCopilot',
         metadata: {
           name: 'Field Support Session',
-          description: 'Pilot assistance chat'
+          description: 'Pilot assistance chat',
+          user_role: userData?.access_level || 'pilot',
+          user_email: userData?.email,
+          pilot_id: userData?.pilot_id,
+          company: userData?.company
         }
       });
       setConversation(conv);
