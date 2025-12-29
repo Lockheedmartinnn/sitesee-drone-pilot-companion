@@ -13,7 +13,7 @@ const VIDEOS = [
     description: "Complete walkthrough of equipment checks and pre-flight preparation.",
     duration: "8:30",
     thumbnail: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=450&fit=crop",
-    videoUrl: null // Placeholder
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const VIDEOS = [
     description: "How to configure exposure and maintain settings through battery changes.",
     duration: "7:45",
     thumbnail: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=450&fit=crop",
-    videoUrl: null
+    videoUrl: "https://www.youtube.com/embed/jNQXAC9IVRw"
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const VIDEOS = [
     description: "Using Nomacs EXIF data to verify GPS stability and proper procedures.",
     duration: "9:15",
     thumbnail: "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=800&h=450&fit=crop",
-    videoUrl: null
+    videoUrl: "https://www.youtube.com/embed/ZZ5LpwO-An4"
   },
   {
     id: 4,
@@ -37,7 +37,55 @@ const VIDEOS = [
     description: "Step-by-step quality control process before leaving the site.",
     duration: "6:20",
     thumbnail: "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=800&h=450&fit=crop",
-    videoUrl: null
+    videoUrl: "https://www.youtube.com/embed/oHg5SJYRHA0"
+  },
+  {
+    id: 5,
+    title: "Understanding Leaning Issues",
+    description: "How to identify and prevent model leaning during capture.",
+    duration: "5:45",
+    thumbnail: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/y6120QOlsfU"
+  },
+  {
+    id: 6,
+    title: "Avoiding Ghosting Effects",
+    description: "Tips for capturing clear images without ghosting artifacts.",
+    duration: "6:50",
+    thumbnail: "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/kJQP7kiw5Fk"
+  },
+  {
+    id: 7,
+    title: "Proper Georeferencing Workflow",
+    description: "Step-by-step guide to ensure accurate georeferencing.",
+    duration: "8:15",
+    thumbnail: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/L_jWHffIx5E"
+  },
+  {
+    id: 8,
+    title: "Rooftop Capture Techniques",
+    description: "Best practices for complex rooftop site captures.",
+    duration: "7:30",
+    thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    id: 9,
+    title: "Wind Management & Stability",
+    description: "Flying safely and capturing quality data in windy conditions.",
+    duration: "6:00",
+    thumbnail: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/jNQXAC9IVRw"
+  },
+  {
+    id: 10,
+    title: "Low Light & Sun Glare Solutions",
+    description: "Techniques for managing challenging lighting conditions.",
+    duration: "5:20",
+    thumbnail: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=450&fit=crop",
+    videoUrl: "https://www.youtube.com/embed/ZZ5LpwO-An4"
   }
 ];
 
@@ -120,15 +168,26 @@ export default function TrainingVideos() {
             
             {/* Video Player Area */}
             <div className="flex-1 flex items-center justify-center p-5">
-              <div className="w-full max-w-lg aspect-video bg-slate-800 rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">🎬</span>
-                  </div>
-                  <p className="text-slate-400">Video coming soon</p>
-                  <p className="text-sm text-slate-500 mt-1">Upload your training video here</p>
+              {selectedVideo.videoUrl ? (
+                <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden">
+                  <iframe
+                    src={selectedVideo.videoUrl}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
-              </div>
+              ) : (
+                <div className="w-full max-w-lg aspect-video bg-slate-800 rounded-2xl flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🎬</span>
+                    </div>
+                    <p className="text-slate-400">Video coming soon</p>
+                    <p className="text-sm text-slate-500 mt-1">Upload your training video here</p>
+                  </div>
+                </div>
+              )}
             </div>
             
             {/* Description */}

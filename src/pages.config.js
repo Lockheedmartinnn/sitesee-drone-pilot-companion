@@ -3,6 +3,7 @@ import Billing from './pages/Billing';
 import EquipmentCorrelation from './pages/EquipmentCorrelation';
 import Home from './pages/Home';
 import LocationQuality from './pages/LocationQuality';
+import MissionDataManagement from './pages/MissionDataManagement';
 import MissionDetail from './pages/MissionDetail';
 import MissionHistory from './pages/MissionHistory';
 import PilotGroupTrends from './pages/PilotGroupTrends';
@@ -13,7 +14,6 @@ import Scenarios from './pages/Scenarios';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
-import MissionDataManagement from './pages/MissionDataManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -23,6 +23,7 @@ export const PAGES = {
     "EquipmentCorrelation": EquipmentCorrelation,
     "Home": Home,
     "LocationQuality": LocationQuality,
+    "MissionDataManagement": MissionDataManagement,
     "MissionDetail": MissionDetail,
     "MissionHistory": MissionHistory,
     "PilotGroupTrends": PilotGroupTrends,
@@ -33,7 +34,6 @@ export const PAGES = {
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
-    "MissionDataManagement": MissionDataManagement,
 }
 
 export const pagesConfig = {
