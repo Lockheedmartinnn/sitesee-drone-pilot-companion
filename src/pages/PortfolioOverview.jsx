@@ -20,6 +20,7 @@ export default function PortfolioOverview() {
     pilot_group: 'all',
     pilot_id: 'all',
     drone_model: 'all',
+    failure_reason: 'all',
     dateRange: 'all',
     year: 'all'
   });
@@ -95,6 +96,7 @@ export default function PortfolioOverview() {
       if (filters.pilot_group !== 'all' && m.pilot_group !== filters.pilot_group) return false;
       if (filters.pilot_id !== 'all' && m.pilot_id !== filters.pilot_id) return false;
       if (filters.drone_model !== 'all' && m.drone_model !== filters.drone_model) return false;
+      if (filters.failure_reason !== 'all' && m.primary_flag_reason !== filters.failure_reason) return false;
       
       // Date filters
       const missionDate = new Date(m.mission_date || m.created_date);
@@ -128,6 +130,7 @@ export default function PortfolioOverview() {
     pilot_groups: [...new Set(missions.map(m => m.pilot_group).filter(Boolean))],
     pilot_ids: [...new Set(missions.map(m => m.pilot_id).filter(Boolean))],
     drone_models: [...new Set(missions.map(m => m.drone_model).filter(Boolean))],
+    failure_reasons: [...new Set(missions.map(m => m.primary_flag_reason).filter(Boolean))],
     years: [...new Set(missions.map(m => {
       const date = new Date(m.mission_date || m.created_date);
       return date.getFullYear();
@@ -291,7 +294,7 @@ export default function PortfolioOverview() {
             <Filter className="w-4 h-4 text-slate-400" />
             <h3 className="font-semibold">Filters</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9 gap-4">
             <div className="space-y-2">
               <Label className="text-slate-400 text-xs">Country</Label>
               <Select value={filters.country} onValueChange={(v) => setFilters({...filters, country: v})}>
@@ -361,6 +364,18 @@ export default function PortfolioOverview() {
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   {uniqueValues.drone_models.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Failure Reason</Label>
+              <Select value={filters.failure_reason} onValueChange={(v) => setFilters({...filters, failure_reason: v})}>
+                <SelectTrigger className="bg-slate-900/50 border-slate-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {uniqueValues.failure_reasons.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
