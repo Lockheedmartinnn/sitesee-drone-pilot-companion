@@ -13,7 +13,7 @@ const VIDEOS = [
     description: "Complete walkthrough of equipment checks and pre-flight preparation.",
     duration: "8:30",
     thumbnail: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    videoUrl: null
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const VIDEOS = [
     description: "How to configure exposure and maintain settings through battery changes.",
     duration: "7:45",
     thumbnail: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/jNQXAC9IVRw"
+    videoUrl: null
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const VIDEOS = [
     description: "Using Nomacs EXIF data to verify GPS stability and proper procedures.",
     duration: "9:15",
     thumbnail: "https://images.unsplash.com/photo-1508444845599-5c89863b1c44?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/ZZ5LpwO-An4"
+    videoUrl: null
   },
   {
     id: 4,
@@ -37,7 +37,7 @@ const VIDEOS = [
     description: "Step-by-step quality control process before leaving the site.",
     duration: "6:20",
     thumbnail: "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/oHg5SJYRHA0"
+    videoUrl: null
   },
   {
     id: 5,
@@ -45,7 +45,7 @@ const VIDEOS = [
     description: "How to identify and prevent model leaning during capture.",
     duration: "5:45",
     thumbnail: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/y6120QOlsfU"
+    videoUrl: null
   },
   {
     id: 6,
@@ -53,7 +53,7 @@ const VIDEOS = [
     description: "Tips for capturing clear images without ghosting artifacts.",
     duration: "6:50",
     thumbnail: "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/kJQP7kiw5Fk"
+    videoUrl: null
   },
   {
     id: 7,
@@ -61,7 +61,7 @@ const VIDEOS = [
     description: "Step-by-step guide to ensure accurate georeferencing.",
     duration: "8:15",
     thumbnail: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/L_jWHffIx5E"
+    videoUrl: null
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ const VIDEOS = [
     description: "Best practices for complex rooftop site captures.",
     duration: "7:30",
     thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    videoUrl: null
   },
   {
     id: 9,
@@ -77,7 +77,7 @@ const VIDEOS = [
     description: "Flying safely and capturing quality data in windy conditions.",
     duration: "6:00",
     thumbnail: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/jNQXAC9IVRw"
+    videoUrl: null
   },
   {
     id: 10,
@@ -85,7 +85,7 @@ const VIDEOS = [
     description: "Techniques for managing challenging lighting conditions.",
     duration: "5:20",
     thumbnail: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=450&fit=crop",
-    videoUrl: "https://www.youtube.com/embed/ZZ5LpwO-An4"
+    videoUrl: null
   }
 ];
 
