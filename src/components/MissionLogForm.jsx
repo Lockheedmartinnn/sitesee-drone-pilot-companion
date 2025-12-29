@@ -319,6 +319,9 @@ export default function MissionLogForm({ onSubmit, onCancel }) {
                   <SelectValue placeholder="Select reason" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="Leaning">Leaning</SelectItem>
+                  <SelectItem value="Ghosting">Ghosting</SelectItem>
+                  <SelectItem value="Non-Georeferenced">Non-Georeferenced</SelectItem>
                   <SelectItem value="GPS instability">GPS instability</SelectItem>
                   <SelectItem value="Exposure inconsistency">Exposure inconsistency</SelectItem>
                   <SelectItem value="Focus issue">Focus issue</SelectItem>

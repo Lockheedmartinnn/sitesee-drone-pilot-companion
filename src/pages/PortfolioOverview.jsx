@@ -33,10 +33,48 @@ export default function PortfolioOverview() {
 
   const permissions = useAccessControl(user);
 
-  const { data: allMissions = [], isLoading } = useQuery({
+  const { data: missionLogs = [], isLoading: isLoadingLogs } = useQuery({
     queryKey: ['allMissions'],
     queryFn: () => base44.entities.MissionLog.list('-created_date', 1000),
   });
+
+  const { data: importedMissions = [], isLoading: isLoadingImported } = useQuery({
+    queryKey: ['importedMissions'],
+    queryFn: () => base44.entities.Mission.list('-created_date', 500),
+  });
+
+  const isLoading = isLoadingLogs || isLoadingImported;
+
+  const allMissions = useMemo(() => {
+    // Combine both sources, prioritizing imported Mission data
+    const combined = [...missionLogs];
+    
+    // Add imported missions (from QNSI) with mapped fields
+    importedMissions.forEach(im => {
+      combined.push({
+        id: im.id,
+        mission_date: im.capture_timestamp || im.created_date,
+        country: im.country,
+        region: im.region,
+        latitude: im.latitude,
+        longitude: im.longitude,
+        customer: im.client_name,
+        pilot_group: im.pilot_group,
+        pilot_id: im.pilot_name || im.pilot_email,
+        site_type: 'Tower',
+        drone_model: im.drone_model,
+        camera_model: null,
+        outcome: im.outcome === 'SUCCESS' ? 'Pass' : 'Fail',
+        flagged: im.outcome === 'FAILURE',
+        primary_flag_reason: im.failure_reason,
+        notes: im.site_name,
+        data_source: 'imported',
+        created_date: im.created_date
+      });
+    });
+    
+    return combined;
+  }, [missionLogs, importedMissions]);
 
   const missions = useMemo(() => {
     if (!user) return [];
