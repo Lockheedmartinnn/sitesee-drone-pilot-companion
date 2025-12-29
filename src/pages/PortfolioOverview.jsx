@@ -673,7 +673,7 @@ export default function PortfolioOverview() {
                   stroke="#94a3b8"
                   tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
-                <YAxis stroke="#94a3b8" label={{ value: 'Failure Rate (%)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
+                <YAxis stroke="#94a3b8" domain={[0, 100]} label={{ value: 'Failure Rate (%)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
                   labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
