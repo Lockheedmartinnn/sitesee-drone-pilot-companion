@@ -54,6 +54,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
     { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
     { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
+    { name: 'Weather Analysis', href: createPageUrl('WeatherAnalysis'), icon: Compass },
   ] : [];
   
   const isActive = (href) => {
