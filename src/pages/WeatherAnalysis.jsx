@@ -115,6 +115,28 @@ export default function WeatherAnalysis() {
     return Object.values(stats);
   }, [missions]);
 
+  // Location-based weather patterns
+  const locationWeatherPatterns = useMemo(() => {
+    const byRegion = {};
+    missions.forEach(m => {
+      if (!m.region || !m.weather_condition || !m.mission_date) return;
+      const region = m.region;
+      const month = format(parseISO(m.mission_date), 'MMM');
+      const hour = getHours(parseISO(m.mission_date));
+      let timeOfDay = 'Morning';
+      if (hour >= 10 && hour < 14) timeOfDay = 'Midday';
+      else if (hour >= 14) timeOfDay = 'Afternoon';
+
+      const key = `${region}_${month}_${timeOfDay}`;
+      if (!byRegion[key]) {
+        byRegion[key] = { region, month, timeOfDay, Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
+      }
+      byRegion[key][m.weather_condition]++;
+      byRegion[key].total++;
+    });
+    return byRegion;
+  }, [missions]);
+
   // Weather prediction for future missions
   const weatherPrediction = useMemo(() => {
     const now = new Date();
@@ -125,25 +147,29 @@ export default function WeatherAnalysis() {
     if (currentHour >= 10 && currentHour < 14) timeOfDay = 'Midday';
     else if (currentHour >= 14) timeOfDay = 'Afternoon';
 
-    // Find historical pattern for this month and time
-    const relevantMissions = missions.filter(m => {
-      if (!m.mission_date || !m.weather_condition) return false;
-      const missionMonth = format(parseISO(m.mission_date), 'MMM');
-      return missionMonth === currentMonth && m.time_of_day === timeOfDay;
-    });
+    // Get all unique regions
+    const regions = [...new Set(missions.filter(m => m.region).map(m => m.region))];
+    
+    const predictions = regions.map(region => {
+      const key = `${region}_${currentMonth}_${timeOfDay}`;
+      const pattern = locationWeatherPatterns[key];
+      
+      if (!pattern) return null;
+      
+      const weatherProbs = Object.entries({ Clear: pattern.Clear, Cloudy: pattern.Cloudy, Windy: pattern.Windy, Rain: pattern.Rain })
+        .map(([w, count]) => ({ weather: w, probability: ((count / pattern.total) * 100).toFixed(1) }))
+        .sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+      
+      return {
+        region,
+        predicted: weatherProbs,
+        sampleSize: pattern.total,
+        mostLikely: weatherProbs[0]
+      };
+    }).filter(Boolean);
 
-    const weatherCounts = { Clear: 0, Cloudy: 0, Windy: 0, Rain: 0 };
-    relevantMissions.forEach(m => {
-      weatherCounts[m.weather_condition]++;
-    });
-
-    const total = relevantMissions.length;
-    const predicted = Object.entries(weatherCounts)
-      .map(([w, count]) => ({ weather: w, probability: total ? ((count / total) * 100).toFixed(1) : 0 }))
-      .sort((a, b) => b.probability - a.probability);
-
-    return { timeOfDay, month: currentMonth, predicted, sampleSize: total };
-  }, [missions]);
+    return { timeOfDay, month: currentMonth, predictions };
+  }, [missions, locationWeatherPatterns]);
 
   const weatherIcons = {
     Clear: <Sun className="w-5 h-5 text-yellow-400" />,
@@ -175,24 +201,40 @@ export default function WeatherAnalysis() {
           <p className="text-slate-400 mt-1">Historical patterns and mission outcome correlations</p>
         </motion.div>
 
-        {/* Weather Prediction Card */}
+        {/* Location-Based Weather Prediction */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-500/30 p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
             <TrendingUp className="w-6 h-6 text-blue-400" />
             <div>
-              <h3 className="font-semibold text-lg">Weather Prediction for Today</h3>
-              <p className="text-xs text-slate-400">Based on {weatherPrediction.sampleSize} historical missions in {weatherPrediction.month} ({weatherPrediction.timeOfDay})</p>
+              <h3 className="font-semibold text-lg">Weather Prediction by Location</h3>
+              <p className="text-xs text-slate-400">Based on historical patterns for {weatherPrediction.month} ({weatherPrediction.timeOfDay})</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {weatherPrediction.predicted.map((p, idx) => (
+          <div className="space-y-4">
+            {weatherPrediction.predictions.map((pred, idx) => (
               <div key={idx} className="bg-slate-800/50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  {weatherIcons[p.weather]}
-                  <span className="font-semibold">{p.weather}</span>
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h4 className="font-semibold text-slate-200">{pred.region}</h4>
+                    <p className="text-xs text-slate-500">{pred.sampleSize} historical missions</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-2 rounded-lg">
+                    {weatherIcons[pred.mostLikely.weather]}
+                    <div>
+                      <p className="font-semibold text-sm">{pred.mostLikely.weather}</p>
+                      <p className="text-xs text-blue-400">{pred.mostLikely.probability}% likely</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-2xl font-bold text-blue-400">{p.probability}%</p>
-                <p className="text-xs text-slate-500">probability</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {pred.predicted.map((p, pidx) => (
+                    <div key={pidx} className="bg-slate-700/30 rounded-lg p-2 text-center">
+                      <div className="flex justify-center mb-1">{weatherIcons[p.weather]}</div>
+                      <p className="text-xs font-semibold">{p.weather}</p>
+                      <p className="text-xs text-slate-400">{p.probability}%</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
