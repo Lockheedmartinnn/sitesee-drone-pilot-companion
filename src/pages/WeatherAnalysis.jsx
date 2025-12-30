@@ -33,13 +33,27 @@ export default function WeatherAnalysis() {
   const allMissions = useMemo(() => {
     const combined = [...missionLogs];
     importedMissions.forEach(im => {
+      const date = im.capture_timestamp || im.created_date;
+      const hour = date ? getHours(parseISO(date)) : 12;
+      let timeOfDay = 'Morning';
+      if (hour >= 10 && hour < 14) timeOfDay = 'Midday';
+      else if (hour >= 14) timeOfDay = 'Afternoon';
+
       combined.push({
         id: im.id,
-        mission_date: im.capture_timestamp || im.created_date,
+        mission_date: date,
+        region: im.region,
+        country: im.country,
+        province: im.province,
+        latitude: im.latitude,
+        longitude: im.longitude,
         weather_condition: null,
-        time_of_day: null,
+        time_of_day: timeOfDay,
         outcome: im.outcome === 'SUCCESS' ? 'Pass' : 'Fail',
-        created_date: im.created_date
+        created_date: im.created_date,
+        site_name: im.site_name,
+        pilot_group: im.pilot_group,
+        data_source: 'imported'
       });
     });
     return combined;
@@ -118,7 +132,7 @@ export default function WeatherAnalysis() {
   // Historical mission records with weather
   const historicalRecords = useMemo(() => {
     return missions
-      .filter(m => m.region && m.weather_condition && m.mission_date)
+      .filter(m => m.region && m.mission_date)
       .map(m => {
         const date = parseISO(m.mission_date);
         return {
@@ -126,10 +140,35 @@ export default function WeatherAnalysis() {
           dateFormatted: format(date, 'MMM d, yyyy'),
           timeFormatted: format(date, 'h:mm a'),
           month: format(date, 'MMMM'),
-          hour: getHours(date)
+          hour: getHours(date),
+          hasWeatherData: !!m.weather_condition
         };
       })
       .sort((a, b) => new Date(b.mission_date) - new Date(a.mission_date));
+  }, [missions]);
+
+  // Infer weather patterns for imported missions
+  const inferredWeatherPatterns = useMemo(() => {
+    const patterns = {};
+    
+    // Group by region and month
+    missions.forEach(m => {
+      if (!m.region || !m.mission_date) return;
+      const month = format(parseISO(m.mission_date), 'MMM');
+      const key = `${m.region}_${month}`;
+      
+      if (!patterns[key]) {
+        patterns[key] = { withWeather: 0, Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
+      }
+      
+      patterns[key].total++;
+      if (m.weather_condition) {
+        patterns[key].withWeather++;
+        patterns[key][m.weather_condition]++;
+      }
+    });
+    
+    return patterns;
   }, [missions]);
 
   // Location-based weather patterns
@@ -229,32 +268,60 @@ export default function WeatherAnalysis() {
           <h3 className="font-semibold mb-4">Historical Weather Records by Location</h3>
           <p className="text-xs text-slate-400 mb-4">Actual weather conditions during past missions</p>
           <div className="space-y-3 max-h-96 overflow-y-auto">
-            {historicalRecords.slice(0, 20).map((record, idx) => (
-              <div key={idx} className="bg-slate-700/30 rounded-xl p-4 flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-slate-200">{record.region}</span>
-                    {record.country && <span className="text-xs text-slate-500">• {record.country}</span>}
+            {historicalRecords.slice(0, 30).map((record, idx) => {
+              const regionMonthKey = `${record.region}_${format(parseISO(record.mission_date), 'MMM')}`;
+              const pattern = inferredWeatherPatterns[regionMonthKey];
+              
+              let inferredWeather = null;
+              if (!record.weather_condition && pattern && pattern.withWeather > 0) {
+                const weathers = ['Clear', 'Cloudy', 'Windy', 'Rain'];
+                const mostCommon = weathers.reduce((prev, curr) => 
+                  pattern[curr] > pattern[prev] ? curr : prev
+                );
+                if (pattern[mostCommon] > 0) {
+                  inferredWeather = mostCommon;
+                }
+              }
+              
+              return (
+                <div key={idx} className="bg-slate-700/30 rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-slate-200">{record.region}</span>
+                      {record.country && <span className="text-xs text-slate-500">• {record.country}</span>}
+                      {record.site_name && <span className="text-xs text-slate-500">• {record.site_name}</span>}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-slate-400">
+                      <span>📅 {record.dateFormatted}</span>
+                      <span>🕐 {record.timeFormatted}</span>
+                      {record.pilot_group && <span>👤 {record.pilot_group}</span>}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-slate-400">
-                    <span>📅 {record.dateFormatted}</span>
-                    <span>🕐 {record.timeFormatted}</span>
+                  <div className="flex items-center gap-4">
+                    {record.weather_condition ? (
+                      <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg">
+                        {weatherIcons[record.weather_condition]}
+                        <span className="font-semibold text-sm">{record.weather_condition}</span>
+                      </div>
+                    ) : inferredWeather ? (
+                      <div className="flex items-center gap-2 bg-slate-800/30 border border-slate-600 px-3 py-2 rounded-lg">
+                        {weatherIcons[inferredWeather]}
+                        <span className="font-semibold text-sm text-slate-400">{inferredWeather}</span>
+                        <span className="text-xs text-slate-500">(inferred)</span>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-slate-500 px-3 py-2">No weather data</div>
+                    )}
+                    <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                      record.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
+                      record.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                    }`}>
+                      {record.outcome}
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg">
-                    {weatherIcons[record.weather_condition]}
-                    <span className="font-semibold text-sm">{record.weather_condition}</span>
-                  </div>
-                  <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    record.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
-                    record.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
-                  }`}>
-                    {record.outcome}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
 
