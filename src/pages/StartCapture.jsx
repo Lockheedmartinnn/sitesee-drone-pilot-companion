@@ -163,9 +163,13 @@ export default function StartCapture() {
   
   const handlePostMissionSubmit = async (data) => {
     try {
-      await base44.entities.MissionLog.create({
-        ...data,
-        pilot_id: user?.email || 'Unknown',
+      await base44.entities.LocalMissionLog.create({
+        pilot_id: user?.pilot_id || user?.email || 'Unknown',
+        company: user?.company || null,
+        completion_timestamp: new Date().toISOString(),
+        job_id: data.job_id || null,
+        checklist_completed: true,
+        notes: data.notes || null
       });
       setMissionComplete(true);
     } catch (error) {
