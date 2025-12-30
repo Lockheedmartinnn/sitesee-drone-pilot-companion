@@ -27,7 +27,10 @@ export default function Home() {
             className="h-12 mx-auto mb-6"
           />
           <h1 className="text-3xl font-bold tracking-tight">Pilot Companion</h1>
-          <p className="text-slate-400 mt-2">Field Operations Guide</p>
+          <p className="text-slate-400 mt-2">Training & Reference Tool</p>
+          <p className="text-xs text-slate-600 mt-3 max-w-sm mx-auto">
+            Optional training aid • Works offline • All data stored locally on your device
+          </p>
         </motion.div>
 
         {/* Primary Action */}

@@ -42,18 +42,11 @@ export default function ChatWidget() {
 
   const initConversation = async () => {
     try {
-      // Get current user data to pass role context to the agent
-      const userData = await base44.auth.me();
-      
       const conv = await base44.agents.createConversation({
         agent_name: 'SiteSeePilotCopilot',
         metadata: {
-          name: 'Field Support Session',
-          description: 'Pilot assistance chat',
-          user_role: userData?.access_level || 'pilot',
-          user_email: userData?.email,
-          pilot_id: userData?.pilot_id,
-          company: userData?.company
+          name: 'Training Support Session',
+          description: 'Pilot training assistance'
         }
       });
       setConversation(conv);
@@ -125,8 +118,8 @@ export default function ChatWidget() {
                   <MessageCircle className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Pilot Copilot</h3>
-                  <p className="text-xs text-slate-400">Field operations support</p>
+                  <h3 className="font-semibold text-white">Training Copilot</h3>
+                  <p className="text-xs text-slate-400">Ask questions about best practices</p>
                 </div>
               </div>
               <Button
@@ -146,9 +139,9 @@ export default function ChatWidget() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
                     <MessageCircle className="w-8 h-8 text-blue-400" />
                   </div>
-                  <p className="text-slate-300 font-semibold mb-1">SiteSee Pilot Copilot</p>
+                  <p className="text-slate-300 font-semibold mb-1">Training Copilot</p>
                   <p className="text-xs text-slate-500">
-                    Ask about GPS issues, camera settings, weather conditions, or any mission concerns.
+                    Ask about capture best practices, GPS stabilization, camera settings, or troubleshooting tips.
                   </p>
                 </div>
               )}
@@ -226,7 +219,7 @@ export default function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about mission issues..."
+                  placeholder="Ask about capture techniques..."
                   className="flex-1 bg-slate-900 border-slate-700 text-white placeholder:text-slate-500"
                   disabled={isLoading || !conversation}
                 />

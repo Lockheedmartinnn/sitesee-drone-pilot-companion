@@ -1,61 +1,32 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import { 
   Menu, 
   X, 
   Home, 
-  User, 
   ClipboardList, 
-  LogOut,
-  Compass,
-  BarChart3,
-  MapPin,
-  Settings,
-  Users,
-  CreditCard
+  BookOpen,
+  PlayCircle,
+  Map,
+  ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import ChatWidget from '@/components/ChatWidget';
-import AccessLevelTester from '@/components/AccessLevelTester';
-import { useAccessControl } from '@/components/useAccessControl';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-  
-  const permissions = useAccessControl(user);
-  
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
-    { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
-    { name: 'Mission History', href: createPageUrl('MissionHistory'), icon: ClipboardList },
+    { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
+    { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: BookOpen },
+    { name: 'Training Videos', href: createPageUrl('TrainingVideos'), icon: PlayCircle },
+    { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
+    { name: 'Tools & Links', href: createPageUrl('ToolsLinks'), icon: ExternalLink },
   ];
-
-  const adminNavigation = permissions.canManageCompany ? [
-    { name: 'Billing', href: createPageUrl('Billing'), icon: CreditCard },
-    { name: 'Audit Log', href: createPageUrl('AuditLog'), icon: Settings },
-  ] : [];
-
-  const systemNavigation = permissions.canManageSystem ? [
-    { name: 'Data Management', href: createPageUrl('MissionDataManagement'), icon: Settings },
-  ] : [];
-  
-  const dashboards = permissions.canViewDashboards ? [
-    { name: 'Portfolio Overview', href: createPageUrl('PortfolioOverview'), icon: BarChart3 },
-    { name: 'Location Quality', href: createPageUrl('LocationQuality'), icon: MapPin },
-    { name: 'Equipment Correlation', href: createPageUrl('EquipmentCorrelation'), icon: Settings },
-    { name: 'Pilot Group Trends', href: createPageUrl('PilotGroupTrends'), icon: Users },
-    { name: 'Weather Analysis', href: createPageUrl('WeatherAnalysis'), icon: Compass },
-  ] : [];
   
   const isActive = (href) => {
     return location.pathname === href || location.pathname === href + '.html';
@@ -85,15 +56,7 @@ export default function Layout({ children, currentPageName }) {
               className="h-6"
             />
           </div>
-          {user && (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <span className="text-xs font-semibold text-blue-400">
-                  {user.full_name?.[0] || user.email?.[0] || 'P'}
-                </span>
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
       
@@ -127,155 +90,38 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </div>
           
-          {/* User Info */}
-          {user && (
-            <div className="p-4 border-b border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <span className="text-lg font-semibold text-blue-400">
-                    {user.full_name?.[0] || user.email?.[0] || 'P'}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-white truncate">
-                    {user.full_name || 'Pilot'}
-                  </p>
-                  <p className="text-xs text-slate-400 truncate">{user.email}</p>
-                </div>
-              </div>
-            </div>
-          )}
+
           
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
-            <div className="space-y-1">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                      active
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                    )}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-            
-            <div>
-              <div className="px-4 mb-2">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Dashboards
-                </h3>
-              </div>
-              <div className="space-y-1">
-                {dashboards.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                        active
-                          ? "bg-blue-500/20 text-blue-400"
-                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                    active
+                      ? "bg-blue-500/20 text-blue-400"
+                      : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  )}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
 
-            {adminNavigation.length > 0 && (
-              <div>
-                <div className="px-4 mb-2">
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Management
-                  </h3>
-                </div>
-                <div className="space-y-1">
-                  {adminNavigation.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.href);
-                    return (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        onClick={() => setSidebarOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                          active
-                            ? "bg-blue-500/20 text-blue-400"
-                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                        )}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-medium">{item.name}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {systemNavigation.length > 0 && (
-              <div>
-                <div className="px-4 mb-2">
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    System
-                  </h3>
-                </div>
-                <div className="space-y-1">
-                  {systemNavigation.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.href);
-                    return (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        onClick={() => setSidebarOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                          active
-                            ? "bg-blue-500/20 text-blue-400"
-                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                        )}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-medium">{item.name}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            </nav>
-
-            {/* Logout */}
+          {/* Info Footer */}
           <div className="p-4 border-t border-slate-800">
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-800"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Logout
-            </Button>
+            <p className="text-xs text-slate-500 text-center">
+              Personal training companion<br />
+              All data stored locally on your device
+            </p>
           </div>
         </div>
       </aside>
@@ -289,9 +135,6 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Chat Widget */}
       <ChatWidget />
-      
-      {/* Access Level Tester */}
-      <AccessLevelTester user={user} />
       </div>
       );
       }
