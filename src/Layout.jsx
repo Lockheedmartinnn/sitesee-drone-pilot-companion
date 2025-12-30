@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Menu, 
   X, 
@@ -9,7 +11,9 @@ import {
   BookOpen,
   PlayCircle,
   Map,
-  ExternalLink
+  ExternalLink,
+  User,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -19,6 +23,11 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+  
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
     { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
@@ -26,6 +35,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Training Videos', href: createPageUrl('TrainingVideos'), icon: PlayCircle },
     { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
     { name: 'Tools & Links', href: createPageUrl('ToolsLinks'), icon: ExternalLink },
+    { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   
   const isActive = (href) => {
@@ -116,11 +126,27 @@ export default function Layout({ children, currentPageName }) {
             })}
           </nav>
 
-          {/* Info Footer */}
-          <div className="p-4 border-t border-slate-800">
-            <p className="text-xs text-slate-500 text-center">
-              Personal training companion<br />
-              All data stored locally on your device
+          {/* User Info & Logout */}
+          <div className="p-4 border-t border-slate-800 space-y-3">
+            {user && (
+              <div className="text-center">
+                <p className="text-sm text-white font-medium">{user.full_name || 'User'}</p>
+                <p className="text-xs text-slate-500">{user.access_level || 'pilot'}</p>
+                {user.pilot_id && (
+                  <p className="text-xs text-slate-600 mt-1">ID: {user.pilot_id}</p>
+                )}
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              onClick={() => base44.auth.logout()}
+              className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-800"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+            <p className="text-xs text-slate-600 text-center pt-2 border-t border-slate-700">
+              Training companion • Local storage
             </p>
           </div>
         </div>

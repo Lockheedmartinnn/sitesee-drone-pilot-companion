@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -8,10 +8,12 @@ import {
   User,
   Briefcase,
   Clock,
-  StickyNote
+  StickyNote,
+  Shield
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
 
 function LocalMissionCard({ mission }) {
   return (
@@ -78,11 +80,23 @@ function LocalMissionCard({ mission }) {
 }
 
 export default function MissionHistory() {
-  const { data: localMissions = [], isLoading } = useQuery({
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const permissions = useAccessControl(user);
+
+  const { data: allMissions = [], isLoading } = useQuery({
     queryKey: ['localMissionLogs'],
     queryFn: () => base44.entities.LocalMissionLog.list('-created_date'),
     initialData: [],
   });
+
+  const localMissions = useMemo(() => {
+    if (!user) return [];
+    return filterMissionsByAccess(allMissions, permissions, user.email, user);
+  }, [allMissions, permissions, user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
@@ -93,12 +107,23 @@ export default function MissionHistory() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">My Captures</h1>
-          <p className="text-slate-400 mb-3">Your personal capture history</p>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl font-bold text-white">My Captures</h1>
+            {user && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
+                <Shield className="w-4 h-4 text-blue-400" />
+                <span className="text-sm text-slate-300 capitalize">{user.access_level || 'pilot'}</span>
+              </div>
+            )}
+          </div>
+          <p className="text-slate-400 mb-3">
+            {permissions.canViewAllMissions ? 'All captures across teams' : 
+             permissions.canViewTeamMissions ? 'Your team captures' : 
+             'Your personal capture history'}
+          </p>
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
             <p className="text-xs text-blue-300">
-              📱 All records stored locally on this device only<br />
-              🔒 For your personal reference • Not uploaded or shared
+              📱 Training companion mode • {permissions.canViewAllMissions ? 'Admin access' : permissions.canViewTeamMissions ? 'Manager access' : 'Pilot access'}
             </p>
           </div>
         </motion.div>
