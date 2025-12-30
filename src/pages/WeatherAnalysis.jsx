@@ -115,6 +115,23 @@ export default function WeatherAnalysis() {
     return Object.values(stats);
   }, [missions]);
 
+  // Historical mission records with weather
+  const historicalRecords = useMemo(() => {
+    return missions
+      .filter(m => m.region && m.weather_condition && m.mission_date)
+      .map(m => {
+        const date = parseISO(m.mission_date);
+        return {
+          ...m,
+          dateFormatted: format(date, 'MMM d, yyyy'),
+          timeFormatted: format(date, 'h:mm a'),
+          month: format(date, 'MMMM'),
+          hour: getHours(date)
+        };
+      })
+      .sort((a, b) => new Date(b.mission_date) - new Date(a.mission_date));
+  }, [missions]);
+
   // Location-based weather patterns
   const locationWeatherPatterns = useMemo(() => {
     const byRegion = {};
@@ -129,10 +146,16 @@ export default function WeatherAnalysis() {
 
       const key = `${region}_${month}_${timeOfDay}`;
       if (!byRegion[key]) {
-        byRegion[key] = { region, month, timeOfDay, Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
+        byRegion[key] = { region, month, timeOfDay, Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0, missions: [] };
       }
       byRegion[key][m.weather_condition]++;
       byRegion[key].total++;
+      byRegion[key].missions.push({
+        date: format(parseISO(m.mission_date), 'MMM d, yyyy'),
+        time: format(parseISO(m.mission_date), 'h:mm a'),
+        weather: m.weather_condition,
+        outcome: m.outcome
+      });
     });
     return byRegion;
   }, [missions]);
@@ -201,6 +224,40 @@ export default function WeatherAnalysis() {
           <p className="text-slate-400 mt-1">Historical patterns and mission outcome correlations</p>
         </motion.div>
 
+        {/* Historical Weather Records */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mb-6">
+          <h3 className="font-semibold mb-4">Historical Weather Records by Location</h3>
+          <p className="text-xs text-slate-400 mb-4">Actual weather conditions during past missions</p>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {historicalRecords.slice(0, 20).map((record, idx) => (
+              <div key={idx} className="bg-slate-700/30 rounded-xl p-4 flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-slate-200">{record.region}</span>
+                    {record.country && <span className="text-xs text-slate-500">• {record.country}</span>}
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-slate-400">
+                    <span>📅 {record.dateFormatted}</span>
+                    <span>🕐 {record.timeFormatted}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg">
+                    {weatherIcons[record.weather_condition]}
+                    <span className="font-semibold text-sm">{record.weather_condition}</span>
+                  </div>
+                  <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                    record.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
+                    record.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                  }`}>
+                    {record.outcome}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Location-Based Weather Prediction */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-500/30 p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
@@ -211,32 +268,61 @@ export default function WeatherAnalysis() {
             </div>
           </div>
           <div className="space-y-4">
-            {weatherPrediction.predictions.map((pred, idx) => (
-              <div key={idx} className="bg-slate-800/50 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h4 className="font-semibold text-slate-200">{pred.region}</h4>
-                    <p className="text-xs text-slate-500">{pred.sampleSize} historical missions</p>
-                  </div>
-                  <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-2 rounded-lg">
-                    {weatherIcons[pred.mostLikely.weather]}
+            {weatherPrediction.predictions.map((pred, idx) => {
+              const key = `${pred.region}_${weatherPrediction.month}_${weatherPrediction.timeOfDay}`;
+              const pattern = locationWeatherPatterns[key];
+              
+              return (
+                <div key={idx} className="bg-slate-800/50 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="font-semibold text-sm">{pred.mostLikely.weather}</p>
-                      <p className="text-xs text-blue-400">{pred.mostLikely.probability}% likely</p>
+                      <h4 className="font-semibold text-slate-200">{pred.region}</h4>
+                      <p className="text-xs text-slate-500">{pred.sampleSize} historical missions</p>
+                    </div>
+                    <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-2 rounded-lg">
+                      {weatherIcons[pred.mostLikely.weather]}
+                      <div>
+                        <p className="font-semibold text-sm">{pred.mostLikely.weather}</p>
+                        <p className="text-xs text-blue-400">{pred.mostLikely.probability}% likely</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {pred.predicted.map((p, pidx) => (
-                    <div key={pidx} className="bg-slate-700/30 rounded-lg p-2 text-center">
-                      <div className="flex justify-center mb-1">{weatherIcons[p.weather]}</div>
-                      <p className="text-xs font-semibold">{p.weather}</p>
-                      <p className="text-xs text-slate-400">{p.probability}%</p>
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    {pred.predicted.map((p, pidx) => (
+                      <div key={pidx} className="bg-slate-700/30 rounded-lg p-2 text-center">
+                        <div className="flex justify-center mb-1">{weatherIcons[p.weather]}</div>
+                        <p className="text-xs font-semibold">{p.weather}</p>
+                        <p className="text-xs text-slate-400">{p.probability}%</p>
+                      </div>
+                    ))}
+                  </div>
+                  {pattern && pattern.missions.length > 0 && (
+                    <div className="border-t border-slate-700/50 pt-3 mt-3">
+                      <p className="text-xs text-slate-500 mb-2">Recent examples:</p>
+                      <div className="space-y-1">
+                        {pattern.missions.slice(0, 3).map((m, midx) => (
+                          <div key={midx} className="text-xs text-slate-400 flex items-center gap-2">
+                            <span>•</span>
+                            <span>{m.date} at {m.time}</span>
+                            <span className="text-slate-600">→</span>
+                            <span className="flex items-center gap-1">
+                              {weatherIcons[m.weather]}
+                              {m.weather}
+                            </span>
+                            <span className={`ml-auto px-2 py-0.5 rounded ${
+                              m.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
+                              m.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                            }`}>
+                              {m.outcome}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
 
