@@ -147,28 +147,89 @@ export default function WeatherAnalysis() {
       .sort((a, b) => new Date(b.mission_date) - new Date(a.mission_date));
   }, [missions]);
 
-  // Infer weather patterns for imported missions
-  const inferredWeatherPatterns = useMemo(() => {
-    const patterns = {};
+  // Detailed analysis by specific date, time, and location
+  const detailedAnalysis = useMemo(() => {
+    const analysis = [];
     
-    // Group by region and month
     missions.forEach(m => {
       if (!m.region || !m.mission_date) return;
-      const month = format(parseISO(m.mission_date), 'MMM');
-      const key = `${m.region}_${month}`;
       
-      if (!patterns[key]) {
-        patterns[key] = { withWeather: 0, Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
-      }
+      const date = parseISO(m.mission_date);
+      const dayOfWeek = format(date, 'EEEE');
+      const exactDate = format(date, 'MMMM d, yyyy');
+      const exactTime = format(date, 'h:mm a');
+      const month = format(date, 'MMMM');
+      const hour = getHours(date);
       
-      patterns[key].total++;
-      if (m.weather_condition) {
-        patterns[key].withWeather++;
-        patterns[key][m.weather_condition]++;
-      }
+      analysis.push({
+        ...m,
+        dayOfWeek,
+        exactDate,
+        exactTime,
+        month,
+        hour,
+        hasWeatherData: !!m.weather_condition
+      });
     });
     
-    return patterns;
+    return analysis.sort((a, b) => new Date(b.mission_date) - new Date(a.mission_date));
+  }, [missions]);
+
+  // Regional patterns with exact timestamps
+  const regionalTimePatterns = useMemo(() => {
+    const patterns = {};
+    
+    missions.forEach(m => {
+      if (!m.region || !m.mission_date) return;
+      
+      const region = m.region;
+      const date = parseISO(m.mission_date);
+      const hour = getHours(date);
+      const month = format(date, 'MMMM');
+      
+      if (!patterns[region]) {
+        patterns[region] = {
+          region,
+          missions: [],
+          byMonth: {},
+          byHour: {},
+          successRate: { total: 0, pass: 0 }
+        };
+      }
+      
+      patterns[region].missions.push({
+        exactDate: format(date, 'MMMM d, yyyy'),
+        exactTime: format(date, 'h:mm a'),
+        dayOfWeek: format(date, 'EEEE'),
+        weather: m.weather_condition,
+        outcome: m.outcome,
+        site: m.site_name
+      });
+      
+      // Track by month
+      if (!patterns[region].byMonth[month]) {
+        patterns[region].byMonth[month] = { Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
+      }
+      patterns[region].byMonth[month].total++;
+      if (m.weather_condition) {
+        patterns[region].byMonth[month][m.weather_condition]++;
+      }
+      
+      // Track by hour
+      if (!patterns[region].byHour[hour]) {
+        patterns[region].byHour[hour] = { Clear: 0, Cloudy: 0, Windy: 0, Rain: 0, total: 0 };
+      }
+      patterns[region].byHour[hour].total++;
+      if (m.weather_condition) {
+        patterns[region].byHour[hour][m.weather_condition]++;
+      }
+      
+      // Success rate
+      patterns[region].successRate.total++;
+      if (m.outcome === 'Pass') patterns[region].successRate.pass++;
+    });
+    
+    return Object.values(patterns);
   }, [missions]);
 
   // Location-based weather patterns
@@ -263,65 +324,79 @@ export default function WeatherAnalysis() {
           <p className="text-slate-400 mt-1">Historical patterns and mission outcome correlations</p>
         </motion.div>
 
-        {/* Historical Weather Records */}
+        {/* Detailed Regional Analysis */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 mb-6">
-          <h3 className="font-semibold mb-4">Historical Weather Records by Location</h3>
-          <p className="text-xs text-slate-400 mb-4">Actual weather conditions during past missions</p>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {historicalRecords.slice(0, 30).map((record, idx) => {
-              const regionMonthKey = `${record.region}_${format(parseISO(record.mission_date), 'MMM')}`;
-              const pattern = inferredWeatherPatterns[regionMonthKey];
-              
-              let inferredWeather = null;
-              if (!record.weather_condition && pattern && pattern.withWeather > 0) {
-                const weathers = ['Clear', 'Cloudy', 'Windy', 'Rain'];
-                const mostCommon = weathers.reduce((prev, curr) => 
-                  pattern[curr] > pattern[prev] ? curr : prev
-                );
-                if (pattern[mostCommon] > 0) {
-                  inferredWeather = mostCommon;
-                }
-              }
-              
-              return (
-                <div key={idx} className="bg-slate-700/30 rounded-xl p-4 flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-slate-200">{record.region}</span>
-                      {record.country && <span className="text-xs text-slate-500">• {record.country}</span>}
-                      {record.site_name && <span className="text-xs text-slate-500">• {record.site_name}</span>}
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-slate-400">
-                      <span>📅 {record.dateFormatted}</span>
-                      <span>🕐 {record.timeFormatted}</span>
-                      {record.pilot_group && <span>👤 {record.pilot_group}</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {record.weather_condition ? (
-                      <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg">
-                        {weatherIcons[record.weather_condition]}
-                        <span className="font-semibold text-sm">{record.weather_condition}</span>
-                      </div>
-                    ) : inferredWeather ? (
-                      <div className="flex items-center gap-2 bg-slate-800/30 border border-slate-600 px-3 py-2 rounded-lg">
-                        {weatherIcons[inferredWeather]}
-                        <span className="font-semibold text-sm text-slate-400">{inferredWeather}</span>
-                        <span className="text-xs text-slate-500">(inferred)</span>
-                      </div>
-                    ) : (
-                      <div className="text-xs text-slate-500 px-3 py-2">No weather data</div>
-                    )}
-                    <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                      record.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
-                      record.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
-                    }`}>
-                      {record.outcome}
-                    </div>
+          <h3 className="font-semibold mb-4">Detailed Analysis by Region, Date & Time</h3>
+          <p className="text-xs text-slate-400 mb-4">Specific mission records with exact timestamps and conditions</p>
+          <div className="space-y-6">
+            {regionalTimePatterns.slice(0, 5).map((pattern, idx) => (
+              <div key={idx} className="bg-slate-700/20 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="font-semibold text-lg text-slate-200">{pattern.region}</h4>
+                    <p className="text-xs text-slate-400">
+                      {pattern.missions.length} missions • {((pattern.successRate.pass / pattern.successRate.total) * 100).toFixed(1)}% success rate
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+                
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {pattern.missions.slice(0, 10).map((mission, midx) => (
+                    <div key={midx} className="bg-slate-800/50 rounded-lg p-3 text-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="font-medium text-slate-200 mb-1">
+                            {mission.dayOfWeek}, {mission.exactDate}
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-slate-400">
+                            <span>🕐 {mission.exactTime}</span>
+                            {mission.site && <span>📍 {mission.site}</span>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {mission.weather && (
+                            <div className="flex items-center gap-1 bg-slate-700/50 px-2 py-1 rounded">
+                              {weatherIcons[mission.weather]}
+                              <span className="text-xs font-medium">{mission.weather}</span>
+                            </div>
+                          )}
+                          <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                            mission.outcome === 'Pass' ? 'bg-emerald-500/20 text-emerald-400' : 
+                            mission.outcome === 'Fail' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                          }`}>
+                            {mission.outcome}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Monthly breakdown */}
+                <div className="mt-4 pt-4 border-t border-slate-700/50">
+                  <p className="text-xs text-slate-500 mb-2">Weather patterns by month:</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {Object.entries(pattern.byMonth).map(([month, data]) => {
+                      const total = data.total;
+                      const mostCommon = ['Clear', 'Cloudy', 'Windy', 'Rain'].reduce((prev, curr) => 
+                        data[curr] > data[prev] ? curr : prev
+                      );
+                      const percentage = total > 0 ? ((data[mostCommon] / total) * 100).toFixed(0) : 0;
+                      
+                      return (
+                        <div key={month} className="bg-slate-800/30 rounded-lg p-2 text-xs">
+                          <div className="font-medium text-slate-300 mb-1">{month}</div>
+                          <div className="flex items-center gap-1">
+                            {data[mostCommon] > 0 && weatherIcons[mostCommon]}
+                            <span className="text-slate-400">{mostCommon} ({percentage}%)</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </motion.div>
 
