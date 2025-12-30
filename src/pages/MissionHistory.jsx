@@ -1,367 +1,135 @@
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
 import { 
-  CheckCircle2, 
-  AlertTriangle, 
+  CheckCircle2,
   Calendar,
-  MapPin,
-  Plane,
-  ChevronDown,
-  Filter,
-  Loader2
+  User,
+  Briefcase,
+  Clock,
+  StickyNote
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-const MissionCard = ({ mission, isOpen, onToggle }) => {
-  const isSuccess = mission.outcome === 'success' || mission.outcome === 'Pass' || mission.outcome === 'SUCCESS';
-  const isFail = mission.outcome === 'Fail' || mission.outcome === 'FAILURE';
-  
+function LocalMissionCard({ mission }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={cn(
-        "rounded-2xl border overflow-hidden transition-all duration-200",
-        isSuccess 
-          ? "bg-emerald-500/5 border-emerald-500/30" 
-          : isFail 
-            ? "bg-red-500/5 border-red-500/30"
-            : "bg-amber-500/5 border-amber-500/30"
-      )}
+      className="bg-slate-800/50 backdrop-blur-sm rounded-xl border-2 border-green-500/30 overflow-hidden"
     >
-      <button
-        onClick={onToggle}
-        className="w-full flex items-start gap-4 p-5 text-left hover:bg-slate-800/30 transition-colors"
-      >
-        <div className={cn(
-          "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
-          isSuccess ? "bg-emerald-500/20" : isFail ? "bg-red-500/20" : "bg-amber-500/20"
-        )}>
-          {isSuccess ? (
-            <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-          ) : (
-            <AlertTriangle className={cn("w-6 h-6", isFail ? "text-red-400" : "text-amber-400")} />
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+              <CheckCircle2 className="w-6 h-6 text-green-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Checklist Completed</p>
+              <p className="font-medium text-white">
+                {format(new Date(mission.completion_timestamp), 'MMM d, yyyy • h:mm a')}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-3 mt-4">
+          {mission.pilot_identifier && (
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-xs text-slate-500">Pilot Identifier</p>
+                <p className="text-sm text-white">{mission.pilot_identifier}</p>
+              </div>
+            </div>
+          )}
+          
+          {mission.job_id && (
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-xs text-slate-500">Job Reference</p>
+                <p className="text-sm text-white">{mission.job_id}</p>
+              </div>
+            </div>
+          )}
+          
+          {mission.notes && (
+            <div className="flex items-start gap-2">
+              <StickyNote className="w-4 h-4 text-slate-400 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-xs text-slate-500 mb-1">Notes</p>
+                <p className="text-sm text-slate-300">{mission.notes}</p>
+              </div>
+            </div>
           )}
         </div>
         
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-3 mb-2">
-            <h3 className="font-semibold text-white">
-              {mission.mission_id || 'Mission Log'}
-            </h3>
-            <span className={cn(
-              "text-xs font-semibold px-2 py-1 rounded-full",
-              isSuccess 
-                ? "bg-emerald-500/20 text-emerald-400" 
-                : isFail
-                  ? "bg-red-500/20 text-red-400"
-                  : "bg-amber-500/20 text-amber-400"
-            )}>
-              {isSuccess ? 'Success' : isFail ? 'Fail' : 'Issue Flagged'}
-            </span>
-          </div>
-          
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm text-slate-400">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{format(new Date(mission.mission_date || mission.created_date), 'MMM d, yyyy • h:mm a')}</span>
-            </div>
-            
-            {mission.notes && (
-              <div className="text-sm text-slate-300 font-medium">
-                {mission.notes}
-              </div>
-            )}
-            
-            {(mission.region || mission.country) && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>{[mission.region, mission.country].filter(Boolean).join(', ')}</span>
-              </div>
-            )}
-
-            {(mission.latitude && mission.longitude) && (
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>{mission.latitude.toFixed(6)}, {mission.longitude.toFixed(6)}</span>
-              </div>
-            )}
-            
-            {mission.customer && (
-              <div className="text-sm text-slate-400">
-                Customer: {mission.customer}
-              </div>
-            )}
-            
-            {mission.pilot_group && (
-              <div className="text-sm text-slate-400">
-                Pilot Group: {mission.pilot_group}
-              </div>
-            )}
-          </div>
+        <div className="mt-4 pt-3 border-t border-slate-700">
+          <p className="text-xs text-slate-600 italic">
+            For your personal reference only • Stored locally on this device
+          </p>
         </div>
-        
-        <ChevronDown className={cn(
-          "w-5 h-5 text-slate-400 transition-transform flex-shrink-0",
-          isOpen && "rotate-180"
-        )} />
-      </button>
-      
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5 space-y-4 border-t border-slate-700/30">
-              {/* Mission Details */}
-              <div className="pt-4 grid grid-cols-2 gap-4">
-                {mission.drone_model && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Drone Model</p>
-                    <div className="flex items-center gap-2">
-                      <Plane className="w-4 h-4 text-slate-400" />
-                      <p className="text-sm text-white">{mission.drone_model}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {mission.battery_changes !== undefined && mission.battery_changes !== null && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Battery Changes</p>
-                    <p className="text-sm text-white">{mission.battery_changes}</p>
-                  </div>
-                )}
-              </div>
-              
-              {/* Conditions */}
-              {mission.conditions && mission.conditions.length > 0 && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Conditions</p>
-                  <div className="flex flex-wrap gap-2">
-                    {mission.conditions.map((condition, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs rounded-lg"
-                      >
-                        {condition.replace(/_/g, ' ')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Technical Notes */}
-              {mission.technical_notes && mission.technical_notes.length > 0 && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Technical Notes</p>
-                  <div className="flex flex-wrap gap-2">
-                    {mission.technical_notes.map((note, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg"
-                      >
-                        {note.replace(/_/g, ' ')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Failure Reason */}
-              {mission.primary_flag_reason && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Failure Reason</p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="px-2 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg">
-                      {mission.primary_flag_reason}
-                    </span>
-                  </div>
-                </div>
-              )}
-              
-              {/* Secondary Factors */}
-              {mission.secondary_factors && mission.secondary_factors.length > 0 && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Secondary Factors</p>
-                  <div className="flex flex-wrap gap-2">
-                    {mission.secondary_factors.map((factor, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs rounded-lg"
-                      >
-                        {factor}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Issue Categories */}
-              {mission.issue_categories && mission.issue_categories.length > 0 && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Issues Reported</p>
-                  <div className="flex flex-wrap gap-2">
-                    {mission.issue_categories.map((issue, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg"
-                      >
-                        {issue.replace(/_/g, ' ')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Free Text Notes */}
-              {mission.free_text_notes && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-2">Notes</p>
-                  <div className="bg-slate-800/50 rounded-xl p-3">
-                    <p className="text-sm text-slate-300">{mission.free_text_notes}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </motion.div>
   );
-};
+}
 
 export default function MissionHistory() {
-  const [filter, setFilter] = useState('all'); // 'all', 'success', 'issues'
-  const [expandedId, setExpandedId] = useState(null);
-  
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-  
-  const { data: allMissions = [], isLoading } = useQuery({
-    queryKey: ['missionHistory'],
-    queryFn: async () => {
-      return await base44.entities.MissionLog.list('-created_date', 500);
-    },
+  const { data: localMissions = [], isLoading } = useQuery({
+    queryKey: ['localMissionLogs'],
+    queryFn: () => base44.entities.LocalMissionLog.list('-created_date'),
+    initialData: [],
   });
 
-  const permissions = useAccessControl(user);
-
-  const missions = useMemo(() => {
-    if (!user) return [];
-    return filterMissionsByAccess(allMissions, permissions, user.email, user);
-  }, [allMissions, permissions, user]);
-  
-  const filteredMissions = missions.filter(mission => {
-    if (filter === 'all') return true;
-    if (filter === 'success') return mission.outcome === 'Pass' || mission.outcome === 'SUCCESS';
-    if (filter === 'issues') return mission.outcome === 'Fail' || mission.outcome === 'Rework' || mission.flagged;
-    return true;
-  });
-  
   return (
-    <div className="min-h-screen text-white">
-      <div className="max-w-4xl mx-auto px-5 py-8 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
+      <div className="max-w-2xl mx-auto px-5 py-8 pb-20">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold">Mission History</h1>
-          <p className="text-slate-400 mt-1">Your submitted mission logs</p>
+          <h1 className="text-3xl font-bold text-white mb-2">My Captures</h1>
+          <p className="text-slate-400 mb-3">Your personal capture history</p>
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+            <p className="text-xs text-blue-300">
+              📱 All records stored locally on this device only<br />
+              🔒 For your personal reference • Not uploaded or shared
+            </p>
+          </div>
         </motion.div>
         
-        {/* Filter */}
+        {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 mb-6"
+          className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700 mb-6"
         >
-          <Filter className="w-4 h-4 text-slate-400" />
-          <div className="flex gap-2">
-            <Button
-              variant={filter === 'all' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setFilter('all')}
-              className={cn(
-                filter === 'all' 
-                  ? "bg-blue-500 hover:bg-blue-600" 
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
-              )}
-            >
-              All ({missions.length})
-            </Button>
-            <Button
-              variant={filter === 'success' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setFilter('success')}
-              className={cn(
-                filter === 'success' 
-                  ? "bg-emerald-500 hover:bg-emerald-600" 
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
-              )}
-            >
-              Success ({missions.filter(m => m.outcome === 'Pass' || m.outcome === 'SUCCESS').length})
-            </Button>
-            <Button
-              variant={filter === 'issues' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setFilter('issues')}
-              className={cn(
-                filter === 'issues' 
-                  ? "bg-amber-500 hover:bg-amber-600" 
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
-              )}
-            >
-              Issues ({missions.filter(m => m.outcome === 'Fail' || m.outcome === 'Rework' || m.flagged).length})
-            </Button>
-          </div>
+          <p className="text-2xl font-bold text-white">{localMissions.length}</p>
+          <p className="text-sm text-slate-400">Completed Checklists</p>
         </motion.div>
-        
-        {/* Mission List */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-          </div>
-        ) : filteredMissions.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
-          >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-800/50 mb-4">
-              <Calendar className="w-8 h-8 text-slate-600" />
+
+        {/* Missions List */}
+        <div className="space-y-4">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-8 h-8 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-300 mb-2">No missions yet</h3>
-            <p className="text-sm text-slate-500">
-              {filter === 'all' 
-                ? 'Complete your first capture to see your mission history here'
-                : `No ${filter === 'success' ? 'successful' : 'issue-flagged'} missions found`}
-            </p>
-          </motion.div>
-        ) : (
-          <div className="space-y-3">
-            {filteredMissions.map((mission, index) => (
-              <MissionCard
-                key={mission.id || index}
-                mission={mission}
-                isOpen={expandedId === mission.id}
-                onToggle={() => setExpandedId(expandedId === mission.id ? null : mission.id)}
-              />
-            ))}
-          </div>
-        )}
+          ) : localMissions.length === 0 ? (
+            <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-slate-700">
+              <p className="text-slate-400 mb-2">No captures recorded yet</p>
+              <p className="text-xs text-slate-600">Complete a capture checklist to see it here</p>
+            </div>
+          ) : (
+            localMissions.map((mission) => (
+              <LocalMissionCard key={mission.id} mission={mission} />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
