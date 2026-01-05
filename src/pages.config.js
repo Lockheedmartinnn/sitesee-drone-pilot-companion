@@ -15,6 +15,7 @@ import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import GPSVerifier from './pages/GPSVerifier';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +37,7 @@ export const PAGES = {
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
+    "GPSVerifier": GPSVerifier,
 }
 
 export const pagesConfig = {
