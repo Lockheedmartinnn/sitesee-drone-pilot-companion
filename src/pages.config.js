@@ -1,6 +1,7 @@
 import AuditLog from './pages/AuditLog';
 import Billing from './pages/Billing';
 import EquipmentCorrelation from './pages/EquipmentCorrelation';
+import GPSVerifier from './pages/GPSVerifier';
 import Home from './pages/Home';
 import LocationQuality from './pages/LocationQuality';
 import MissionDataManagement from './pages/MissionDataManagement';
@@ -15,7 +16,6 @@ import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import GPSVerifier from './pages/GPSVerifier';
 import __Layout from './Layout.jsx';
 
 
@@ -23,6 +23,7 @@ export const PAGES = {
     "AuditLog": AuditLog,
     "Billing": Billing,
     "EquipmentCorrelation": EquipmentCorrelation,
+    "GPSVerifier": GPSVerifier,
     "Home": Home,
     "LocationQuality": LocationQuality,
     "MissionDataManagement": MissionDataManagement,
@@ -37,7 +38,6 @@ export const PAGES = {
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "GPSVerifier": GPSVerifier,
 }
 
 export const pagesConfig = {

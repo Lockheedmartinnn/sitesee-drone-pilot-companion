@@ -371,19 +371,36 @@ export default function StartCapture() {
             />
             <h1 className="text-2xl font-bold mb-2">Select Site Type</h1>
             <p className="text-slate-400">Choose the type of capture you'll be performing</p>
+          </div>
+          
+          {/* Location Permission Alert */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            {!location && !locationError && (
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 text-center">
+                <MapPin className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                <p className="text-sm text-blue-300 font-medium mb-1">Location Access Required</p>
+                <p className="text-xs text-blue-300/70">Please enable location when prompted</p>
+              </div>
+            )}
             {location && (
-              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-emerald-400">
-                <MapPin className="w-3 h-3" />
-                <span>Location acquired</span>
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <p className="text-sm text-emerald-300 font-medium">Location Enabled</p>
+                <p className="text-xs text-emerald-300/70">Ready to start capture</p>
               </div>
             )}
             {locationError && (
-              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-amber-400">
-                <AlertTriangle className="w-3 h-3" />
-                <span>Location unavailable</span>
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-center">
+                <AlertTriangle className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                <p className="text-sm text-amber-300 font-medium">Location Unavailable</p>
+                <p className="text-xs text-amber-300/70">Enable in browser settings to continue</p>
               </div>
             )}
-          </div>
+          </motion.div>
           
           <div className="space-y-4">
             <motion.button
