@@ -61,6 +61,14 @@ const LINKS = [
     items: [
       {
         icon: Camera,
+        title: "GPS Altitude Verifier",
+        description: "Check Y-axis altitude stability (battery swaps)",
+        url: createPageUrl('GPSVerifier'),
+        color: "text-emerald-400 bg-emerald-500/20",
+        internal: true
+      },
+      {
+        icon: Camera,
         title: "Nomacs Image Viewer",
         description: "EXIF data & image review",
         url: "https://nomacs.org",
@@ -99,17 +107,8 @@ const LINKS = [
 const LinkCard = ({ item, index }) => {
   const Icon = item.icon;
   
-  return (
-    <motion.a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all duration-200"
-    >
+  const content = (
+    <>
       <div className={cn(
         "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
         item.color
@@ -121,6 +120,38 @@ const LinkCard = ({ item, index }) => {
         <p className="text-sm text-slate-400">{item.description}</p>
       </div>
       <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+    </>
+  );
+
+  const className = "flex items-center gap-4 p-4 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all duration-200";
+  
+  if (item.internal) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <Link to={item.url} className={className}>
+          {content}
+        </Link>
+      </motion.div>
+    );
+  }
+  
+  return (
+    <motion.a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileTap={{ scale: 0.98 }}
+      className={className}
+    >
+      {content}
     </motion.a>
   );
 };
