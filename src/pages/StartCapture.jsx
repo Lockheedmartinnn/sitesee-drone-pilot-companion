@@ -230,6 +230,16 @@ export default function StartCapture() {
                   label="GPS Stabilisation Timer"
                 />
                 
+                {user?.role === 'admin' && !gpsTimerComplete && (
+                  <Button
+                    onClick={() => setGpsTimerComplete(true)}
+                    variant="outline"
+                    className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
+                  >
+                    Skip Timer (Admin)
+                  </Button>
+                )}
+                
                 {config.info && (
                   <InfoCard variant="info" title={config.info.title}>
                     <p>{config.info.message}</p>
