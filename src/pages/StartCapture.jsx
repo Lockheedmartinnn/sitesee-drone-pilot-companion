@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -26,112 +26,273 @@ import {
   Eye,
   CheckCircle2,
   XCircle,
-  Home
+  Home,
+  MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProgressBar from '@/components/ProgressBar';
 import ChecklistItem from '@/components/ChecklistItem';
 import Timer from '@/components/Timer';
 import InfoCard from '@/components/InfoCard';
-import MissionLogForm from '@/components/MissionLogForm';
+
 import { cn } from '@/lib/utils';
 
-const STEPS = [
+const TOWER_STEPS = [
   "Equipment & Pre-Flight",
-  "Camera & Settings",
+  "ScalePoint Placement",
   "GPS Stabilisation",
-  "Marking & MSA",
-  "Battery Change",
-  "On-Site QC"
+  "Mission Setup & Camera",
+  "Flight Execution",
+  "Post-Flight QC"
 ];
 
-const STEP_CONFIGS = {
+const ROOFTOP_STEPS = [
+  "Equipment & Pre-Flight",
+  "ScalePoint Placement",
+  "GPS Stabilisation",
+  "Rooftop Mission Setup",
+  "Flight Execution",
+  "Post-Flight QC"
+];
+
+const TOWER_CONFIGS = {
   1: {
     title: "Equipment & Pre-Flight Checklist",
-    subtitle: "Verify all equipment is ready before takeoff",
+    subtitle: "Complete before any flight activity",
     items: [
-      { id: 'batteries', label: 'Batteries fully charged', sublabel: 'All flight batteries at 100%', critical: true },
-      { id: 'storage', label: 'Storage available', sublabel: 'SD cards formatted & ready' },
-      { id: 'lens', label: 'Lens clean', sublabel: 'No dust, smudges, or debris' },
-      { id: 'permissions', label: 'Permissions checked', sublabel: 'Airspace & site access confirmed' },
-      { id: 'weather', label: 'Weather acceptable', sublabel: 'Wind <20km/h, no rain expected' },
-      { id: 'recording', label: 'Screen recording enabled', sublabel: 'For mission logging', critical: true }
+      { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
+      { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
+      { id: 'takeoff_clear', label: 'Takeoff area clear', sublabel: 'At least 5m from crowd/obstacles' },
+      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
+      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
   },
   2: {
-    title: "Camera & Screen Settings",
-    subtitle: "Lock exposure settings before flight",
-    items: [
-      { id: 'manual', label: 'Manual exposure set', sublabel: 'ISO / Aperture / Shutter speed configured', critical: true },
-      { id: 'histogram', label: 'Histogram checked', sublabel: 'No clipping, balanced exposure' },
-      { id: 'whitebalance', label: 'White balance rules followed', sublabel: 'Daylight or fixed Kelvin value' }
-    ],
+    title: "ScalePoint Placement",
+    subtitle: "Critical for accurate measurements",
+    info: {
+      title: "Good Placement Requirements",
+      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
+    },
     warning: {
-      title: "Critical Rule",
-      message: "Never change exposure mid-mission. If lighting changes significantly, complete the current component first."
-    }
+      title: "Bad Placement to AVOID",
+      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
+    },
+    items: [
+      { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
+      { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
+      { id: 'scalepoint_distance', label: 'Proper distance from tower', sublabel: 'Close enough to capture, far from obstacles' },
+      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
+    ]
   },
   3: {
-    title: "GPS Stabilisation",
+    title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
       title: "Why This Matters",
-      message: "GPS drift causes misaligned images. Waiting for stabilisation prevents costly re-flights and data quality issues."
+      message: "GPS drift causes misaligned images and failures. Conduct 5min hovering on ground with propeller OFF after every drone reboot."
+    },
+    warning: {
+      title: "GPS Signal Requirements",
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
     }
   },
   4: {
-    title: "Marking & MSA",
-    subtitle: "Correct tower marking ensures data quality",
+    title: "Mission Setup & Camera",
+    subtitle: "Configure mission parameters and validate camera settings",
     items: [
-      { id: 'gps_stable', label: 'GPS confirmed stable', sublabel: '~32 satellites locked', critical: true },
-      { id: 'tower_marked', label: 'Tower marked correctly', sublabel: 'Centre point verified' },
-      { id: 'obstacles_marked', label: 'Obstacles marked correctly', sublabel: 'Not oversized — match real obstacles' },
-      { id: 'msa_set', label: 'Minimum Safe Altitude set', sublabel: 'Based on actual obstacles + buffer' }
+      { id: 'camera_validated', label: 'Camera settings validated', sublabel: 'F-stop, exposure, ISO - Screenshot to WhatsApp', critical: true },
+      { id: 'tower_type', label: 'Tower type selected', sublabel: 'Correct type for this site' },
+      { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID' },
+      { id: 'msa_set', label: 'MSA set (10-15m)', sublabel: 'Minimum Safe Altitude', critical: true },
+      { id: 'rad_height', label: 'RAD height marked', sublabel: '0° gimbal - equipment level' },
+      { id: 'tower_height', label: 'Tower height marked', sublabel: '0° gimbal' },
+      { id: 'tower_center', label: 'Tower center marked', sublabel: '-90° gimbal', critical: true },
+      { id: 'tower_edge', label: 'Tower edge marked', sublabel: '-90° gimbal (radius ~4.5m for SST)' },
+      { id: 'obstacles_checked', label: 'Obstacles checked & marked', sublabel: 'All boundaries marked' },
+      { id: 'obstacle_altitude', label: 'Obstacle altitudes set', sublabel: '+4m buffer from actual height' }
+    ],
+    capturePhases: [
+      { name: "Phase 1 (Overview)", altitude: "20m above tower", gimbal: "-90°", notes: "Overhead capture for full site view" },
+      { name: "Phase 2 (Detailed)", altitude: "At equipment height", gimbal: "-60°", notes: "Detailed equipment inspection" }
     ],
     warning: {
-      title: "Common Mistake",
-      message: "Oversizing obstacles artificially raises MSA and wastes battery on higher flights."
+      title: "Camera Validation Critical",
+      message: "Send screenshot to CAMERA DRONE SETTING WhatsApp group. Wait for back office validation before EACH flight. Re-validate after battery swaps."
     }
   },
   5: {
-    title: "Battery Change Protocol",
-    subtitle: "Treat every battery swap as a reset event",
+    title: "Flight Execution",
+    subtitle: "Monitor during active mission",
     items: [
-      { id: 'battery_swapped', label: 'New battery installed', sublabel: 'Verified charge level' },
-      { id: 'gps_restabilised', label: 'GPS re-stabilised', sublabel: '2 minutes minimum after boot' },
-      { id: 'camera_rechecked', label: 'Camera settings re-verified', sublabel: 'Exposure unchanged from before' },
-      { id: 'tower_recentred', label: 'Tower re-centred', sublabel: 'Before resuming mission' }
+      { id: 'screen_recording_active', label: 'Screen recording confirmed', sublabel: 'Active throughout mission', critical: true },
+      { id: 'gps_stable_flight', label: 'GPS stable during flight', sublabel: '26-32 satellites maintained' },
+      { id: 'no_exposure_changes', label: 'No camera changes mid-flight', sublabel: 'Settings locked as validated', critical: true }
     ],
-    warning: {
-      title: "Battery Swap = Full Reset",
-      message: "Don't rush! The most common failures happen after battery changes when steps are skipped."
+    info: {
+      title: "Battery Swap Protocol",
+      message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Re-verify camera settings\n5. Re-center tower before resuming"
     }
   },
   6: {
-    title: "On-Site QC",
-    subtitle: "Quality check before leaving the site",
+    title: "Post-Flight QC",
+    subtitle: "Quality check before leaving site",
     items: [
-      { id: 'exposure_consistent', label: 'Exposure consistent', sublabel: 'Spot check images across mission' },
-      { id: 'tower_centred', label: 'Tower centred throughout', sublabel: 'No drift visible in captures' },
-      { id: 'components_complete', label: 'All mission components done', sublabel: 'Nothing missing from plan' },
-      { id: 'no_drift', label: 'No drift after battery changes', sublabel: 'Alignment maintained' }
+      { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Preferably same as takeoff point' },
+      { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
+      { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All planned captures done' },
+      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
+      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
+    ]
+  }
+};
+
+const ROOFTOP_CONFIGS = {
+  1: {
+    title: "Equipment & Pre-Flight Checklist",
+    subtitle: "Complete before any flight activity",
+    items: [
+      { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
+      { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
+      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Pilot/spotter MUST be on roof', critical: true },
+      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
+      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
+      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
+    ],
+    warning: {
+      title: "Rooftop Safety",
+      message: "Pilot or spotter MUST be present on roof during marking and capture. DO NOT attempt without rooftop access."
+    }
+  },
+  2: {
+    title: "ScalePoint Placement",
+    subtitle: "Critical for accurate measurements",
+    info: {
+      title: "Good Placement Requirements",
+      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
+    },
+    warning: {
+      title: "Bad Placement to AVOID",
+      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
+    },
+    items: [
+      { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
+      { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
+      { id: 'scalepoint_distance', label: 'Proper distance from tower', sublabel: 'Close enough to capture, far from obstacles' },
+      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
+    ]
+  },
+  3: {
+    title: "GPS Stabilisation (5 min)",
+    subtitle: "Wait for stable satellite lock",
+    info: {
+      title: "Why This Matters",
+      message: "GPS drift causes misaligned images and failures. Conduct 5min hovering on ground with propeller OFF after every drone reboot."
+    },
+    warning: {
+      title: "GPS Signal Requirements",
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
+    }
+  },
+  4: {
+    title: "Rooftop Mission Setup & Camera",
+    subtitle: "Configure mission parameters and camera settings",
+    items: [
+      { id: 'shutter_adjusted', label: 'Shutter speed adjusted for roof', sublabel: 'e.g., 1/2000 → 1/1500 for reflection', critical: true },
+      { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID + date' },
+      { id: 'msa_roof', label: 'MSA set to roof height', sublabel: 'NOT equipment height - roof level', critical: true },
+      { id: 'facade_boundary', label: 'Facade boundary marked CLOCKWISE', sublabel: 'External points only, no concave points', critical: true },
+      { id: 'equipment_marked', label: 'Equipment/tower locations marked', sublabel: 'Center and radius for each cluster' },
+      { id: 'equipment_height', label: 'Equipment heights set', sublabel: 'Above MSA for orbits' },
+      { id: 'obstacles_marked', label: 'Obstacles marked', sublabel: 'Buildings, trees with buffer' },
+      { id: 'pano_ortho_selected', label: 'Panorama/Orthomosaic selected (if needed)', sublabel: 'Optional components' },
+      { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
+    ],
+    facadeOrbits: [
+      { name: "First Facade (Overview)", altitude: "30m above MSA", distance: "11m away", gimbal: "-65°" },
+      { name: "Second Facade (Top)", altitude: "25m above MSA", distance: "11m away", gimbal: "-55°" },
+      { name: "Third Facade (Mid)", altitude: "22m above MSA", distance: "11m away", gimbal: "-45°" },
+      { name: "Fourth Facade (Lowest)", altitude: "19m above MSA", distance: "10m away", gimbal: "-45°" }
+    ],
+    warning: {
+      title: "Critical",
+      message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
+    }
+  },
+  5: {
+    title: "Flight Execution",
+    subtitle: "Monitor during active mission",
+    items: [
+      { id: 'screen_recording_active', label: 'Screen recording confirmed', sublabel: 'Active throughout mission', critical: true },
+      { id: 'obstacle_avoidance_on', label: 'Obstacle avoidance active', sublabel: 'Critical for rooftop safety', critical: true },
+      { id: 'gps_stable_flight', label: 'GPS stable during flight', sublabel: '26-32 satellites maintained' },
+      { id: 'no_exposure_changes', label: 'No camera changes mid-flight', sublabel: 'Settings locked as validated', critical: true }
+    ],
+    info: {
+      title: "Battery Swap Protocol - CRITICAL",
+      message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Re-verify camera settings\n5. Takeoff from same spot - cannot recenter mission"
+    }
+  },
+  6: {
+    title: "Post-Flight QC",
+    subtitle: "Quality check before leaving site",
+    items: [
+      { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Same as takeoff point' },
+      { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
+      { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
+      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
+      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
     ]
   }
 };
 
 export default function StartCapture() {
+  const [siteType, setSiteType] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [checkedItems, setCheckedItems] = useState({});
   const [gpsTimerComplete, setGpsTimerComplete] = useState(false);
   const [finalDecision, setFinalDecision] = useState(null);
   const [showPostMissionForm, setShowPostMissionForm] = useState(false);
   const [missionComplete, setMissionComplete] = useState(false);
+  const [pilotId, setPilotId] = useState('');
+  const [jobId, setJobId] = useState('');
+  const [location, setLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
   });
   
+  useEffect(() => {
+    if (user?.email && !pilotId) {
+      setPilotId(user.email);
+    }
+  }, [user, pilotId]);
+
+  // Request location permission on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+          setLocationError(null);
+        },
+        (error) => {
+          setLocationError(error.message);
+          console.error('Location error:', error);
+        }
+      );
+    } else {
+      setLocationError('Geolocation not supported');
+    }
+  }, []);
+  
+  const STEPS = siteType === 'rooftop' ? ROOFTOP_STEPS : TOWER_STEPS;
+  const STEP_CONFIGS = siteType === 'rooftop' ? ROOFTOP_CONFIGS : TOWER_CONFIGS;
   const config = STEP_CONFIGS[currentStep];
   
   const toggleItem = useCallback((id) => {
@@ -142,10 +303,11 @@ export default function StartCapture() {
   }, []);
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
+  const totalSteps = 6;
   const canProceed = currentStep === 3 ? gpsTimerComplete : allItemsChecked;
   
   const nextStep = () => {
-    if (currentStep < 6) {
+    if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -161,15 +323,28 @@ export default function StartCapture() {
     setShowPostMissionForm(true);
   };
   
-  const handlePostMissionSubmit = async (data) => {
+  const handlePostMissionSubmit = async (e) => {
+    e.preventDefault();
     try {
+      // Use stored location or get fresh one
+      let coords = location;
+      if (!coords) {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+      }
+      
       await base44.entities.LocalMissionLog.create({
-        pilot_id: user?.pilot_id || user?.email || 'Unknown',
+        pilot_id: user?.pilot_id || pilotId,
         company: user?.company || null,
         completion_timestamp: new Date().toISOString(),
-        job_id: data.job_id || null,
+        job_id: jobId || null,
         checklist_completed: true,
-        notes: data.notes || null
+        notes: `${siteType === 'rooftop' ? 'Rooftop' : 'Tower'} capture - ${finalDecision === 'yes' ? 'Pass' : 'Rework'}`
       });
       setMissionComplete(true);
     } catch (error) {
@@ -182,6 +357,73 @@ export default function StartCapture() {
     setShowPostMissionForm(false);
     setFinalDecision(null);
   };
+
+  // Site Type Selection
+  if (!siteType) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white flex items-center justify-center p-5">
+        <div className="max-w-lg w-full">
+          <div className="text-center mb-8">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+              alt="SiteSee"
+              className="h-8 mx-auto mb-4"
+            />
+            <h1 className="text-2xl font-bold mb-2">Select Site Type</h1>
+            <p className="text-slate-400">Choose the type of capture you'll be performing</p>
+            {location && (
+              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-emerald-400">
+                <MapPin className="w-3 h-3" />
+                <span>Location acquired</span>
+              </div>
+            )}
+            {locationError && (
+              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-amber-400">
+                <AlertTriangle className="w-3 h-3" />
+                <span>Location unavailable</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="space-y-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSiteType('tower')}
+              className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
+            >
+              <div className="flex items-start gap-4">
+                <Mountain className="w-8 h-8 text-blue-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Tower Capture</h3>
+                  <p className="text-sm text-slate-400">Standard cell tower with ground-level operations. ScalePoint placement on ground.</p>
+                </div>
+              </div>
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSiteType('rooftop')}
+              className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
+            >
+              <div className="flex items-start gap-4">
+                <Home className="w-8 h-8 text-amber-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Rooftop Capture</h3>
+                  <p className="text-sm text-slate-400">Rooftop antenna installations. Requires pilot/spotter on roof during capture.</p>
+                  <div className="mt-2 flex items-center gap-2 text-xs text-amber-400">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Rooftop access required</span>
+                  </div>
+                </div>
+              </div>
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
@@ -200,11 +442,14 @@ export default function StartCapture() {
               className="h-6"
             />
           </div>
+          <div className="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
+            {siteType === 'rooftop' ? 'Rooftop' : 'Tower'}
+          </div>
         </div>
         
         {/* Progress */}
         <div className="mb-8">
-          <ProgressBar current={currentStep} total={6} labels={STEPS} />
+          <ProgressBar current={currentStep} total={totalSteps} labels={STEPS} />
         </div>
         
         {/* Step Content */}
@@ -234,30 +479,29 @@ export default function StartCapture() {
                   <Button
                     onClick={() => setGpsTimerComplete(true)}
                     variant="outline"
-                    className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
+                    className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
                   >
-                    Skip Timer (Admin)
+                    <Shield className="w-4 h-4 mr-2" />
+                    Admin: Skip Timer
                   </Button>
                 )}
                 
                 {config.info && (
                   <InfoCard variant="info" title={config.info.title}>
-                    <p>{config.info.message}</p>
+                    <p className="whitespace-pre-line">{config.info.message}</p>
                   </InfoCard>
                 )}
                 
-                <InfoCard variant="warning" title="Checklist">
-                  <ul className="space-y-1">
-                    <li>• Wait for ~32 satellites</li>
-                    <li>• Do NOT mark tower until timer completes</li>
-                    <li>• Position should stop drifting</li>
-                  </ul>
-                </InfoCard>
+                {config.warning && (
+                  <InfoCard variant="warning" title={config.warning.title}>
+                    <p className="whitespace-pre-line">{config.warning.message}</p>
+                  </InfoCard>
+                )}
               </div>
             )}
             
-            {/* Step 6: Final Decision */}
-            {currentStep === 6 && finalDecision === null && !showPostMissionForm && allItemsChecked && (
+            {/* Final Step: Final Decision */}
+            {currentStep === totalSteps && finalDecision === null && !showPostMissionForm && allItemsChecked && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -287,23 +531,46 @@ export default function StartCapture() {
             )}
             
             {/* Post-Mission Form */}
-            {currentStep === 6 && showPostMissionForm && !missionComplete && (
+            {currentStep === totalSteps && showPostMissionForm && !missionComplete && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <div className="mb-4">
-                  <h3 className="text-xl font-bold">Mission Log</h3>
-                  <p className="text-slate-400 text-sm mt-1">
-                    {finalDecision === 'yes' 
-                      ? 'Quick completion form — helps us improve training'
-                      : 'Help us understand what happened'}
-                  </p>
-                </div>
-                <MissionLogForm
-                  onSubmit={handlePostMissionSubmit}
-                  onCancel={handleCancelForm}
-                />
+                <form onSubmit={handlePostMissionSubmit} className="bg-slate-800/50 border border-slate-700 rounded-2xl p-5 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Job ID</label>
+                    <input
+                      type="text"
+                      value={jobId}
+                      onChange={(e) => setJobId(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500"
+                      placeholder="Enter job ID (optional)"
+                    />
+                  </div>
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+                    <p className="text-xs text-blue-300">
+                      ✓ Date/time captured automatically<br />
+                      ✓ Pilot ID from your profile<br />
+                      ✓ Stored locally on this device
+                    </p>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancelForm}
+                      className="flex-1 border-slate-600 bg-slate-800 hover:bg-slate-700"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-blue-500 hover:bg-blue-600"
+                    >
+                      Complete
+                    </Button>
+                  </div>
+                </form>
               </motion.div>
             )}
             
@@ -328,14 +595,64 @@ export default function StartCapture() {
             )}
             
             {/* Warning Card */}
-            {config.warning && (
+            {config.warning && currentStep !== 3 && (
               <InfoCard variant="warning" title={config.warning.title} className="mb-4">
-                <p>{config.warning.message}</p>
+                <p className="whitespace-pre-line">{config.warning.message}</p>
+              </InfoCard>
+            )}
+            
+            {/* Info Card for Steps without items */}
+            {config.info && !config.items && currentStep !== 3 && (
+              <InfoCard variant="info" title={config.info.title} className="mb-4">
+                <p className="whitespace-pre-line">{config.info.message}</p>
+              </InfoCard>
+            )}
+            
+            {/* Capture Phases Info (Tower Step 4) */}
+            {config.capturePhases && (
+              <InfoCard variant="info" title="Capture Phases" className="mb-4">
+                <div className="text-xs space-y-2">
+                  {config.capturePhases.map((phase, idx) => (
+                    <div key={idx} className="border-l-2 border-blue-400/30 pl-3">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-slate-300 font-medium">{phase.name}</span>
+                      </div>
+                      <div className="text-slate-400">
+                        <span>{phase.altitude}</span>
+                        <span className="mx-2">•</span>
+                        <span>Gimbal: {phase.gimbal}</span>
+                      </div>
+                      {phase.notes && (
+                        <div className="text-slate-500 text-[10px] mt-1">{phase.notes}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </InfoCard>
+            )}
+            
+            {/* Facade Orbits Info (Rooftop Step 4) */}
+            {config.facadeOrbits && (
+              <InfoCard variant="info" title="4 Facade Orbits (Auto-Set)" className="mb-4">
+                <div className="text-xs space-y-2">
+                  {config.facadeOrbits.map((orbit, idx) => (
+                    <div key={idx} className="border-l-2 border-amber-400/30 pl-3">
+                      <div className="text-slate-300 font-medium mb-1">{orbit.name}</div>
+                      <div className="text-slate-400">
+                        <span>{orbit.altitude}</span>
+                        <span className="mx-2">•</span>
+                        <span>{orbit.distance}</span>
+                        <span className="mx-2">•</span>
+                        <span>Gimbal: {orbit.gimbal}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </InfoCard>
             )}
             
             {/* Checklist Items */}
-            {config.items && currentStep !== 6 && (
+            {config.items && currentStep !== totalSteps && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
@@ -350,8 +667,8 @@ export default function StartCapture() {
               </div>
             )}
             
-            {/* Step 6 Checklist */}
-            {currentStep === 6 && !finalDecision && (
+            {/* Final Step Checklist */}
+            {currentStep === totalSteps && !finalDecision && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
@@ -370,7 +687,7 @@ export default function StartCapture() {
       </div>
       
       {/* Navigation Footer */}
-      {!(currentStep === 6 && (missionComplete || showPostMissionForm)) && (
+      {!(currentStep === totalSteps && (missionComplete || showPostMissionForm)) && (
         <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-5 py-4">
           <div className="max-w-lg mx-auto flex gap-3">
             <Button
@@ -384,7 +701,7 @@ export default function StartCapture() {
             </Button>
             <Button
               onClick={nextStep}
-              disabled={!canProceed || currentStep === 6}
+              disabled={!canProceed || currentStep === totalSteps}
               className={cn(
                 "flex-1 transition-all duration-300",
                 canProceed 
@@ -392,8 +709,8 @@ export default function StartCapture() {
                   : "bg-slate-700 cursor-not-allowed"
               )}
             >
-              {currentStep === 6 ? 'Complete' : 'Next'}
-              {currentStep < 6 && <ArrowRight className="w-4 h-4 ml-2" />}
+              {currentStep === totalSteps ? 'Complete' : 'Next'}
+              {currentStep < totalSteps && <ArrowRight className="w-4 h-4 ml-2" />}
             </Button>
           </div>
         </div>
