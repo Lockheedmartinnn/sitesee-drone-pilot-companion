@@ -264,8 +264,8 @@ export default function TrainingResources() {
               className="h-6"
             />
             <div>
-              <h1 className="text-lg font-semibold">Training & Resources</h1>
-              <p className="text-sm text-slate-400">Required for pilot certification</p>
+              <h1 className="text-lg font-semibold">Onboarding / Training</h1>
+              <p className="text-sm text-slate-400">Complete training & quizzes before production</p>
             </div>
           </div>
         </div>

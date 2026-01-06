@@ -30,11 +30,10 @@ export default function Layout({ children, currentPageName }) {
   
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
+    { name: 'Onboarding / Training', href: createPageUrl('ToolsLinks'), icon: BookOpen },
     { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
-    { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: BookOpen },
-    { name: 'Training Videos', href: createPageUrl('TrainingVideos'), icon: PlayCircle },
+    { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: ExternalLink },
     { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
-    { name: 'Training & Resources', href: createPageUrl('ToolsLinks'), icon: ExternalLink },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   
