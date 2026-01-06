@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Rocket, 
   BookOpen, 
@@ -12,6 +14,11 @@ import {
 import ActionButton from '@/components/ActionButton';
 
 export default function Home() {
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+  
   return (
     <div className="min-h-screen text-white">
       <div className="max-w-lg mx-auto px-5 py-8 pb-20 lg:px-8">
