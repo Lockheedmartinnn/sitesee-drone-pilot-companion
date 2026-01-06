@@ -78,33 +78,65 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-slate-700/50" />
-          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Field Operations</span>
-          <div className="flex-1 h-px bg-slate-700/50" />
-        </div>
+        {/* Field Operations Section - Gated by Training Completion */}
+        {user?.training_completed ? (
+          <>
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-slate-700/50" />
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Field Operations</span>
+              <div className="flex-1 h-px bg-slate-700/50" />
+            </div>
 
-        {/* Field Operations Section */}
-        <div className="space-y-3">
-          <Link to={createPageUrl('QuickReference')}>
-            <ActionButton
-              icon={BookOpen}
-              label="Quick Reference"
-              sublabel="Field bible & checklists"
-              index={0}
-            />
-          </Link>
+            {/* Field Operations Section */}
+            <div className="space-y-3">
+              <Link to={createPageUrl('QuickReference')}>
+                <ActionButton
+                  icon={BookOpen}
+                  label="Quick Reference"
+                  sublabel="Field bible & checklists"
+                  index={0}
+                />
+              </Link>
 
-          <Link to={createPageUrl('Scenarios')}>
-            <ActionButton
-              icon={Map}
-              label="Scenarios"
-              sublabel="What-if field situations"
-              index={1}
-            />
-          </Link>
-        </div>
+              <Link to={createPageUrl('Scenarios')}>
+                <ActionButton
+                  icon={Map}
+                  label="Scenarios"
+                  sublabel="What-if field situations"
+                  index={1}
+                />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Training Required Notice */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-slate-700/50" />
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Complete Training to Unlock</span>
+              <div className="flex-1 h-px bg-slate-700/50" />
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5"
+            >
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/30 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-amber-300">Training Required</h3>
+                  <p className="text-sm text-amber-200/80 mt-1">
+                    Complete the required quizzes in Onboarding / Training to access field operations tools.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
 
         {/* Footer */}
         <motion.p
