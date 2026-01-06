@@ -89,8 +89,8 @@ export default function Home() {
           <Link to={createPageUrl('ToolsLinks')}>
             <ActionButton
               icon={ExternalLink}
-              label="Tools & Links"
-              sublabel="Useful resources"
+              label="Training & Resources"
+              sublabel="Required guides & markup videos"
               index={3}
             />
           </Link>

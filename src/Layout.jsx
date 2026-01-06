@@ -34,7 +34,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: BookOpen },
     { name: 'Training Videos', href: createPageUrl('TrainingVideos'), icon: PlayCircle },
     { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
-    { name: 'Tools & Links', href: createPageUrl('ToolsLinks'), icon: ExternalLink },
+    { name: 'Training & Resources', href: createPageUrl('ToolsLinks'), icon: ExternalLink },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   

@@ -19,6 +19,25 @@ import { cn } from '@/lib/utils';
 
 const LINKS = [
   {
+    category: "Mission Markup Videos (REQUIRED)",
+    items: [
+      {
+        icon: PlayCircle,
+        title: "Rooftop Markup v9.6.0 (Latest)",
+        description: "WATCH BEFORE FLYING - Mission setup walkthrough",
+        url: "https://youtu.be/M82GH-ZcWEM",
+        color: "text-red-400 bg-red-500/20"
+      },
+      {
+        icon: PlayCircle,
+        title: "Rooftop Markup v8.6.1 (Reference)",
+        description: "Previous version for comparison",
+        url: "https://youtu.be/ta1A0MXqLWI",
+        color: "text-orange-400 bg-orange-500/20"
+      }
+    ]
+  },
+  {
     category: "Mission Markup & Capture Guides",
     items: [
       {
@@ -217,7 +236,7 @@ const LinkCard = ({ item, index }) => {
   );
 };
 
-export default function ToolsLinks() {
+export default function TrainingResources() {
   let itemIndex = 0;
   
   return (
@@ -237,8 +256,8 @@ export default function ToolsLinks() {
               className="h-6"
             />
             <div>
-              <h1 className="text-lg font-semibold">Tools & Links</h1>
-              <p className="text-sm text-slate-400">Useful resources</p>
+              <h1 className="text-lg font-semibold">Training & Resources</h1>
+              <p className="text-sm text-slate-400">Required for pilot certification</p>
             </div>
           </div>
         </div>
