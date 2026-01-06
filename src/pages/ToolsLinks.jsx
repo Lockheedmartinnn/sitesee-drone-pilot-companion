@@ -12,7 +12,8 @@ import {
   Camera,
   Compass,
   Settings,
-  BookOpen
+  BookOpen,
+  PlayCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
