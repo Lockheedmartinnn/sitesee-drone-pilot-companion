@@ -2,8 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
   ExternalLink,
@@ -15,8 +13,7 @@ import {
   Compass,
   Settings,
   BookOpen,
-  PlayCircle,
-  CheckCircle2
+  PlayCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -250,11 +247,6 @@ const LinkCard = ({ item, index }) => {
 export default function TrainingResources() {
   let itemIndex = 0;
   
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
       <div className="max-w-lg mx-auto px-5 py-6 pb-20">
@@ -329,43 +321,6 @@ export default function TrainingResources() {
               <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
             </motion.a>
           </div>
-
-          {/* Training Completion Button */}
-          {user && !user.training_completed && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mt-4 pt-4 border-t border-slate-700/50"
-            >
-              <Button
-                onClick={async () => {
-                  await base44.auth.updateMe({ training_completed: true });
-                  window.location.reload();
-                }}
-                className="w-full bg-emerald-500 hover:bg-emerald-600"
-              >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Mark Training Complete
-              </Button>
-              <p className="text-xs text-slate-500 text-center mt-2">
-                Complete both quizzes first, then click above
-              </p>
-            </motion.div>
-          )}
-
-          {user?.training_completed && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 pt-4 border-t border-slate-700/50 text-center"
-            >
-              <div className="inline-flex items-center gap-2 text-emerald-400 text-sm">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="font-medium">Training Completed ✓</span>
-              </div>
-            </motion.div>
-          )}
         </motion.div>
 
         {/* Training Videos Section */}
