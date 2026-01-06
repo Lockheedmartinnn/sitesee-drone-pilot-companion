@@ -329,6 +329,43 @@ export default function TrainingResources() {
               <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
             </motion.a>
           </div>
+
+          {/* Training Completion Button */}
+          {user && !user.training_completed && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 pt-4 border-t border-slate-700/50"
+            >
+              <Button
+                onClick={async () => {
+                  await base44.auth.updateMe({ training_completed: true });
+                  window.location.reload();
+                }}
+                className="w-full bg-emerald-500 hover:bg-emerald-600"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Mark Training Complete
+              </Button>
+              <p className="text-xs text-slate-500 text-center mt-2">
+                Complete both quizzes first, then click above
+              </p>
+            </motion.div>
+          )}
+
+          {user?.training_completed && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 pt-4 border-t border-slate-700/50 text-center"
+            >
+              <div className="inline-flex items-center gap-2 text-emerald-400 text-sm">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="font-medium">Training Completed ✓</span>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Training Videos Section */}
