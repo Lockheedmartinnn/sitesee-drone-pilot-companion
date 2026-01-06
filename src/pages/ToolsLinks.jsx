@@ -270,6 +270,59 @@ export default function TrainingResources() {
           </div>
         </div>
         
+        {/* Required Quizzes Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 rounded-2xl p-5 mb-8"
+        >
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/30 flex items-center justify-center flex-shrink-0">
+              <FileText className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-white">Required Quizzes</h2>
+              <p className="text-sm text-blue-200/80">Complete these before production captures</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <motion.a
+              href="https://docs.google.com/forms/d/e/1FAIpQLScz8kxD5LzYQDJOZ9gD8vY3J0wvQiF7pO0iHnF5i7JXj8vNFA/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
+            >
+              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-5 h-5 text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white">Tower Quiz</p>
+                <p className="text-sm text-slate-400">Image Acquisition with Scanlink (Towers)</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+            </motion.a>
+
+            <motion.a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfcw3aLJeYjKGJvz_3E8JXm1BQMXRxYjqZr5F3T0z7p8iNRtA/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
+            >
+              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-5 h-5 text-purple-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white">Rooftop Quiz</p>
+                <p className="text-sm text-slate-400">Image Acquisition with Scanlink (Rooftops)</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+            </motion.a>
+          </div>
+        </motion.div>
+
         {/* Categories */}
         <div className="space-y-8">
           {LINKS.map((category, catIndex) => (
