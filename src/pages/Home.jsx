@@ -50,47 +50,57 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        {/* Divider */}
+        {/* Training Divider */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-slate-700/50" />
+          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Training</span>
+          <div className="flex-1 h-px bg-slate-700/50" />
+        </div>
+
+        {/* Training Section */}
+        <div className="space-y-3 mb-8">
+          <Link to={createPageUrl('ToolsLinks')}>
+            <ActionButton
+              icon={ExternalLink}
+              label="Training & Resources"
+              sublabel="Required guides & markup videos"
+              index={0}
+            />
+          </Link>
+
+          <Link to={createPageUrl('TrainingVideos')}>
+            <ActionButton
+              icon={PlayCircle}
+              label="Training Videos"
+              sublabel="Mission markup & tutorials"
+              index={1}
+            />
+          </Link>
+        </div>
+
+        {/* Quick Access Divider */}
         <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 h-px bg-slate-700/50" />
           <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Quick Access</span>
           <div className="flex-1 h-px bg-slate-700/50" />
         </div>
 
-        {/* Secondary Actions */}
+        {/* Quick Access Section */}
         <div className="space-y-3">
           <Link to={createPageUrl('QuickReference')}>
             <ActionButton
               icon={BookOpen}
               label="Quick Reference"
               sublabel="Field bible & checklists"
-              index={0}
+              index={2}
             />
           </Link>
-          
-          <Link to={createPageUrl('TrainingVideos')}>
-            <ActionButton
-              icon={PlayCircle}
-              label="Training Videos"
-              sublabel="4 short IRL tutorials"
-              index={1}
-            />
-          </Link>
-          
+
           <Link to={createPageUrl('Scenarios')}>
             <ActionButton
               icon={Map}
               label="Scenarios"
               sublabel="What-if field situations"
-              index={2}
-            />
-          </Link>
-          
-          <Link to={createPageUrl('ToolsLinks')}>
-            <ActionButton
-              icon={ExternalLink}
-              label="Training & Resources"
-              sublabel="Required guides & markup videos"
               index={3}
             />
           </Link>
