@@ -2,8 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import { 
   Rocket, 
   BookOpen, 
@@ -14,22 +12,6 @@ import {
 import ActionButton from '@/components/ActionButton';
 
 export default function Home() {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-  
   return (
     <div className="min-h-screen text-white">
       <div className="max-w-lg mx-auto px-5 py-8 pb-20 lg:px-8">
