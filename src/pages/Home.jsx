@@ -68,12 +68,21 @@ export default function Home() {
             />
           </Link>
 
+          <Link to={createPageUrl('TrainingVideos')}>
+            <ActionButton
+              icon={PlayCircle}
+              label="Training Videos"
+              sublabel="Mission markup & tutorials"
+              index={1}
+            />
+          </Link>
+
           <Link to={createPageUrl('Scenarios')}>
             <ActionButton
               icon={Map}
               label="Scenarios"
               sublabel="What-if field situations"
-              index={1}
+              index={2}
             />
           </Link>
         </div>
