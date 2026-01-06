@@ -96,9 +96,16 @@ const LINKS = [
         description: "How to capture panoramas",
         url: "https://sitesee.io/panorama-tower-missions",
         color: "text-orange-400 bg-orange-500/20"
+      },
+      {
+        icon: BookOpen,
+        title: "Introduction to Scanlink",
+        description: "Learn about Scanlink and what to expect",
+        url: "https://support.dronelink.com/hc/en-us/articles/360063769833-Introduction-to-Scanlink-and-What-to-Expect",
+        color: "text-purple-400 bg-purple-500/20"
       }
-    ]
-  },
+      ]
+      },
   {
     category: "Weather & Airspace",
     items: [

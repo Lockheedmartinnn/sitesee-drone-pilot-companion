@@ -9,6 +9,22 @@ import VideoCard from '@/components/VideoCard';
 const VIDEOS = [
   {
     id: 1,
+    title: "Rooftop Markup v9.6.0 (Latest)",
+    description: "WATCH BEFORE FLYING - Mission setup walkthrough",
+    duration: "12:30",
+    thumbnail: "https://img.youtube.com/vi/M82GH-ZcWEM/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/M82GH-ZcWEM"
+  },
+  {
+    id: 2,
+    title: "Rooftop Markup v8.6.1 (Reference)",
+    description: "Previous version for comparison",
+    duration: "10:15",
+    thumbnail: "https://img.youtube.com/vi/ta1A0MXqLWI/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/ta1A0MXqLWI"
+  },
+  {
+    id: 3,
     title: "Equipment & Pre-Flight",
     description: "Complete walkthrough of equipment checks and pre-flight preparation.",
     duration: "8:30",
@@ -16,7 +32,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 2,
+    id: 4,
     title: "Camera Settings & Battery Resets",
     description: "How to configure exposure and maintain settings through battery changes.",
     duration: "7:45",
@@ -24,7 +40,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 3,
+    id: 5,
     title: "GPS Stabilisation & Battery Changes",
     description: "Using Nomacs EXIF data to verify GPS stability and proper procedures.",
     duration: "9:15",
@@ -32,7 +48,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 4,
+    id: 6,
     title: "On-Site QC Walkthrough",
     description: "Step-by-step quality control process before leaving the site.",
     duration: "6:20",
@@ -40,7 +56,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 5,
+    id: 7,
     title: "Understanding Leaning Issues",
     description: "How to identify and prevent model leaning during capture.",
     duration: "5:45",
@@ -48,7 +64,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 6,
+    id: 8,
     title: "Avoiding Ghosting Effects",
     description: "Tips for capturing clear images without ghosting artifacts.",
     duration: "6:50",
@@ -56,7 +72,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 7,
+    id: 9,
     title: "Proper Georeferencing Workflow",
     description: "Step-by-step guide to ensure accurate georeferencing.",
     duration: "8:15",
@@ -64,7 +80,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 8,
+    id: 10,
     title: "Rooftop Capture Techniques",
     description: "Best practices for complex rooftop site captures.",
     duration: "7:30",
@@ -72,7 +88,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 9,
+    id: 11,
     title: "Wind Management & Stability",
     description: "Flying safely and capturing quality data in windy conditions.",
     duration: "6:00",
@@ -80,7 +96,7 @@ const VIDEOS = [
     videoUrl: null
   },
   {
-    id: 10,
+    id: 12,
     title: "Low Light & Sun Glare Solutions",
     description: "Techniques for managing challenging lighting conditions.",
     duration: "5:20",
