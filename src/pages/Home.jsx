@@ -53,6 +53,34 @@ export default function Home() {
         {/* Divider */}
         <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 h-px bg-slate-700/50" />
+          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Onboarding & Training</span>
+          <div className="flex-1 h-px bg-slate-700/50" />
+        </div>
+
+        {/* Onboarding & Training Section */}
+        <div className="space-y-3">
+          <Link to={createPageUrl('TrainingVideos')}>
+            <ActionButton
+              icon={PlayCircle}
+              label="Training Videos"
+              sublabel="Mission markup & tutorials"
+              index={0}
+            />
+          </Link>
+
+          <Link to={createPageUrl('ToolsLinks')}>
+            <ActionButton
+              icon={BookOpen}
+              label="Resources & Guides"
+              sublabel="Complete onboarding materials"
+              index={1}
+            />
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-slate-700/50" />
           <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Field Operations</span>
           <div className="flex-1 h-px bg-slate-700/50" />
         </div>
@@ -68,21 +96,12 @@ export default function Home() {
             />
           </Link>
 
-          <Link to={createPageUrl('TrainingVideos')}>
-            <ActionButton
-              icon={PlayCircle}
-              label="Training Videos"
-              sublabel="Mission markup & tutorials"
-              index={1}
-            />
-          </Link>
-
           <Link to={createPageUrl('Scenarios')}>
             <ActionButton
               icon={Map}
               label="Scenarios"
               sublabel="What-if field situations"
-              index={2}
+              index={1}
             />
           </Link>
         </div>
