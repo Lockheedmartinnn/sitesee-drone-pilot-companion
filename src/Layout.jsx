@@ -93,7 +93,7 @@ export default function Layout({ children, currentPageName }) {
                 className="h-8"
               />
               <div>
-                <h1 className="font-bold text-white">Drone Pilot Companion</h1>
+                <h1 className="font-bold text-white">Pilot Companion</h1>
                 <p className="text-xs text-slate-400">Field Operations Guide</p>
               </div>
             </div>
