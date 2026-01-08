@@ -89,12 +89,12 @@ const TOWER_CONFIGS = {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
-      title: "Why This Matters",
-      message: "GPS drift causes misaligned images and failures. Conduct 5min hovering on ground with propeller OFF after every drone reboot."
+      title: "Model-Specific Instructions",
+      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
     },
     warning: {
       title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
   4: {
@@ -186,12 +186,12 @@ const ROOFTOP_CONFIGS = {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
-      title: "Why This Matters",
-      message: "GPS drift causes misaligned images and failures. Conduct 5min hovering on ground with propeller OFF after every drone reboot."
+      title: "Model-Specific Instructions",
+      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
     },
     warning: {
       title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
   4: {
