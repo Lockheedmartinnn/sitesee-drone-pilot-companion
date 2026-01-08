@@ -30,6 +30,7 @@ export default function Layout({ children, currentPageName }) {
   
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
+    { name: 'GPS Altitude Verifier', href: createPageUrl('GPSVerifier'), icon: Satellite },
     { name: 'Onboarding / Training', href: createPageUrl('ToolsLinks'), icon: BookOpen },
     { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
     { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: ExternalLink },

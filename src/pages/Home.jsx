@@ -7,7 +7,8 @@ import {
   BookOpen, 
   PlayCircle, 
   Map, 
-  ExternalLink
+  ExternalLink,
+  Satellite
 } from 'lucide-react';
 import ActionButton from '@/components/ActionButton';
 
@@ -33,22 +34,38 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Primary Action */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8"
-        >
-          <Link to={createPageUrl('StartCapture')}>
-            <ActionButton
-              icon={Rocket}
-              label="Start a Capture"
-              sublabel="Guided step-by-step workflow"
-              variant="primary"
-            />
-          </Link>
-        </motion.div>
+        {/* Primary Actions */}
+        <div className="space-y-3 mb-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Link to={createPageUrl('StartCapture')}>
+              <ActionButton
+                icon={Rocket}
+                label="Start a Capture"
+                sublabel="Guided step-by-step workflow"
+                variant="primary"
+              />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <Link to={createPageUrl('GPSVerifier')}>
+              <ActionButton
+                icon={Satellite}
+                label="GPS Altitude Verifier"
+                sublabel="Verify battery swap GPS stability"
+                variant="success"
+              />
+            </Link>
+          </motion.div>
+        </div>
 
         {/* Divider */}
         <div className="flex items-center gap-4 mb-6">
