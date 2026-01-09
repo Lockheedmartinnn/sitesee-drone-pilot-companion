@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import VideoCard from '@/components/VideoCard';
 
@@ -131,6 +131,28 @@ export default function TrainingVideos() {
           </div>
         </div>
         
+        {/* Quiz CTA */}
+        <Link to={createPageUrl('MissionMarkupQuiz')}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border-2 border-emerald-500/30 rounded-2xl p-5 mb-6"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/30 flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-white">Mission Markup Quiz</h3>
+                <p className="text-sm text-emerald-200/80">Required: Watch + Quiz</p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-300">
+              Complete training video and 10-question quiz to verify understanding
+            </p>
+          </motion.div>
+        </Link>
+
         {/* Video Grid */}
         <div className="space-y-4">
           {VIDEOS.map((video, index) => (
