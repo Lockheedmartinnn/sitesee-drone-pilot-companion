@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import InfoCard from '@/components/InfoCard';
 import { cn } from '@/lib/utils';
 
-const QUIZ_QUESTIONS = [
+const ROOFTOP_QUESTIONS = [
   {
     id: 1,
     question: "For rooftop captures, what is the MSA (Minimum Safe Altitude) set to?",
@@ -109,28 +109,125 @@ const QUIZ_QUESTIONS = [
   }
 ];
 
+const TOWER_QUESTIONS = [
+  {
+    id: 1,
+    question: "What is the minimum number of satellites required for GPS stabilization?",
+    options: ["20-24", "26-32", "32-36", "36-40"],
+    correct: 1
+  },
+  {
+    id: 2,
+    question: "How long should you wait for GPS stabilization on M3E (Mavic 3 Enterprise)?",
+    options: ["1-2 minutes", "3-4 minutes", "5 minutes on ground before takeoff", "5 minutes at hover after takeoff"],
+    correct: 2
+  },
+  {
+    id: 3,
+    question: "What should you do after a battery swap on tower missions?",
+    options: [
+      "Continue flying immediately",
+      "Wait 5 min GPS stabilization and re-center tower",
+      "Just re-center the tower",
+      "Only verify camera settings"
+    ],
+    correct: 1
+  },
+  {
+    id: 4,
+    question: "What is the typical MSA (Minimum Safe Altitude) range for tower captures?",
+    options: ["5-8m", "10-15m", "20-25m", "30-35m"],
+    correct: 1
+  },
+  {
+    id: 5,
+    question: "At what gimbal angle do you mark the tower center?",
+    options: ["0° gimbal", "-45° gimbal", "-60° gimbal", "-90° gimbal"],
+    correct: 3
+  },
+  {
+    id: 6,
+    question: "What buffer should you add when marking obstacle altitudes?",
+    options: ["No buffer needed", "+2m buffer", "+4m buffer", "+6m buffer"],
+    correct: 2
+  },
+  {
+    id: 7,
+    question: "Where should the ScalePoint be placed?",
+    options: [
+      "Under trees for shade",
+      "On elevated surface for better visibility",
+      "In clear line of sight on flat surface",
+      "As close to tower as possible"
+    ],
+    correct: 2
+  },
+  {
+    id: 8,
+    question: "What is the main cause of 'leaning' or 'ghosting' in captures?",
+    options: [
+      "Poor camera settings",
+      "GPS instability or drift",
+      "Wind conditions",
+      "Wrong gimbal angle"
+    ],
+    correct: 1
+  },
+  {
+    id: 9,
+    question: "What are the two main capture phases for towers?",
+    options: [
+      "Morning and afternoon",
+      "Overview (20m above) and Detailed (equipment height)",
+      "Ground and aerial",
+      "Front and back"
+    ],
+    correct: 1
+  },
+  {
+    id: 10,
+    question: "What must be ON from hover start to mission end?",
+    options: ["GPS tracking", "Screen recording", "Auto exposure", "All sensors"],
+    correct: 1
+  }
+];
+
 export default function MissionMarkupQuiz() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [section, setSection] = useState('rooftop'); // 'rooftop' or 'tower'
   const [quizStarted, setQuizStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
+  const [rooftopCompleted, setRooftopCompleted] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
   });
 
-  const { data: previousAttempts = [] } = useQuery({
-    queryKey: ['quizAttempts', user?.email],
+  const { data: rooftopAttempts = [] } = useQuery({
+    queryKey: ['quizAttempts', user?.email, 'rooftop'],
     queryFn: () => base44.entities.QuizAttempt.filter({ 
       pilot_id: user?.email, 
       quiz_id: 'rooftop-markup-quiz' 
     }),
     enabled: !!user?.email
   });
+
+  const { data: towerAttempts = [] } = useQuery({
+    queryKey: ['quizAttempts', user?.email, 'tower'],
+    queryFn: () => base44.entities.QuizAttempt.filter({ 
+      pilot_id: user?.email, 
+      quiz_id: 'tower-markup-quiz' 
+    }),
+    enabled: !!user?.email
+  });
+
+  const QUIZ_QUESTIONS = section === 'rooftop' ? ROOFTOP_QUESTIONS : TOWER_QUESTIONS;
+  const previousAttempts = section === 'rooftop' ? rooftopAttempts : towerAttempts;
 
   const submitQuizMutation = useMutation({
     mutationFn: (data) => base44.entities.QuizAttempt.create(data),
@@ -159,7 +256,7 @@ export default function MissionMarkupQuiz() {
     setShowResults(true);
     
     await submitQuizMutation.mutateAsync({
-      quiz_id: 'rooftop-markup-quiz',
+      quiz_id: section === 'rooftop' ? 'rooftop-markup-quiz' : 'tower-markup-quiz',
       pilot_id: user?.email || user?.pilot_id || 'anonymous',
       score: results.score,
       total_questions: results.total,
@@ -174,6 +271,16 @@ export default function MissionMarkupQuiz() {
     setCurrentQuestion(0);
     setSelectedAnswers({});
     setShowResults(false);
+  };
+
+  const moveToTowerSection = () => {
+    setRooftopCompleted(true);
+    setSection('tower');
+    setQuizStarted(false);
+    setCurrentQuestion(0);
+    setSelectedAnswers({});
+    setShowResults(false);
+    setVideoWatched(false);
   };
 
   const bestScore = previousAttempts.length > 0 
@@ -192,8 +299,8 @@ export default function MissionMarkupQuiz() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">Rooftop Markup Training</h1>
-              <p className="text-sm text-slate-400">Watch video then take quiz</p>
+              <h1 className="text-2xl font-bold">{section === 'rooftop' ? 'Rooftop' : 'Tower'} Markup Training</h1>
+              <p className="text-sm text-slate-400">Watch video then take quiz {section === 'rooftop' && '(Part 1 of 2)'}</p>
             </div>
           </div>
 
@@ -207,21 +314,38 @@ export default function MissionMarkupQuiz() {
           )}
 
           <div className="bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 mb-6">
-            <div className="aspect-video bg-black">
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/M82GH-ZcWEM"
-                title="Mission Markup Training"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+            {section === 'rooftop' ? (
+              <div className="aspect-video bg-black">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/M82GH-ZcWEM"
+                  title="Rooftop Markup Training"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="aspect-video bg-gradient-to-br from-blue-900/20 to-slate-900 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800')] bg-cover bg-center opacity-20" />
+                <div className="relative z-10 text-center">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-500/20 mb-4">
+                    <PlayCircle className="w-10 h-10 text-blue-400" />
+                  </div>
+                  <p className="text-slate-300 font-medium">Tower Capture Training Video</p>
+                  <p className="text-sm text-slate-500 mt-2">Visual: Drone flying over cell tower</p>
+                </div>
+              </div>
+            )}
             <div className="p-6">
-              <h3 className="font-semibold text-lg mb-2">Rooftop Capture v9.6.0</h3>
+              <h3 className="font-semibold text-lg mb-2">
+                {section === 'rooftop' ? 'Rooftop Capture v9.6.0' : 'Tower Capture with Scanlink'}
+              </h3>
               <p className="text-sm text-slate-400 mb-4">
-                Learn rooftop mission setup, facade boundaries, battery swap procedures, and safety requirements.
+                {section === 'rooftop' 
+                  ? 'Learn rooftop mission setup, facade boundaries, battery swap procedures, and safety requirements.'
+                  : 'Learn tower mission setup, marking procedures, MSA settings, and capture phases for cell tower sites.'}
               </p>
               <Button
                 onClick={() => setVideoWatched(true)}
@@ -291,7 +415,7 @@ export default function MissionMarkupQuiz() {
             </h2>
             <p className="text-slate-400">
               {results.passed 
-                ? "Great work! You've demonstrated understanding of rooftop capture procedures."
+                ? `Great work! You've demonstrated understanding of ${section === 'rooftop' ? 'rooftop' : 'tower'} capture procedures.`
                 : "Review the training video and try again. You need 70% to pass."}
             </p>
           </div>
@@ -324,12 +448,28 @@ export default function MissionMarkupQuiz() {
             >
               Retake Quiz
             </Button>
-            <Button
-              onClick={() => navigate(createPageUrl('ToolsLinks'))}
-              className="flex-1 bg-blue-500 hover:bg-blue-600"
-            >
-              Back to Training
-            </Button>
+            {section === 'rooftop' && results.passed ? (
+              <Button
+                onClick={moveToTowerSection}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+              >
+                Next: Tower Quiz →
+              </Button>
+            ) : section === 'tower' && results.passed ? (
+              <Button
+                onClick={() => navigate(createPageUrl('ToolsLinks'))}
+                className="flex-1 bg-blue-500 hover:bg-blue-600"
+              >
+                Complete Training
+              </Button>
+            ) : (
+              <Button
+                onClick={() => navigate(createPageUrl('ToolsLinks'))}
+                className="flex-1 bg-blue-500 hover:bg-blue-600"
+              >
+                Back to Training
+              </Button>
+            )}
           </div>
         </motion.div>
       </div>
@@ -350,7 +490,7 @@ export default function MissionMarkupQuiz() {
               <BookOpen className="w-10 h-10 text-blue-400" />
             </div>
             <h1 className="text-3xl font-bold mb-2">Ready for the Quiz?</h1>
-            <p className="text-slate-400">10 questions about rooftop capture procedures</p>
+            <p className="text-slate-400">10 questions about {section === 'rooftop' ? 'rooftop' : 'tower'} capture procedures</p>
           </div>
 
           <InfoCard variant="info" className="mb-6">

@@ -81,20 +81,10 @@ export default function Home() {
           <Link to={createPageUrl('MissionMarkupQuiz')}>
             <ActionButton
               icon={BookOpen}
-              label="Rooftop Markup Quiz"
-              sublabel="Video + 10 questions (rooftop)"
+              label="Mission Markup Quiz"
+              sublabel="Rooftop + Tower: 20 questions total"
               variant="primary"
               index={0}
-            />
-          </Link>
-
-          <Link to={createPageUrl('TowerMarkupQuiz')}>
-            <ActionButton
-              icon={BookOpen}
-              label="Tower Markup Quiz"
-              sublabel="Video + 10 questions (tower)"
-              variant="primary"
-              index={1}
             />
           </Link>
 
@@ -103,7 +93,7 @@ export default function Home() {
               icon={PlayCircle}
               label="Training Videos"
               sublabel="Mission markup & tutorials"
-              index={2}
+              index={1}
             />
           </Link>
 
@@ -112,7 +102,7 @@ export default function Home() {
               icon={BookOpen}
               label="Resources & Guides"
               sublabel="Complete onboarding materials"
-              index={3}
+              index={2}
             />
           </Link>
         </div>
