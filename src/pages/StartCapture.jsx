@@ -27,7 +27,8 @@ import {
   CheckCircle2,
   XCircle,
   Home,
-  MapPin
+  MapPin,
+  Battery
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProgressBar from '@/components/ProgressBar';
@@ -260,6 +261,9 @@ export default function StartCapture() {
   const [jobId, setJobId] = useState('');
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [batterySwapMode, setBatterySwapMode] = useState(false);
+  const [batterySwapChecks, setBatterySwapChecks] = useState({});
+  const [batterySwapGpsComplete, setBatterySwapGpsComplete] = useState(false);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -359,6 +363,31 @@ export default function StartCapture() {
     setShowPostMissionForm(false);
     setFinalDecision(null);
   };
+
+  const startBatterySwap = () => {
+    setBatterySwapMode(true);
+    setBatterySwapChecks({});
+    setBatterySwapGpsComplete(false);
+  };
+
+  const completeBatterySwap = () => {
+    setBatterySwapMode(false);
+    setBatterySwapChecks({});
+    setBatterySwapGpsComplete(false);
+  };
+
+  const batterySwapItems = [
+    { id: 'landed_safe', label: 'Landed at safe location', critical: true },
+    { id: 'new_battery', label: 'New battery installed', critical: true },
+    { id: 'gps_verified', label: 'GPS Altitude Verifier used', sublabel: 'Altitude shift verified OK', critical: true },
+    { id: 'camera_settings', label: 'Camera settings re-verified', critical: true },
+    ...(siteType === 'tower' 
+      ? [{ id: 'tower_recentered', label: 'Tower re-centered', critical: true }]
+      : [{ id: 'same_takeoff', label: 'Ready at SAME takeoff location', critical: true }]
+    )
+  ];
+
+  const allBatterySwapChecked = batterySwapItems.every(item => batterySwapChecks[item.id]) && batterySwapGpsComplete;
 
   // Site Type Selection
   if (!siteType) {
@@ -485,8 +514,66 @@ export default function StartCapture() {
               <p className="text-slate-400 mt-1">{config.subtitle}</p>
             </div>
             
+            {/* Battery Swap Mode */}
+            {batterySwapMode && currentStep === 5 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <InfoCard variant="warning" title="Battery Swap In Progress">
+                  <p>Complete all checks before resuming flight</p>
+                </InfoCard>
+
+                <Timer 
+                  targetMinutes={5} 
+                  onComplete={() => setBatterySwapGpsComplete(true)}
+                  label="GPS Stabilisation (5 min)"
+                />
+
+                <Link to={createPageUrl('GPSVerifier')} target="_blank">
+                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
+                    <Satellite className="w-4 h-4 mr-2" />
+                    Open GPS Altitude Verifier
+                  </Button>
+                </Link>
+
+                <div className="space-y-3 mt-4">
+                  {batterySwapItems.map(item => (
+                    <ChecklistItem
+                      key={item.id}
+                      label={item.label}
+                      sublabel={item.sublabel}
+                      checked={batterySwapChecks[item.id]}
+                      critical={item.critical}
+                      onToggle={() => setBatterySwapChecks(prev => ({
+                        ...prev,
+                        [item.id]: !prev[item.id]
+                      }))}
+                    />
+                  ))}
+                </div>
+
+                {allBatterySwapChecked && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex gap-3"
+                  >
+                    <Button
+                      onClick={completeBatterySwap}
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Resume Flight
+                    </Button>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+
             {/* Step 3: GPS Timer */}
-            {currentStep === 3 && (
+            {currentStep === 3 && !batterySwapMode && (
               <div className="space-y-4">
                 <Timer 
                   targetMinutes={5} 
@@ -679,7 +766,7 @@ export default function StartCapture() {
             )}
             
             {/* Checklist Items */}
-            {config.items && currentStep !== totalSteps && (
+            {config.items && currentStep !== totalSteps && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
