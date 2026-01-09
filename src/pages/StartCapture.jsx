@@ -27,8 +27,7 @@ import {
   CheckCircle2,
   XCircle,
   Home,
-  MapPin,
-  Battery
+  MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProgressBar from '@/components/ProgressBar';
