@@ -66,20 +66,7 @@ export default function Home() {
             </Link>
             </motion.div>
 
-            <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            >
-            <Link to={createPageUrl('MissionMarkupQuiz')}>
-              <ActionButton
-                icon={BookOpen}
-                label="Mission Markup Quiz"
-                sublabel="Required: Watch video + take quiz"
-                variant="primary"
-              />
-            </Link>
-            </motion.div>
+
             </div>
 
             {/* Divider */}
@@ -91,12 +78,22 @@ export default function Home() {
 
         {/* Onboarding & Training Section */}
         <div className="space-y-3">
+          <Link to={createPageUrl('MissionMarkupQuiz')}>
+            <ActionButton
+              icon={BookOpen}
+              label="Mission Markup Quiz"
+              sublabel="START HERE: Video + 10 questions"
+              variant="primary"
+              index={0}
+            />
+          </Link>
+
           <Link to={createPageUrl('TrainingVideos')}>
             <ActionButton
               icon={PlayCircle}
               label="Training Videos"
               sublabel="Mission markup & tutorials"
-              index={0}
+              index={1}
             />
           </Link>
 
@@ -105,7 +102,7 @@ export default function Home() {
               icon={BookOpen}
               label="Resources & Guides"
               sublabel="Complete onboarding materials"
-              index={1}
+              index={2}
             />
           </Link>
         </div>
