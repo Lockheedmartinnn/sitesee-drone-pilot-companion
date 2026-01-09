@@ -20,93 +20,78 @@ import { cn } from '@/lib/utils';
 const ROOFTOP_QUESTIONS = [
   {
     id: 1,
-    question: "For rooftop captures, what is the MSA (Minimum Safe Altitude) set to?",
-    options: ["Equipment height", "Roof height", "10m above roof", "Ground level"],
-    correct: 1
+    question: "What is the minimum battery requirement before starting any flight?",
+    options: ["1-2 batteries at 80%", "2 batteries at 90%", "3+ batteries at 95-100% + remote 95-100%", "4 batteries at any charge"],
+    correct: 2
   },
   {
     id: 2,
-    question: "How should you mark the facade boundary for rooftop missions?",
-    options: ["Counter-clockwise", "Clockwise with external points only", "Any direction is fine", "Clockwise with concave points"],
-    correct: 1
+    question: "For rooftop missions, where MUST the pilot or spotter be during marking and capture?",
+    options: ["On the ground for safety", "In a vehicle nearby", "On the rooftop (CRITICAL)", "Anywhere with line of sight"],
+    correct: 2
   },
   {
     id: 3,
-    question: "During rooftop battery swaps, where MUST you land and takeoff?",
-    options: [
-      "Anywhere safe on the roof",
-      "On the ground below",
-      "EXACT SAME takeoff location",
-      "Near the equipment"
-    ],
+    question: "What critical safety feature must be ON for rooftop captures?",
+    options: ["Return to home", "Sport mode", "Obstacle Avoidance (verify in DJI app)", "Follow me mode"],
     correct: 2
   },
   {
     id: 4,
-    question: "What must be ON during rooftop flights for safety?",
-    options: ["Night lights", "Return to home", "Obstacle Avoidance", "Auto landing"],
+    question: "For rooftop missions, what is the MSA (Minimum Safe Altitude) set to?",
+    options: ["Ground level", "Equipment height", "Roof height (NOT equipment height)", "10m above roof"],
     correct: 2
   },
   {
     id: 5,
-    question: "Why might you adjust shutter speed for rooftop captures?",
-    options: [
-      "For faster flight",
-      "To manage roof surface reflections",
-      "To save battery",
-      "To increase altitude"
-    ],
+    question: "In which direction must the facade boundary be marked for rooftop missions?",
+    options: ["Counter-clockwise", "CLOCKWISE (external points only, no concave)", "Either direction", "From highest to lowest point"],
     correct: 1
   },
   {
     id: 6,
-    question: "Who MUST be present on the rooftop during marking and capture?",
-    options: [
-      "Only the drone",
-      "Building security",
-      "Pilot or spotter",
-      "Customer representative"
-    ],
-    correct: 2
+    question: "What camera setting adjustment is critical for rooftop captures to handle reflections?",
+    options: ["Increase ISO", "Adjust shutter speed (e.g., 1/2000 → 1/1500)", "Change aperture", "Enable HDR"],
+    correct: 1
   },
   {
     id: 7,
-    question: "How many facade orbits are typically set for rooftop missions?",
-    options: ["2 orbits", "3 orbits", "4 orbits", "5 orbits"],
-    correct: 2
+    question: "For battery swaps on rooftop missions, what is CRITICAL about the takeoff location?",
+    options: [
+      "Use any clear spot",
+      "Must use EXACT SAME location - cannot recenter mission",
+      "Choose highest point on roof",
+      "Land near equipment"
+    ],
+    correct: 1
   },
   {
     id: 8,
-    question: "What happens if you cannot land at the same takeoff location after battery swap?",
+    question: "What must be completed during battery swaps?",
     options: [
-      "Mission continues normally",
-      "You can recenter the mission",
-      "Mission cannot be recentered - compromised",
-      "Use RTH feature"
+      "Just install new battery and fly",
+      "Wait 5 min GPS stabilization + verify with Altitude Verifier + re-verify camera",
+      "Only check battery percentage",
+      "Wait 2 minutes"
     ],
-    correct: 2
+    correct: 1
   },
   {
     id: 9,
-    question: "What should you verify after GPS stabilization on battery swap?",
-    options: [
-      "Only battery level",
-      "GPS altitude shift and camera settings",
-      "Just the propellers",
-      "Wind speed only"
-    ],
+    question: "What must be ON and active from hover start to mission end?",
+    options: ["GPS tracking only", "Screen recording (CRITICAL)", "Auto return to home", "Sport mode"],
     correct: 1
   },
   {
     id: 10,
-    question: "What components might be included in a rooftop mission?",
+    question: "Where should the ScalePoint be placed?",
     options: [
-      "Only facade orbits",
-      "Roof, Equipment, Panorama, Orthomosaic",
-      "Just equipment shots",
-      "Only panorama"
+      "Under trees for protection",
+      "On elevated surface for better view",
+      "Clear line of sight, flat surface, both April Tags fully visible",
+      "As close to building as possible"
     ],
-    correct: 1
+    correct: 2
   }
 ];
 
