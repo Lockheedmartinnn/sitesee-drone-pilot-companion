@@ -17,6 +17,7 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
 import MissionMarkupQuiz from './pages/MissionMarkupQuiz';
+import TowerMarkupQuiz from './pages/TowerMarkupQuiz';
 import __Layout from './Layout.jsx';
 
 
@@ -40,6 +41,7 @@ export const PAGES = {
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
     "MissionMarkupQuiz": MissionMarkupQuiz,
+    "TowerMarkupQuiz": TowerMarkupQuiz,
 }
 
 export const pagesConfig = {

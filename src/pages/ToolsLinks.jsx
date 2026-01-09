@@ -301,56 +301,35 @@ export default function TrainingResources() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white">Mission Markup Quiz</p>
-                  <p className="text-sm text-emerald-300">START HERE: Video + 10 Questions</p>
+                  <p className="font-semibold text-white">Rooftop Markup Quiz</p>
+                  <p className="text-sm text-emerald-300">Video + 10 Questions (Rooftop)</p>
                 </div>
                 <ExternalLink className="w-4 h-4 text-emerald-500 flex-shrink-0" />
               </motion.div>
             </Link>
 
-            <motion.a
-              href="https://docs.google.com/forms/d/e/1FAIpQLScz8kxD5LzYQDJOZ9gD8vY3J0wvQiF7pO0iHnF5i7JXj8vNFA/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-slate-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  2
+            <Link to={createPageUrl('TowerMarkupQuiz')}>
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                    2
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <BookOpen className="w-5 h-5 text-blue-400" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-5 h-5 text-blue-400" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white">Tower Markup Quiz</p>
+                  <p className="text-sm text-slate-400">Video + 10 Questions (Tower)</p>
                 </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white">Tower Quiz</p>
-                <p className="text-sm text-slate-400">Image Acquisition with Scanlink (Towers)</p>
-              </div>
-              <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
-            </motion.a>
+                <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+              </motion.div>
+            </Link>
 
-            <motion.a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfcw3aLJeYjKGJvz_3E8JXm1BQMXRxYjqZr5F3T0z7p8iNRtA/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-slate-600 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm">
-                  3
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-5 h-5 text-purple-400" />
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white">Rooftop Quiz</p>
-                <p className="text-sm text-slate-400">Image Acquisition with Scanlink (Rooftops)</p>
-              </div>
-              <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
-            </motion.a>
+
           </div>
         </motion.div>
 

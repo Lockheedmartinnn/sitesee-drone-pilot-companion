@@ -19,97 +19,87 @@ import { cn } from '@/lib/utils';
 const QUIZ_QUESTIONS = [
   {
     id: 1,
-    question: "For rooftop captures, what is the MSA (Minimum Safe Altitude) set to?",
-    options: ["Equipment height", "Roof height", "10m above roof", "Ground level"],
+    question: "What is the minimum number of satellites required for GPS stabilization?",
+    options: ["20-24", "26-32", "32-36", "36-40"],
     correct: 1
   },
   {
     id: 2,
-    question: "How should you mark the facade boundary for rooftop missions?",
-    options: ["Counter-clockwise", "Clockwise with external points only", "Any direction is fine", "Clockwise with concave points"],
-    correct: 1
+    question: "How long should you wait for GPS stabilization on M3E (Mavic 3 Enterprise)?",
+    options: ["1-2 minutes", "3-4 minutes", "5 minutes on ground before takeoff", "5 minutes at hover after takeoff"],
+    correct: 2
   },
   {
     id: 3,
-    question: "During rooftop battery swaps, where MUST you land and takeoff?",
+    question: "What should you do after a battery swap on tower missions?",
     options: [
-      "Anywhere safe on the roof",
-      "On the ground below",
-      "EXACT SAME takeoff location",
-      "Near the equipment"
-    ],
-    correct: 2
-  },
-  {
-    id: 4,
-    question: "What must be ON during rooftop flights for safety?",
-    options: ["Night lights", "Return to home", "Obstacle Avoidance", "Auto landing"],
-    correct: 2
-  },
-  {
-    id: 5,
-    question: "Why might you adjust shutter speed for rooftop captures?",
-    options: [
-      "For faster flight",
-      "To manage roof surface reflections",
-      "To save battery",
-      "To increase altitude"
+      "Continue flying immediately",
+      "Wait 5 min GPS stabilization and re-center tower",
+      "Just re-center the tower",
+      "Only verify camera settings"
     ],
     correct: 1
   },
   {
+    id: 4,
+    question: "What is the typical MSA (Minimum Safe Altitude) range for tower captures?",
+    options: ["5-8m", "10-15m", "20-25m", "30-35m"],
+    correct: 1
+  },
+  {
+    id: 5,
+    question: "At what gimbal angle do you mark the tower center?",
+    options: ["0° gimbal", "-45° gimbal", "-60° gimbal", "-90° gimbal"],
+    correct: 3
+  },
+  {
     id: 6,
-    question: "Who MUST be present on the rooftop during marking and capture?",
-    options: [
-      "Only the drone",
-      "Building security",
-      "Pilot or spotter",
-      "Customer representative"
-    ],
+    question: "What buffer should you add when marking obstacle altitudes?",
+    options: ["No buffer needed", "+2m buffer", "+4m buffer", "+6m buffer"],
     correct: 2
   },
   {
     id: 7,
-    question: "How many facade orbits are typically set for rooftop missions?",
-    options: ["2 orbits", "3 orbits", "4 orbits", "5 orbits"],
-    correct: 2
-  },
-  {
-    id: 8,
-    question: "What happens if you cannot land at the same takeoff location after battery swap?",
+    question: "Where should the ScalePoint be placed?",
     options: [
-      "Mission continues normally",
-      "You can recenter the mission",
-      "Mission cannot be recentered - compromised",
-      "Use RTH feature"
+      "Under trees for shade",
+      "On elevated surface for better visibility",
+      "In clear line of sight on flat surface",
+      "As close to tower as possible"
     ],
     correct: 2
   },
   {
-    id: 9,
-    question: "What should you verify after GPS stabilization on battery swap?",
+    id: 8,
+    question: "What is the main cause of 'leaning' or 'ghosting' in captures?",
     options: [
-      "Only battery level",
-      "GPS altitude shift and camera settings",
-      "Just the propellers",
-      "Wind speed only"
+      "Poor camera settings",
+      "GPS instability or drift",
+      "Wind conditions",
+      "Wrong gimbal angle"
+    ],
+    correct: 1
+  },
+  {
+    id: 9,
+    question: "What are the two main capture phases for towers?",
+    options: [
+      "Morning and afternoon",
+      "Overview (20m above) and Detailed (equipment height)",
+      "Ground and aerial",
+      "Front and back"
     ],
     correct: 1
   },
   {
     id: 10,
-    question: "What components might be included in a rooftop mission?",
-    options: [
-      "Only facade orbits",
-      "Roof, Equipment, Panorama, Orthomosaic",
-      "Just equipment shots",
-      "Only panorama"
-    ],
+    question: "What must be ON from hover start to mission end?",
+    options: ["GPS tracking", "Screen recording", "Auto exposure", "All sensors"],
     correct: 1
   }
 ];
 
-export default function MissionMarkupQuiz() {
+export default function TowerMarkupQuiz() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [quizStarted, setQuizStarted] = useState(false);
@@ -127,7 +117,7 @@ export default function MissionMarkupQuiz() {
     queryKey: ['quizAttempts', user?.email],
     queryFn: () => base44.entities.QuizAttempt.filter({ 
       pilot_id: user?.email, 
-      quiz_id: 'rooftop-markup-quiz' 
+      quiz_id: 'tower-markup-quiz' 
     }),
     enabled: !!user?.email
   });
@@ -159,7 +149,7 @@ export default function MissionMarkupQuiz() {
     setShowResults(true);
     
     await submitQuizMutation.mutateAsync({
-      quiz_id: 'rooftop-markup-quiz',
+      quiz_id: 'tower-markup-quiz',
       pilot_id: user?.email || user?.pilot_id || 'anonymous',
       score: results.score,
       total_questions: results.total,
@@ -192,7 +182,7 @@ export default function MissionMarkupQuiz() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">Rooftop Markup Training</h1>
+              <h1 className="text-2xl font-bold">Tower Markup Training</h1>
               <p className="text-sm text-slate-400">Watch video then take quiz</p>
             </div>
           </div>
@@ -211,17 +201,17 @@ export default function MissionMarkupQuiz() {
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/M82GH-ZcWEM"
-                title="Mission Markup Training"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Tower Markup Training"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>
             <div className="p-6">
-              <h3 className="font-semibold text-lg mb-2">Rooftop Capture v9.6.0</h3>
+              <h3 className="font-semibold text-lg mb-2">Tower Capture with Scanlink</h3>
               <p className="text-sm text-slate-400 mb-4">
-                Learn rooftop mission setup, facade boundaries, battery swap procedures, and safety requirements.
+                Learn tower mission setup, marking procedures, MSA settings, and capture phases for cell tower sites.
               </p>
               <Button
                 onClick={() => setVideoWatched(true)}
@@ -291,7 +281,7 @@ export default function MissionMarkupQuiz() {
             </h2>
             <p className="text-slate-400">
               {results.passed 
-                ? "Great work! You've demonstrated understanding of rooftop capture procedures."
+                ? "Great work! You've demonstrated understanding of tower capture procedures."
                 : "Review the training video and try again. You need 70% to pass."}
             </p>
           </div>
@@ -350,7 +340,7 @@ export default function MissionMarkupQuiz() {
               <BookOpen className="w-10 h-10 text-blue-400" />
             </div>
             <h1 className="text-3xl font-bold mb-2">Ready for the Quiz?</h1>
-            <p className="text-slate-400">10 questions about rooftop capture procedures</p>
+            <p className="text-slate-400">10 questions about tower capture procedures</p>
           </div>
 
           <InfoCard variant="info" className="mb-6">
