@@ -113,24 +113,24 @@ const ROOFTOP_QUESTIONS = [
 const TOWER_QUESTIONS = [
   {
     id: 1,
-    question: "What is the minimum number of satellites required for GPS stabilization?",
-    options: ["20-24", "26-32", "32-36", "36-40"],
+    question: "What is the minimum satellite count required for GPS stabilization?",
+    options: ["20-24", "26-32 satellites (must reach this)", "32-36", "Any number above 20"],
     correct: 1
   },
   {
     id: 2,
     question: "How long should you wait for GPS stabilization on M3E (Mavic 3 Enterprise)?",
-    options: ["1-2 minutes", "3-4 minutes", "5 minutes on ground before takeoff", "5 minutes at hover after takeoff"],
+    options: ["1-2 minutes", "3-4 minutes", "5 minutes on ground with propellers OFF before takeoff", "5 minutes at hover after takeoff"],
     correct: 2
   },
   {
     id: 3,
-    question: "What should you do after a battery swap on tower missions?",
+    question: "What is required during battery swaps on tower missions?",
     options: [
-      "Continue flying immediately",
-      "Wait 5 min GPS stabilization and re-center tower",
+      "Continue immediately after battery change",
+      "Wait 5 min GPS stabilization + verify GPS with Altitude Verifier + re-center tower",
       "Just re-center the tower",
-      "Only verify camera settings"
+      "Only check camera settings"
     ],
     correct: 1
   },
@@ -143,32 +143,32 @@ const TOWER_QUESTIONS = [
   {
     id: 5,
     question: "At what gimbal angle do you mark the tower center?",
-    options: ["0° gimbal", "-45° gimbal", "-60° gimbal", "-90° gimbal"],
+    options: ["0° gimbal", "-45° gimbal", "-60° gimbal", "-90° gimbal (CRITICAL)"],
     correct: 3
   },
   {
     id: 6,
     question: "What buffer should you add when marking obstacle altitudes?",
-    options: ["No buffer needed", "+2m buffer", "+4m buffer", "+6m buffer"],
+    options: ["No buffer needed", "+2m buffer", "+4m buffer from actual height", "+6m buffer"],
     correct: 2
   },
   {
     id: 7,
-    question: "Where should the ScalePoint be placed?",
+    question: "Where should the ScalePoint be placed for best results?",
     options: [
       "Under trees for shade",
-      "On elevated surface for better visibility",
-      "In clear line of sight on flat surface",
+      "On elevated surface for visibility",
+      "Clear line of sight, flat surface, both April Tags fully visible",
       "As close to tower as possible"
     ],
     correct: 2
   },
   {
     id: 8,
-    question: "What is the main cause of 'leaning' or 'ghosting' in captures?",
+    question: "What is the PRIMARY cause of 'leaning' or 'ghosting' failures in captures?",
     options: [
       "Poor camera settings",
-      "GPS instability or drift",
+      "GPS instability or drift (main cause)",
       "Wind conditions",
       "Wrong gimbal angle"
     ],
@@ -176,19 +176,19 @@ const TOWER_QUESTIONS = [
   },
   {
     id: 9,
-    question: "What are the two main capture phases for towers?",
+    question: "Before EACH flight (including after battery swaps), what MUST be validated?",
     options: [
-      "Morning and afternoon",
-      "Overview (20m above) and Detailed (equipment height)",
-      "Ground and aerial",
-      "Front and back"
+      "Only GPS signal",
+      "Camera settings - screenshot to WhatsApp and wait for back office validation",
+      "Drone battery only",
+      "Tower distance"
     ],
     correct: 1
   },
   {
     id: 10,
-    question: "What must be ON from hover start to mission end?",
-    options: ["GPS tracking", "Screen recording", "Auto exposure", "All sensors"],
+    question: "What must be ON and recording from hover start to mission end?",
+    options: ["GPS tracking only", "Screen recording (CRITICAL - required)", "Auto exposure", "Return to home"],
     correct: 1
   }
 ];
