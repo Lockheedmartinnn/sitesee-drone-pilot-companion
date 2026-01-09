@@ -10,7 +10,8 @@ import {
   XCircle,
   Award,
   PlayCircle,
-  BookOpen
+  BookOpen,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import InfoCard from '@/components/InfoCard';
@@ -517,6 +518,17 @@ export default function MissionMarkupQuiz() {
               Start Quiz
             </Button>
           </div>
+
+          {user?.role === 'admin' && section === 'rooftop' && (
+            <Button
+              onClick={moveToTowerSection}
+              variant="outline"
+              className="w-full mt-3 border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              Admin: Skip to Tower Section
+            </Button>
+          )}
         </motion.div>
       </div>
     );
