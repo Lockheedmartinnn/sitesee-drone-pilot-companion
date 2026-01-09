@@ -64,11 +64,26 @@ export default function Home() {
                 variant="success"
               />
             </Link>
-          </motion.div>
-        </div>
+            </motion.div>
 
-        {/* Divider */}
-        <div className="flex items-center gap-4 mb-6">
+            <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            >
+            <Link to={createPageUrl('MissionMarkupQuiz')}>
+              <ActionButton
+                icon={BookOpen}
+                label="Mission Markup Quiz"
+                sublabel="Required: Watch video + take quiz"
+                variant="primary"
+              />
+            </Link>
+            </motion.div>
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 h-px bg-slate-700/50" />
           <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Onboarding & Training</span>
           <div className="flex-1 h-px bg-slate-700/50" />
