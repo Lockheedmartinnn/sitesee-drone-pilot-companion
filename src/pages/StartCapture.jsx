@@ -129,9 +129,10 @@ const TOWER_CONFIGS = {
       { id: 'gps_stable_flight', label: 'GPS stable during flight', sublabel: '26-32 satellites maintained' },
       { id: 'no_exposure_changes', label: 'No camera changes mid-flight', sublabel: 'Settings locked as validated', critical: true }
     ],
+    batterySwap: true,
     info: {
       title: "Battery Swap Protocol",
-      message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Re-verify camera settings\n5. Re-center tower before resuming"
+      message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Re-center tower before resuming"
     }
   },
   6: {
@@ -228,9 +229,10 @@ const ROOFTOP_CONFIGS = {
       { id: 'gps_stable_flight', label: 'GPS stable during flight', sublabel: '26-32 satellites maintained' },
       { id: 'no_exposure_changes', label: 'No camera changes mid-flight', sublabel: 'Settings locked as validated', critical: true }
     ],
+    batterySwap: true,
     info: {
       title: "Battery Swap Protocol - CRITICAL",
-      message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Re-verify camera settings\n5. Takeoff from same spot - cannot recenter mission"
+      message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
   },
   6: {
@@ -506,6 +508,14 @@ export default function StartCapture() {
                 {config.info && (
                   <InfoCard variant="info" title={config.info.title}>
                     <p className="whitespace-pre-line">{config.info.message}</p>
+                    {config.batterySwap && (
+                      <Link to={createPageUrl('GPSVerifier')}>
+                        <Button className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
+                          <Satellite className="w-4 h-4 mr-2" />
+                          Open GPS Altitude Verifier
+                        </Button>
+                      </Link>
+                    )}
                   </InfoCard>
                 )}
                 
