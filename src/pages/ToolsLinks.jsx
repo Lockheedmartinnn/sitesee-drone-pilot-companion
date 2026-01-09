@@ -287,6 +287,22 @@ export default function TrainingResources() {
           </div>
 
           <div className="space-y-2">
+            <Link to={createPageUrl('MissionMarkupQuiz')}>
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700/60 hover:border-slate-600/50 transition-all duration-200"
+              >
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white">Mission Markup Quiz</p>
+                  <p className="text-sm text-slate-400">Video + Quiz (In-App)</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-slate-500 flex-shrink-0" />
+              </motion.div>
+            </Link>
+
             <motion.a
               href="https://docs.google.com/forms/d/e/1FAIpQLScz8kxD5LzYQDJOZ9gD8vY3J0wvQiF7pO0iHnF5i7JXj8vNFA/viewform"
               target="_blank"
