@@ -219,6 +219,25 @@ export default function Profile() {
                 </div>
               )}
               
+              {/* Admin Access Button */}
+              {user?.role === 'admin' && !isEditing && (
+                <div className="pt-4 border-t border-slate-700">
+                  <Button
+                    onClick={async () => {
+                      await base44.auth.updateMe({ access_level: 'admin' });
+                      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+                    }}
+                    className="w-full bg-amber-500 hover:bg-amber-600"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Enable Admin Access Level
+                  </Button>
+                  <p className="text-xs text-slate-500 mt-2 text-center">
+                    Click to set your access_level to admin and view all checklists
+                  </p>
+                </div>
+              )}
+              
               {/* Success Message */}
               {saveSuccess && (
                 <motion.div
