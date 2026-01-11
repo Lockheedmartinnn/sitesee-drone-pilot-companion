@@ -9,7 +9,9 @@ import {
   Save, 
   Loader2,
   CheckCircle2,
-  Shield
+  Shield,
+  BookOpen,
+  Award
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +58,18 @@ export default function Profile() {
     },
     enabled: !!user,
   });
+
+  const { data: localCaptures = [] } = useQuery({
+    queryKey: ['localCaptures'],
+    queryFn: () => base44.entities.LocalMissionLog.list('-created_date'),
+    initialData: [],
+  });
+
+  const { data: quizAttempts = [] } = useQuery({
+    queryKey: ['allQuizAttempts'],
+    queryFn: () => base44.entities.QuizAttempt.list('-completed_at'),
+    initialData: [],
+  });
   
   const updateProfileMutation = useMutation({
     mutationFn: async (data) => {
@@ -84,6 +98,10 @@ export default function Profile() {
   const totalMissions = missionLogs.length;
   const successfulMissions = missionLogs.filter(log => log.outcome === 'success').length;
   const issuesFlagged = missionLogs.filter(log => log.outcome === 'issue_flagged').length;
+  
+  const userLocalCaptures = localCaptures.filter(c => c.created_by === user?.email);
+  const userQuizAttempts = quizAttempts.filter(q => q.created_by === user?.email);
+  const passedQuizzes = userQuizAttempts.filter(q => q.passed).length;
   
   return (
     <div className="min-h-screen text-white">
@@ -284,6 +302,38 @@ export default function Profile() {
               label="Issues Reported"
               value={issuesFlagged}
               color="bg-amber-500/20 text-amber-400"
+            />
+          </div>
+        </motion.div>
+
+        {/* Training Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6"
+        >
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">
+            Training Progress
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StatCard
+              icon={CheckCircle2}
+              label="Captures Completed"
+              value={userLocalCaptures.length}
+              color="bg-purple-500/20 text-purple-400"
+            />
+            <StatCard
+              icon={BookOpen}
+              label="Quiz Attempts"
+              value={userQuizAttempts.length}
+              color="bg-cyan-500/20 text-cyan-400"
+            />
+            <StatCard
+              icon={Award}
+              label="Quizzes Passed"
+              value={passedQuizzes}
+              color="bg-emerald-500/20 text-emerald-400"
             />
           </div>
         </motion.div>
