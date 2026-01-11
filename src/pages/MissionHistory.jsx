@@ -116,9 +116,15 @@ export default function MissionHistory() {
   });
 
   const localMissions = useMemo(() => {
-    // Show all missions without filtering
-    return allMissions;
-  }, [allMissions]);
+    if (!user) return [];
+    
+    // Admin sees all, regular users only see their own
+    if (user.role === 'admin') {
+      return allMissions;
+    }
+    
+    return allMissions.filter(mission => mission.created_by === user.email);
+  }, [allMissions, user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
@@ -139,11 +145,11 @@ export default function MissionHistory() {
             )}
           </div>
           <p className="text-slate-400 mb-3">
-            All captures from all devices and users
+            {user?.role === 'admin' ? 'All captures from all users' : 'Your completed capture checklists'}
           </p>
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
             <p className="text-xs text-blue-300">
-              📱 Training companion mode • Showing all capture records globally
+              📱 {user?.role === 'admin' ? 'Admin view: Showing all capture records globally' : 'Personal training companion • Showing only your captures'}
             </p>
           </div>
         </motion.div>
