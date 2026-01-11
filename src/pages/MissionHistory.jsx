@@ -94,9 +94,9 @@ export default function MissionHistory() {
   });
 
   const localMissions = useMemo(() => {
-    if (!user) return [];
-    return filterMissionsByAccess(allMissions, permissions, user.email, user);
-  }, [allMissions, permissions, user]);
+    // Show all missions without filtering
+    return allMissions;
+  }, [allMissions]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
@@ -117,13 +117,11 @@ export default function MissionHistory() {
             )}
           </div>
           <p className="text-slate-400 mb-3">
-            {permissions.canViewAllMissions ? 'All captures across teams' : 
-             permissions.canViewTeamMissions ? 'Your team captures' : 
-             'Your personal capture history'}
+            All captures from all devices and users
           </p>
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
             <p className="text-xs text-blue-300">
-              📱 Training companion mode • {permissions.canViewAllMissions ? 'Admin access' : permissions.canViewTeamMissions ? 'Manager access' : 'Pilot access'}
+              📱 Training companion mode • Showing all capture records globally
             </p>
           </div>
         </motion.div>

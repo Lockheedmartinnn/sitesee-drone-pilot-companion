@@ -195,21 +195,17 @@ export default function MissionMarkupQuiz() {
   });
 
   const { data: rooftopAttempts = [] } = useQuery({
-    queryKey: ['quizAttempts', user?.email, 'rooftop'],
+    queryKey: ['quizAttempts', 'rooftop'],
     queryFn: () => base44.entities.QuizAttempt.filter({ 
-      pilot_id: user?.email, 
       quiz_id: 'rooftop-markup-quiz' 
-    }),
-    enabled: !!user?.email
+    })
   });
 
   const { data: towerAttempts = [] } = useQuery({
-    queryKey: ['quizAttempts', user?.email, 'tower'],
+    queryKey: ['quizAttempts', 'tower'],
     queryFn: () => base44.entities.QuizAttempt.filter({ 
-      pilot_id: user?.email, 
       quiz_id: 'tower-markup-quiz' 
-    }),
-    enabled: !!user?.email
+    })
   });
 
   const QUIZ_QUESTIONS = section === 'rooftop' ? ROOFTOP_QUESTIONS : TOWER_QUESTIONS;
