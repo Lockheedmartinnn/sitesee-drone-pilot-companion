@@ -36,6 +36,10 @@ export function filterMissionsByAccess(missions, permissions, userEmail, user) {
     return missions.filter(m => m.company === permissions.company);
   }
   
-  // Pilot: only their own missions
-  return missions.filter(m => m.pilot_id === permissions.pilotId);
+  // Pilot: only their own missions - check both pilot_id and created_by (email)
+  return missions.filter(m => 
+    m.pilot_id === permissions.pilotId || 
+    m.pilot_id === userEmail ||
+    m.created_by === userEmail
+  );
 }
