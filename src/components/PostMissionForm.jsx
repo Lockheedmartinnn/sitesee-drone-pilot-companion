@@ -46,6 +46,23 @@ export default function PostMissionForm({
   const [location, setLocation] = useState('');
   const [droneModel, setDroneModel] = useState('');
   const [batteryChanges, setBatteryChanges] = useState('');
+  const [deviceLocation, setDeviceLocation] = useState(null);
+
+  React.useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setDeviceLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error('Location error:', error);
+        }
+      );
+    }
+  }, []);
   
   // Success form
   const [conditions, setConditions] = useState({
@@ -142,6 +159,8 @@ export default function PostMissionForm({
       drone_model: droneModel || undefined,
       battery_changes: batteryChanges ? parseInt(batteryChanges) : undefined,
       mission_date: new Date().toISOString(),
+      latitude: deviceLocation?.latitude,
+      longitude: deviceLocation?.longitude,
       ...(outcome === 'success' ? {
         conditions: selectedConditions,
         technical_notes: selectedTechnicalNotes,

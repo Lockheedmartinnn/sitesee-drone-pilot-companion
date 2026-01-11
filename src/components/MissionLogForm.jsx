@@ -7,10 +7,32 @@ import { Briefcase, StickyNote } from 'lucide-react';
 export default function MissionLogForm({ onSubmit, onCancel }) {
   const [jobId, setJobId] = useState('');
   const [notes, setNotes] = useState('');
+  const [location, setLocation] = useState(null);
+
+  React.useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error('Location error:', error);
+        }
+      );
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ job_id: jobId, notes });
+    onSubmit({ 
+      job_id: jobId, 
+      notes,
+      latitude: location?.latitude,
+      longitude: location?.longitude
+    });
   };
 
   return (
