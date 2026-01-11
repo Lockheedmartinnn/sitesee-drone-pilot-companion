@@ -61,13 +61,27 @@ export default function Profile() {
 
   const { data: localCaptures = [] } = useQuery({
     queryKey: ['localCaptures'],
-    queryFn: () => base44.entities.LocalMissionLog.list('-created_date'),
+    queryFn: async () => {
+      if (!user) return [];
+      return await base44.entities.LocalMissionLog.filter(
+        { created_by: user.email },
+        '-created_date'
+      );
+    },
+    enabled: !!user,
     initialData: [],
   });
 
   const { data: quizAttempts = [] } = useQuery({
     queryKey: ['allQuizAttempts'],
-    queryFn: () => base44.entities.QuizAttempt.list('-completed_at'),
+    queryFn: async () => {
+      if (!user) return [];
+      return await base44.entities.QuizAttempt.filter(
+        { created_by: user.email },
+        '-completed_at'
+      );
+    },
+    enabled: !!user,
     initialData: [],
   });
   
@@ -99,9 +113,7 @@ export default function Profile() {
   const successfulMissions = missionLogs.filter(log => log.outcome === 'success').length;
   const issuesFlagged = missionLogs.filter(log => log.outcome === 'issue_flagged').length;
   
-  const userLocalCaptures = localCaptures.filter(c => c.created_by === user?.email);
-  const userQuizAttempts = quizAttempts.filter(q => q.created_by === user?.email);
-  const passedQuizzes = userQuizAttempts.filter(q => q.passed).length;
+  const passedQuizzes = quizAttempts.filter(q => q.passed).length;
   
   return (
     <div className="min-h-screen text-white">
@@ -320,13 +332,13 @@ export default function Profile() {
             <StatCard
               icon={CheckCircle2}
               label="Captures Completed"
-              value={userLocalCaptures.length}
+              value={localCaptures.length}
               color="bg-purple-500/20 text-purple-400"
             />
             <StatCard
               icon={BookOpen}
               label="Quiz Attempts"
-              value={userQuizAttempts.length}
+              value={quizAttempts.length}
               color="bg-cyan-500/20 text-cyan-400"
             />
             <StatCard
