@@ -9,7 +9,9 @@ import {
   Briefcase,
   Clock,
   StickyNote,
-  Shield
+  Shield,
+  Mail,
+  MapPin
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -38,6 +40,16 @@ function LocalMissionCard({ mission }) {
         </div>
         
         <div className="space-y-3 mt-4">
+          {mission.created_by && (
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-xs text-slate-500">Email</p>
+                <p className="text-sm text-white">{mission.created_by}</p>
+              </div>
+            </div>
+          )}
+
           {mission.pilot_identifier && (
             <div className="flex items-center gap-2">
               <User className="w-4 h-4 text-slate-400" />
@@ -54,6 +66,16 @@ function LocalMissionCard({ mission }) {
               <div>
                 <p className="text-xs text-slate-500">Job Reference</p>
                 <p className="text-sm text-white">{mission.job_id}</p>
+              </div>
+            </div>
+          )}
+
+          {(mission.latitude && mission.longitude) && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-slate-400" />
+              <div>
+                <p className="text-xs text-slate-500">Location</p>
+                <p className="text-sm text-white font-mono">{mission.latitude.toFixed(6)}, {mission.longitude.toFixed(6)}</p>
               </div>
             </div>
           )}
