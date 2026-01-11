@@ -342,14 +342,16 @@ export default function StartCapture() {
           longitude: position.coords.longitude
         };
       }
-      
+
       await base44.entities.LocalMissionLog.create({
         pilot_id: user?.pilot_id || pilotId,
         company: user?.company || null,
         completion_timestamp: new Date().toISOString(),
         job_id: jobId || null,
         checklist_completed: true,
-        notes: `${siteType === 'rooftop' ? 'Rooftop' : 'Tower'} capture - ${finalDecision === 'yes' ? 'Pass' : 'Rework'}`
+        notes: `${siteType === 'rooftop' ? 'Rooftop' : 'Tower'} capture - ${finalDecision === 'yes' ? 'Pass' : 'Rework'}`,
+        latitude: coords?.latitude || null,
+        longitude: coords?.longitude || null
       });
       setMissionComplete(true);
     } catch (error) {
