@@ -135,7 +135,7 @@ const TOWER_CONFIGS = {
     },
     warning: {
       title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
     }
   },
   6: {
@@ -270,7 +270,7 @@ const ROOFTOP_CONFIGS = {
     },
     warning: {
       title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
+      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
     }
   },
   6: {
