@@ -248,11 +248,12 @@ const ROOFTOP_CONFIGS = {
       message: "Ground Control Points (GCPs) are physical markers with known coordinates used to improve the accuracy of your 3D model and measurements.\n\nGCPs provide:\n• Improved positional accuracy\n• Better scale verification\n• Enhanced model georeferencing\n\nFor detailed guidance, see SiteSee's GCP User Guide."
     },
     warning: {
-      title: "GCP Placement Best Practices",
-      message: "✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Minimum 4-5 GCPs recommended\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
+      title: "CRITICAL: Triangulation Required",
+      message: "⚠️ DO NOT place GCPs in a straight line - they MUST be staggered for proper triangulation\n\n✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Stagger placement - avoid linear arrangements\n✓ Minimum 5 GCPs required\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Don't arrange in a straight line\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
     },
     items: [
-      { id: 'gcp_count', label: 'Minimum 4-5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
+      { id: 'gcp_count', label: 'Minimum 5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
+      { id: 'gcp_staggered', label: 'GCPs staggered (NOT in straight line)', sublabel: 'Required for triangulation', critical: true },
       { id: 'gcp_coordinates', label: 'GCP coordinates recorded', sublabel: 'Using GPS or survey equipment', critical: true },
       { id: 'gcp_flat', label: 'GCPs on flat, stable surfaces', sublabel: 'No uneven ground or vegetation' },
       { id: 'gcp_visible', label: 'GCPs visible from multiple angles', sublabel: 'No shadows or obstructions', critical: true },
