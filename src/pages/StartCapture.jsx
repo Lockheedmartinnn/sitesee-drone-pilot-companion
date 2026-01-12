@@ -134,8 +134,8 @@ const TOWER_CONFIGS = {
       message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
     },
     warning: {
-      title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
+      title: "CRITICAL: Battery Change Protocol",
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU STARTED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
@@ -259,8 +259,8 @@ const ROOFTOP_CONFIGS = {
       message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
     },
     warning: {
-      title: "GPS Signal Requirements",
-      message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first."
+      title: "CRITICAL: Battery Change Protocol",
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU STARTED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
