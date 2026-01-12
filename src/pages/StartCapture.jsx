@@ -413,8 +413,8 @@ export default function StartCapture() {
   const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
-  // Step 7 can proceed if: battery change answered NO and all items checked
-  const step7CanProceed = needsBatteryChange === false && allItemsChecked;
+  // Step 7 can proceed if: all items checked AND battery change answered
+  const step7CanProceed = allItemsChecked && needsBatteryChange !== null;
   const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
@@ -996,8 +996,24 @@ export default function StartCapture() {
               </InfoCard>
             )}
 
-            {/* Step 7: Battery Change Yes/No */}
-            {currentStep === 7 && needsBatteryChange === null && !batterySwapMode && (
+            {/* Step 7: Flight Execution Checklist */}
+            {currentStep === 7 && !batterySwapMode && (
+              <div className="space-y-3 mb-6">
+                {config.items.map(item => (
+                  <ChecklistItem
+                    key={item.id}
+                    label={item.label}
+                    sublabel={item.sublabel}
+                    checked={checkedItems[item.id]}
+                    critical={item.critical}
+                    onToggle={() => toggleItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Step 7: Battery Change Question (after checklist) */}
+            {currentStep === 7 && allItemsChecked && needsBatteryChange === null && !batterySwapMode && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1032,22 +1048,6 @@ export default function StartCapture() {
                   </div>
                 </InfoCard>
               </motion.div>
-            )}
-
-            {/* Step 7: Flight Execution Checklist (if no battery change) */}
-            {currentStep === 7 && needsBatteryChange === false && !batterySwapMode && (
-              <div className="space-y-3">
-                {config.items.map(item => (
-                  <ChecklistItem
-                    key={item.id}
-                    label={item.label}
-                    sublabel={item.sublabel}
-                    checked={checkedItems[item.id]}
-                    critical={item.critical}
-                    onToggle={() => toggleItem(item.id)}
-                  />
-                ))}
-              </div>
             )}
 
             {/* Checklist Items (other steps) */}
