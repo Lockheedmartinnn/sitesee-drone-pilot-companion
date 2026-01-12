@@ -140,9 +140,8 @@ const TOWER_CONFIGS = {
   },
   6: {
     title: "Mission Setup & Camera",
-    subtitle: "Configure mission parameters and validate camera settings",
+    subtitle: "Configure mission parameters",
     items: [
-      { id: 'camera_validated', label: 'Camera settings validated', sublabel: 'F-stop, exposure, ISO - Screenshot to WhatsApp', critical: true },
       { id: 'tower_type', label: 'Tower type selected', sublabel: 'Correct type for this site' },
       { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID' },
       { id: 'msa_set', label: 'MSA set (10-15m)', sublabel: 'Minimum Safe Altitude', critical: true },
@@ -152,15 +151,7 @@ const TOWER_CONFIGS = {
       { id: 'tower_edge', label: 'Tower edge marked', sublabel: '-90° gimbal (radius ~4.5m for SST)' },
       { id: 'obstacles_checked', label: 'Obstacles checked & marked', sublabel: 'All boundaries marked' },
       { id: 'obstacle_altitude', label: 'Obstacle altitudes set', sublabel: '+4m buffer from actual height' }
-    ],
-    capturePhases: [
-      { name: "Phase 1 (Overview)", altitude: "20m above tower", gimbal: "-90°", notes: "Overhead capture for full site view" },
-      { name: "Phase 2 (Detailed)", altitude: "At equipment height", gimbal: "-60°", notes: "Detailed equipment inspection" }
-    ],
-    warning: {
-      title: "Camera Validation Critical",
-      message: "Send screenshot to CAMERA DRONE SETTING WhatsApp group. Wait for back office validation before EACH flight. Re-validate after battery swaps."
-    }
+    ]
   },
   7: {
     title: "Flight Execution",
