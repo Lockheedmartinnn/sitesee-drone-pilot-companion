@@ -1071,25 +1071,17 @@ export default function StartCapture() {
             
             {/* Final Step Checklist */}
             {currentStep === totalSteps && !finalDecision && (
-              <div className="space-y-4">
-                <Link to={createPageUrl('GPSVerifier')} target="_blank">
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
-                    <Satellite className="w-4 h-4 mr-2" />
-                    Open GPS Altitude Verifier
-                  </Button>
-                </Link>
-                <div className="space-y-3">
-                  {config.items.map(item => (
-                    <ChecklistItem
-                      key={item.id}
-                      label={item.label}
-                      sublabel={item.sublabel}
-                      checked={checkedItems[item.id]}
-                      critical={item.critical}
-                      onToggle={() => toggleItem(item.id)}
-                    />
-                  ))}
-                </div>
+              <div className="space-y-3">
+                {config.items.map(item => (
+                  <ChecklistItem
+                    key={item.id}
+                    label={item.label}
+                    sublabel={item.sublabel}
+                    checked={checkedItems[item.id]}
+                    critical={item.critical}
+                    onToggle={() => toggleItem(item.id)}
+                  />
+                ))}
               </div>
             )}
           </motion.div>
