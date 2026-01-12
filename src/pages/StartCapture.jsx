@@ -307,6 +307,7 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Quality check before leaving site",
     items: [
       { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Same as takeoff point' },
+      { id: 'gps_variance_check', label: 'GPS variance verified', sublabel: 'Use GPS Altitude Verifier to check stability', critical: true },
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
       { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
@@ -1070,17 +1071,25 @@ export default function StartCapture() {
             
             {/* Final Step Checklist */}
             {currentStep === totalSteps && !finalDecision && (
-              <div className="space-y-3">
-                {config.items.map(item => (
-                  <ChecklistItem
-                    key={item.id}
-                    label={item.label}
-                    sublabel={item.sublabel}
-                    checked={checkedItems[item.id]}
-                    critical={item.critical}
-                    onToggle={() => toggleItem(item.id)}
-                  />
-                ))}
+              <div className="space-y-4">
+                <Link to={createPageUrl('GPSVerifier')} target="_blank">
+                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
+                    <Satellite className="w-4 h-4 mr-2" />
+                    Open GPS Altitude Verifier
+                  </Button>
+                </Link>
+                <div className="space-y-3">
+                  {config.items.map(item => (
+                    <ChecklistItem
+                      key={item.id}
+                      label={item.label}
+                      sublabel={item.sublabel}
+                      checked={checkedItems[item.id]}
+                      critical={item.critical}
+                      onToggle={() => toggleItem(item.id)}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>
