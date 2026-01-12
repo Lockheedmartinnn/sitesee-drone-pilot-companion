@@ -107,6 +107,25 @@ const TOWER_CONFIGS = {
     ]
   },
   4: {
+    title: "GCP Placement",
+    subtitle: "Ground Control Points for enhanced accuracy",
+    info: {
+      title: "What are GCPs?",
+      message: "Ground Control Points (GCPs) are physical markers with known coordinates used to improve the accuracy of your 3D model and measurements.\n\nGCPs provide:\n• Improved positional accuracy\n• Better scale verification\n• Enhanced model georeferencing\n\nFor detailed guidance, see SiteSee's GCP User Guide."
+    },
+    warning: {
+      title: "GCP Placement Best Practices",
+      message: "✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Minimum 4-5 GCPs recommended\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
+    },
+    items: [
+      { id: 'gcp_count', label: 'Minimum 4-5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
+      { id: 'gcp_coordinates', label: 'GCP coordinates recorded', sublabel: 'Using GPS or survey equipment', critical: true },
+      { id: 'gcp_flat', label: 'GCPs on flat, stable surfaces', sublabel: 'No uneven ground or vegetation' },
+      { id: 'gcp_visible', label: 'GCPs visible from multiple angles', sublabel: 'No shadows or obstructions', critical: true },
+      { id: 'gcp_photos', label: 'Close-up photos of each GCP taken', sublabel: 'For back office reference' }
+    ]
+  },
+  5: {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
