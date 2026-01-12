@@ -334,6 +334,7 @@ export default function StartCapture() {
   const [usingScalePoint, setUsingScalePoint] = useState(null);
   const [usingGCP, setUsingGCP] = useState(null);
   const [needsBatteryChange, setNeedsBatteryChange] = useState(null);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -371,12 +372,39 @@ export default function StartCapture() {
   const STEP_CONFIGS = siteType === 'rooftop' ? ROOFTOP_CONFIGS : TOWER_CONFIGS;
   const config = STEP_CONFIGS[currentStep];
   
+  const logActivity = useCallback(async (actionType, itemId, itemLabel, newState) => {
+    try {
+      await base44.entities.ChecklistActivity.create({
+        pilot_id: user?.pilot_id || pilotId,
+        pilot_email: user?.email || pilotId,
+        company: user?.company || null,
+        site_type: siteType,
+        step_number: currentStep,
+        step_name: STEPS[currentStep - 1],
+        action_type: actionType,
+        item_id: itemId,
+        item_label: itemLabel,
+        new_state: newState,
+        latitude: location?.latitude || null,
+        longitude: location?.longitude || null,
+        session_id: sessionId
+      });
+    } catch (error) {
+      console.error('Failed to log activity:', error);
+    }
+  }, [user, pilotId, siteType, currentStep, location, sessionId, STEPS]);
+
   const toggleItem = useCallback((id) => {
-    setCheckedItems(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  }, []);
+    setCheckedItems(prev => {
+      const newState = !prev[id];
+      const item = config?.items?.find(i => i.id === id);
+      logActivity('checkbox_toggle', id, item?.label || id, newState ? 'checked' : 'unchecked');
+      return {
+        ...prev,
+        [id]: newState
+      };
+    });
+  }, [config, logActivity]);
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 8;
@@ -390,6 +418,9 @@ export default function StartCapture() {
   const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
+    // Log step navigation
+    logActivity('step_navigation', `step_${currentStep}_to_${currentStep + 1}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[currentStep]}`, 'next');
+    
     // If on Step 7 and battery change is needed, go back to Step 5
     if (currentStep === 7 && needsBatteryChange === true) {
       setCurrentStep(5);
@@ -665,7 +696,10 @@ export default function StartCapture() {
               <div className="space-y-4">
                 <Timer 
                   targetMinutes={5} 
-                  onComplete={() => setGpsTimerComplete(true)}
+                  onComplete={() => {
+                    setGpsTimerComplete(true);
+                    logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
+                  }}
                   label="GPS Stabilisation Timer"
                 />
                 
@@ -864,14 +898,20 @@ export default function StartCapture() {
                   <p className="mb-4">Are you using a ScalePoint for this capture?</p>
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => setUsingScalePoint(true)}
+                      onClick={() => {
+                        setUsingScalePoint(true);
+                        logActivity('yes_no_decision', 'scalepoint_usage', 'Are you using a ScalePoint?', 'yes');
+                      }}
                       className="flex-1 bg-blue-500 hover:bg-blue-600"
                     >
                       <CheckCircle2 className="w-4 h-4 mr-2" />
                       Yes
                     </Button>
                     <Button
-                      onClick={() => setUsingScalePoint(false)}
+                      onClick={() => {
+                        setUsingScalePoint(false);
+                        logActivity('yes_no_decision', 'scalepoint_usage', 'Are you using a ScalePoint?', 'no');
+                      }}
                       variant="outline"
                       className="flex-1 border-slate-600"
                     >
@@ -917,14 +957,20 @@ export default function StartCapture() {
                   <p className="mb-4">Are you using Ground Control Points (GCPs) for this capture?</p>
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => setUsingGCP(true)}
+                      onClick={() => {
+                        setUsingGCP(true);
+                        logActivity('yes_no_decision', 'gcp_usage', 'Are you using Ground Control Points (GCPs)?', 'yes');
+                      }}
                       className="flex-1 bg-blue-500 hover:bg-blue-600"
                     >
                       <CheckCircle2 className="w-4 h-4 mr-2" />
                       Yes
                     </Button>
                     <Button
-                      onClick={() => setUsingGCP(false)}
+                      onClick={() => {
+                        setUsingGCP(false);
+                        logActivity('yes_no_decision', 'gcp_usage', 'Are you using Ground Control Points (GCPs)?', 'no');
+                      }}
                       variant="outline"
                       className="flex-1 border-slate-600"
                     >
@@ -970,14 +1016,20 @@ export default function StartCapture() {
                   <p className="mb-4">Do you need to change the battery?</p>
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => setNeedsBatteryChange(true)}
+                      onClick={() => {
+                        setNeedsBatteryChange(true);
+                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
+                      }}
                       className="flex-1 bg-amber-500 hover:bg-amber-600"
                     >
                       <Battery className="w-4 h-4 mr-2" />
                       Yes - Change Battery
                     </Button>
                     <Button
-                      onClick={() => setNeedsBatteryChange(false)}
+                      onClick={() => {
+                        setNeedsBatteryChange(false);
+                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'no');
+                      }}
                       className="flex-1 bg-blue-500 hover:bg-blue-600"
                     >
                       <CheckCircle2 className="w-4 h-4 mr-2" />
