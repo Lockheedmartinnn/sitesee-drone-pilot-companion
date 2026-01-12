@@ -62,49 +62,7 @@ const ROOFTOP_STEPS = [
 const TOWER_CONFIGS = {
   1: {
     title: "Equipment & Pre-Flight Checklist",
-    subtitle: "Complete before any flight activity",
-    items: [
-      { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
-      { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
-      { id: 'takeoff_clear', label: 'Takeoff area clear', sublabel: 'At least 5m from crowd/obstacles' },
-      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
-      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
-    ]
-  },
-  2: {
-    title: "Camera Setup",
-    subtitle: "Configure camera settings before flight",
-    info: {
-      title: "Required Camera Settings",
-      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
-    },
-    items: [
-      { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
-      { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
-      { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
-      { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
-      { id: 'camera_iso', label: 'ISO - 100', critical: true },
-      { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
-      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
-    ]
-  },
-  3: {
-    title: "ScalePoint Placement",
-    subtitle: "Critical for accurate measurements",
-    info: {
-      title: "Good Placement Requirements",
-      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
-    },
-    warning: {
-      title: "Bad Placement to AVOID",
-      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
-    },
-    items: [
-      { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
-      { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
-      { id: 'scalepoint_distance', label: 'Proper distance from tower', sublabel: 'Close enough to capture, far from obstacles' },
-      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
-    ]
+...
   },
   4: {
     title: "GCP Placement",
@@ -114,8 +72,8 @@ const TOWER_CONFIGS = {
       message: "Ground Control Points (GCPs) are physical markers with known coordinates used to improve the accuracy of your 3D model and measurements.\n\nGCPs provide:\n• Improved positional accuracy\n• Better scale verification\n• Enhanced model georeferencing\n\nFor detailed guidance, see SiteSee's GCP User Guide."
     },
     warning: {
-      title: "CRITICAL: Triangulation Required",
-      message: "⚠️ DO NOT place GCPs in a straight line - they MUST be staggered for proper triangulation\n\n✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Stagger placement - avoid linear arrangements\n✓ Minimum 5 GCPs required\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Don't arrange in a straight line\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
+      title: "CRITICAL",
+      message: "⚠️ DO NOT place GCPs in a straight line - they MUST be staggered\n\nMinimum 5 GCPs required • Distribute evenly around site • Place on flat surfaces • Record coordinates"
     },
     items: [
       { id: 'gcp_count', label: 'Minimum 5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
@@ -182,54 +140,7 @@ const TOWER_CONFIGS = {
 const ROOFTOP_CONFIGS = {
   1: {
     title: "Equipment & Pre-Flight Checklist",
-    subtitle: "Complete before any flight activity",
-    items: [
-      { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
-      { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
-      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Pilot/spotter MUST be on roof', critical: true },
-      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
-      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
-      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
-    ],
-    warning: {
-      title: "Rooftop Safety",
-      message: "Pilot or spotter MUST be present on roof during marking and capture. DO NOT attempt without rooftop access."
-    }
-  },
-  2: {
-    title: "Camera Setup",
-    subtitle: "Configure camera settings before flight",
-    info: {
-      title: "Required Camera Settings",
-      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
-    },
-    items: [
-      { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
-      { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
-      { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
-      { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
-      { id: 'camera_iso', label: 'ISO - 100', critical: true },
-      { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
-      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
-    ]
-  },
-  3: {
-    title: "ScalePoint Placement",
-    subtitle: "Critical for accurate measurements",
-    info: {
-      title: "Good Placement Requirements",
-      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
-    },
-    warning: {
-      title: "Bad Placement to AVOID",
-      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
-    },
-    items: [
-      { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
-      { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
-      { id: 'scalepoint_distance', label: 'Proper distance from tower', sublabel: 'Close enough to capture, far from obstacles' },
-      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
-    ]
+...
   },
   4: {
     title: "GCP Placement",
@@ -239,8 +150,8 @@ const ROOFTOP_CONFIGS = {
       message: "Ground Control Points (GCPs) are physical markers with known coordinates used to improve the accuracy of your 3D model and measurements.\n\nGCPs provide:\n• Improved positional accuracy\n• Better scale verification\n• Enhanced model georeferencing\n\nFor detailed guidance, see SiteSee's GCP User Guide."
     },
     warning: {
-      title: "CRITICAL: Triangulation Required",
-      message: "⚠️ DO NOT place GCPs in a straight line - they MUST be staggered for proper triangulation\n\n✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Stagger placement - avoid linear arrangements\n✓ Minimum 5 GCPs required\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Don't arrange in a straight line\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
+      title: "CRITICAL",
+      message: "⚠️ DO NOT place GCPs in a straight line - they MUST be staggered\n\nMinimum 5 GCPs required • Distribute evenly around site • Place on flat surfaces • Record coordinates"
     },
     items: [
       { id: 'gcp_count', label: 'Minimum 5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
