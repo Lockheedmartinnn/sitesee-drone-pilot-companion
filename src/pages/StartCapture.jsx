@@ -222,6 +222,25 @@ const ROOFTOP_CONFIGS = {
     ]
   },
   4: {
+    title: "GCP Placement",
+    subtitle: "Ground Control Points for enhanced accuracy",
+    info: {
+      title: "What are GCPs?",
+      message: "Ground Control Points (GCPs) are physical markers with known coordinates used to improve the accuracy of your 3D model and measurements.\n\nGCPs provide:\n• Improved positional accuracy\n• Better scale verification\n• Enhanced model georeferencing\n\nFor detailed guidance, see SiteSee's GCP User Guide."
+    },
+    warning: {
+      title: "GCP Placement Best Practices",
+      message: "✓ Place on flat, stable surfaces\n✓ Distribute evenly around site perimeter\n✓ Minimum 4-5 GCPs recommended\n✓ Mark coordinates with GPS/survey equipment\n✓ Ensure visible from multiple angles\n✓ Avoid shadows and obstructions\n\n✗ Don't place on uneven ground\n✗ Avoid areas with vegetation\n✗ Don't cluster all in one area"
+    },
+    items: [
+      { id: 'gcp_count', label: 'Minimum 4-5 GCPs placed', sublabel: 'Distributed around site perimeter', critical: true },
+      { id: 'gcp_coordinates', label: 'GCP coordinates recorded', sublabel: 'Using GPS or survey equipment', critical: true },
+      { id: 'gcp_flat', label: 'GCPs on flat, stable surfaces', sublabel: 'No uneven ground or vegetation' },
+      { id: 'gcp_visible', label: 'GCPs visible from multiple angles', sublabel: 'No shadows or obstructions', critical: true },
+      { id: 'gcp_photos', label: 'Close-up photos of each GCP taken', sublabel: 'For back office reference' }
+    ]
+  },
+  5: {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
@@ -258,7 +277,7 @@ const ROOFTOP_CONFIGS = {
       message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
     }
   },
-  8: {
+  7: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -272,6 +291,17 @@ const ROOFTOP_CONFIGS = {
       title: "Battery Swap Protocol - CRITICAL",
       message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
+  },
+  8: {
+    title: "Post-Flight QC",
+    subtitle: "Quality check before leaving site",
+    items: [
+      { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Same as takeoff point' },
+      { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
+      { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
+      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
+      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
+    ]
   }
 };
 
