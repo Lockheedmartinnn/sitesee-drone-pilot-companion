@@ -996,13 +996,10 @@ export default function StartCapture() {
               </InfoCard>
             )}
 
-            {/* Step 7: Battery Change Yes/No */}
-            {currentStep === 7 && needsBatteryChange === null && !batterySwapMode && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
-              >
+            {/* Step 7: Battery Change and Flight Execution */}
+            {currentStep === 7 && !batterySwapMode && (
+              <div className="space-y-4">
+                {/* Battery Change Question */}
                 <InfoCard variant="info" title="Battery Change">
                   <p className="mb-4">Do you need to change the battery?</p>
                   <div className="flex gap-3">
@@ -1025,28 +1022,33 @@ export default function StartCapture() {
                         logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'no');
                       }}
                       className="flex-1 bg-blue-500 hover:bg-blue-600"
+                      disabled={needsBatteryChange === false}
                     >
                       <CheckCircle2 className="w-4 h-4 mr-2" />
-                      No - Continue
+                      {needsBatteryChange === false ? '✓ No Battery Change' : 'No - Continue'}
                     </Button>
                   </div>
                 </InfoCard>
-              </motion.div>
-            )}
 
-            {/* Step 7: Flight Execution Checklist (if no battery change) */}
-            {currentStep === 7 && needsBatteryChange === false && !batterySwapMode && (
-              <div className="space-y-3">
-                {config.items.map(item => (
-                  <ChecklistItem
-                    key={item.id}
-                    label={item.label}
-                    sublabel={item.sublabel}
-                    checked={checkedItems[item.id]}
-                    critical={item.critical}
-                    onToggle={() => toggleItem(item.id)}
-                  />
-                ))}
+                {/* Flight Execution Checklist (shown after No is selected) */}
+                {needsBatteryChange === false && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3"
+                  >
+                    {config.items.map(item => (
+                      <ChecklistItem
+                        key={item.id}
+                        label={item.label}
+                        sublabel={item.sublabel}
+                        checked={checkedItems[item.id]}
+                        critical={item.critical}
+                        onToggle={() => toggleItem(item.id)}
+                      />
+                    ))}
+                  </motion.div>
+                )}
               </div>
             )}
 

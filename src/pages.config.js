@@ -13,11 +13,11 @@ import PortfolioOverview from './pages/PortfolioOverview';
 import Profile from './pages/Profile';
 import QuickReference from './pages/QuickReference';
 import Scenarios from './pages/Scenarios';
-import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
 import ChecklistActivityLog from './pages/ChecklistActivityLog';
+import StartCapture from './pages/StartCapture';
 import __Layout from './Layout.jsx';
 
 
@@ -37,11 +37,11 @@ export const PAGES = {
     "Profile": Profile,
     "QuickReference": QuickReference,
     "Scenarios": Scenarios,
-    "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
     "ChecklistActivityLog": ChecklistActivityLog,
+    "StartCapture": StartCapture,
 }
 
 export const pagesConfig = {
