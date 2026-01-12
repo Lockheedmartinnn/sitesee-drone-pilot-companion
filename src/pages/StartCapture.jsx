@@ -413,22 +413,13 @@ export default function StartCapture() {
   const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
-  // Step 7 can proceed if: battery change answered and (if no) all items checked
-  const step7CanProceed = needsBatteryChange === false ? allItemsChecked : needsBatteryChange === true;
+  // Step 7 can proceed if: battery change answered NO and all items checked
+  const step7CanProceed = needsBatteryChange === false && allItemsChecked;
   const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
     // Log step navigation
     logActivity('step_navigation', `step_${currentStep}_to_${currentStep + 1}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[currentStep]}`, 'next');
-    
-    // If on Step 7 and battery change is needed, go back to Step 5
-    if (currentStep === 7 && needsBatteryChange === true) {
-      setCurrentStep(5);
-      setGpsTimerComplete(false);
-      setCheckedItems({});
-      setNeedsBatteryChange(null);
-      return;
-    }
     
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
@@ -1017,8 +1008,11 @@ export default function StartCapture() {
                   <div className="flex gap-3">
                     <Button
                       onClick={() => {
-                        setNeedsBatteryChange(true);
                         logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
+                        setCurrentStep(5);
+                        setGpsTimerComplete(false);
+                        setCheckedItems({});
+                        setNeedsBatteryChange(null);
                       }}
                       className="flex-1 bg-amber-500 hover:bg-amber-600"
                     >
@@ -1054,14 +1048,6 @@ export default function StartCapture() {
                   />
                 ))}
               </div>
-            )}
-
-            {/* Step 7: Battery Change Redirect Message */}
-            {currentStep === 7 && needsBatteryChange === true && !batterySwapMode && (
-              <InfoCard variant="warning" title="Battery Change Required">
-                <p className="mb-3">You will be redirected to GPS Stabilisation (Step 5) to complete the battery change protocol.</p>
-                <p className="text-sm">After stabilization, you'll proceed through Mission Setup and return to Flight Execution.</p>
-              </InfoCard>
             )}
 
             {/* Checklist Items (other steps) */}
