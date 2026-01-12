@@ -293,8 +293,6 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Monitor during active mission",
     items: [
       { id: 'screen_recording_active', label: 'Screen recording confirmed', sublabel: 'Active throughout mission', critical: true },
-      { id: 'obstacle_avoidance_on', label: 'Obstacle avoidance active', sublabel: 'Critical for rooftop safety', critical: true },
-      { id: 'gps_stable_flight', label: 'GPS stable during flight', sublabel: '26-32 satellites maintained' },
       { id: 'no_exposure_changes', label: 'No camera changes mid-flight', sublabel: 'Settings locked as validated', critical: true }
     ],
     batterySwap: true,
