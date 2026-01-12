@@ -154,7 +154,7 @@ const TOWER_CONFIGS = {
       message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Re-center tower before resuming"
     }
   },
-  6: {
+  7: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
@@ -271,7 +271,7 @@ const ROOFTOP_CONFIGS = {
       message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
   },
-  7: {
+  8: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
