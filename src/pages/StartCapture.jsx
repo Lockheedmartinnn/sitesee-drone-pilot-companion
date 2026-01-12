@@ -63,6 +63,13 @@ const TOWER_CONFIGS = {
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'takeoff_clear', label: 'Takeoff area clear', sublabel: 'At least 5m from crowd/obstacles' },
+      { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
+      { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
+      { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
+      { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
+      { id: 'camera_iso', label: 'ISO - 100', critical: true },
+      { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
+      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
