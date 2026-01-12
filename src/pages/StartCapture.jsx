@@ -104,7 +104,7 @@ const TOWER_CONFIGS = {
       { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
     ]
   },
-  3: {
+  4: {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
@@ -140,7 +140,7 @@ const TOWER_CONFIGS = {
       message: "Send screenshot to CAMERA DRONE SETTING WhatsApp group. Wait for back office validation before EACH flight. Re-validate after battery swaps."
     }
   },
-  5: {
+  6: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -256,7 +256,7 @@ const ROOFTOP_CONFIGS = {
       message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
     }
   },
-  6: {
+  7: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -270,17 +270,6 @@ const ROOFTOP_CONFIGS = {
       title: "Battery Swap Protocol - CRITICAL",
       message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
-  },
-  8: {
-    title: "Post-Flight QC",
-    subtitle: "Quality check before leaving site",
-    items: [
-      { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Same as takeoff point' },
-      { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
-      { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
-      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
-      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
-    ]
   }
 };
 
