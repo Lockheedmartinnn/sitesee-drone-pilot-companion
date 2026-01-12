@@ -288,6 +288,7 @@ export default function StartCapture() {
   const [batterySwapMode, setBatterySwapMode] = useState(false);
   const [batterySwapChecks, setBatterySwapChecks] = useState({});
   const [batterySwapGpsComplete, setBatterySwapGpsComplete] = useState(false);
+  const [usingScalePoint, setUsingScalePoint] = useState(null);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -334,7 +335,10 @@ export default function StartCapture() {
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 7;
-  const canProceed = currentStep === 4 ? gpsTimerComplete : allItemsChecked;
+  
+  // Step 3 can proceed if: no scale point selected OR all items checked
+  const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? gpsTimerComplete : allItemsChecked);
   
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -791,8 +795,61 @@ export default function StartCapture() {
               </InfoCard>
             )}
             
-            {/* Checklist Items */}
-            {config.items && currentStep !== totalSteps && !batterySwapMode && (
+            {/* Step 3: ScalePoint Yes/No */}
+            {currentStep === 3 && usingScalePoint === null && !batterySwapMode && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <InfoCard variant="info" title="ScalePoint Usage">
+                  <p className="mb-4">Are you using a ScalePoint for this capture?</p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => setUsingScalePoint(true)}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={() => setUsingScalePoint(false)}
+                      variant="outline"
+                      className="flex-1 border-slate-600"
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      No
+                    </Button>
+                  </div>
+                </InfoCard>
+              </motion.div>
+            )}
+
+            {/* Step 3: ScalePoint Checklist (if yes) */}
+            {currentStep === 3 && usingScalePoint === true && !batterySwapMode && (
+              <div className="space-y-3">
+                {config.items.map(item => (
+                  <ChecklistItem
+                    key={item.id}
+                    label={item.label}
+                    sublabel={item.sublabel}
+                    checked={checkedItems[item.id]}
+                    critical={item.critical}
+                    onToggle={() => toggleItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Step 3: No ScalePoint Confirmation */}
+            {currentStep === 3 && usingScalePoint === false && !batterySwapMode && (
+              <InfoCard variant="warning" title="Skipping ScalePoint">
+                <p>You've indicated no ScalePoint is being used. You can proceed to GPS Stabilisation.</p>
+              </InfoCard>
+            )}
+
+            {/* Checklist Items (other steps) */}
+            {config.items && currentStep !== totalSteps && currentStep !== 3 && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
