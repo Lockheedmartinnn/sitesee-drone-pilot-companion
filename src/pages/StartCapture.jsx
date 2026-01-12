@@ -41,6 +41,7 @@ const TOWER_STEPS = [
   "Equipment & Pre-Flight",
   "Camera Setup",
   "ScalePoint Placement",
+  "GCP Placement",
   "GPS Stabilisation",
   "Mission Setup & Camera",
   "Flight Execution",
@@ -51,6 +52,7 @@ const ROOFTOP_STEPS = [
   "Equipment & Pre-Flight",
   "Camera Setup",
   "ScalePoint Placement",
+  "GCP Placement",
   "GPS Stabilisation",
   "Rooftop Mission Setup",
   "Flight Execution",
@@ -116,7 +118,7 @@ const TOWER_CONFIGS = {
       message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
-  5: {
+  6: {
     title: "Mission Setup & Camera",
     subtitle: "Configure mission parameters and validate camera settings",
     items: [
@@ -140,7 +142,7 @@ const TOWER_CONFIGS = {
       message: "Send screenshot to CAMERA DRONE SETTING WhatsApp group. Wait for back office validation before EACH flight. Re-validate after battery swaps."
     }
   },
-  6: {
+  7: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -154,7 +156,7 @@ const TOWER_CONFIGS = {
       message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Re-center tower before resuming"
     }
   },
-  7: {
+  8: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
@@ -231,7 +233,7 @@ const ROOFTOP_CONFIGS = {
       message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
-  5: {
+  6: {
     title: "Rooftop Mission Setup & Camera",
     subtitle: "Configure mission parameters and camera settings",
     items: [
@@ -256,7 +258,7 @@ const ROOFTOP_CONFIGS = {
       message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
     }
   },
-  7: {
+  8: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -289,6 +291,7 @@ export default function StartCapture() {
   const [batterySwapChecks, setBatterySwapChecks] = useState({});
   const [batterySwapGpsComplete, setBatterySwapGpsComplete] = useState(false);
   const [usingScalePoint, setUsingScalePoint] = useState(null);
+  const [usingGCP, setUsingGCP] = useState(null);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -334,11 +337,13 @@ export default function StartCapture() {
   }, []);
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
-  const totalSteps = 7;
+  const totalSteps = 8;
   
   // Step 3 can proceed if: no scale point selected OR all items checked
   const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? gpsTimerComplete : allItemsChecked);
+  // Step 4 can proceed if: no GCP selected OR all items checked
+  const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : allItemsChecked));
   
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -545,7 +550,7 @@ export default function StartCapture() {
             </div>
             
             {/* Battery Swap Mode */}
-            {batterySwapMode && currentStep === 6 && (
+            {batterySwapMode && currentStep === 7 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -602,8 +607,8 @@ export default function StartCapture() {
               </motion.div>
             )}
 
-            {/* Step 4: GPS Timer */}
-            {currentStep === 4 && !batterySwapMode && (
+            {/* Step 5: GPS Timer */}
+            {currentStep === 5 && !batterySwapMode && (
               <div className="space-y-4">
                 <Timer 
                   targetMinutes={5} 
@@ -739,14 +744,14 @@ export default function StartCapture() {
             )}
             
             {/* Warning Card */}
-            {config.warning && currentStep !== 4 && (
+            {config.warning && currentStep !== 5 && (
               <InfoCard variant="warning" title={config.warning.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.warning.message}</p>
               </InfoCard>
             )}
             
             {/* Info Card for Steps without items */}
-            {config.info && !config.items && currentStep !== 4 && (
+            {config.info && !config.items && currentStep !== 5 && (
               <InfoCard variant="info" title={config.info.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.info.message}</p>
               </InfoCard>
@@ -844,12 +849,65 @@ export default function StartCapture() {
             {/* Step 3: No ScalePoint Confirmation */}
             {currentStep === 3 && usingScalePoint === false && !batterySwapMode && (
               <InfoCard variant="warning" title="Skipping ScalePoint">
-                <p>You've indicated no ScalePoint is being used. You can proceed to GPS Stabilisation.</p>
+                <p>You've indicated no ScalePoint is being used. You can proceed to GCP Placement.</p>
+              </InfoCard>
+            )}
+
+            {/* Step 4: GCP Yes/No */}
+            {currentStep === 4 && usingGCP === null && !batterySwapMode && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <InfoCard variant="info" title="GCP Usage">
+                  <p className="mb-4">Are you using Ground Control Points (GCPs) for this capture?</p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => setUsingGCP(true)}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Yes
+                    </Button>
+                    <Button
+                      onClick={() => setUsingGCP(false)}
+                      variant="outline"
+                      className="flex-1 border-slate-600"
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      No
+                    </Button>
+                  </div>
+                </InfoCard>
+              </motion.div>
+            )}
+
+            {/* Step 4: GCP Checklist (if yes) */}
+            {currentStep === 4 && usingGCP === true && !batterySwapMode && (
+              <div className="space-y-3">
+                {config.items.map(item => (
+                  <ChecklistItem
+                    key={item.id}
+                    label={item.label}
+                    sublabel={item.sublabel}
+                    checked={checkedItems[item.id]}
+                    critical={item.critical}
+                    onToggle={() => toggleItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Step 4: No GCP Confirmation */}
+            {currentStep === 4 && usingGCP === false && !batterySwapMode && (
+              <InfoCard variant="info" title="Skipping GCP Placement">
+                <p>You've indicated no GCPs are being used. You can proceed to GPS Stabilisation.</p>
               </InfoCard>
             )}
 
             {/* Checklist Items (other steps) */}
-            {config.items && currentStep !== totalSteps && currentStep !== 3 && !batterySwapMode && (
+            {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
