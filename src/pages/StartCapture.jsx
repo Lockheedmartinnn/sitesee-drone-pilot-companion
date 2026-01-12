@@ -135,7 +135,7 @@ const TOWER_CONFIGS = {
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU STARTED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
@@ -260,7 +260,7 @@ const ROOFTOP_CONFIGS = {
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU STARTED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
@@ -683,6 +683,12 @@ export default function StartCapture() {
             {/* Step 5: GPS Timer */}
             {currentStep === 5 && !batterySwapMode && (
               <div className="space-y-4">
+                {config.warning && (
+                  <InfoCard variant="warning" title={config.warning.title}>
+                    <p className="whitespace-pre-line">{config.warning.message}</p>
+                  </InfoCard>
+                )}
+
                 <Timer 
                   targetMinutes={5} 
                   onComplete={() => {
@@ -714,12 +720,6 @@ export default function StartCapture() {
                         </Button>
                       </Link>
                     )}
-                  </InfoCard>
-                )}
-                
-                {config.warning && (
-                  <InfoCard variant="warning" title={config.warning.title}>
-                    <p className="whitespace-pre-line">{config.warning.message}</p>
                   </InfoCard>
                 )}
               </div>
