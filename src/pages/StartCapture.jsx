@@ -39,6 +39,7 @@ import { cn } from '@/lib/utils';
 
 const TOWER_STEPS = [
   "Equipment & Pre-Flight",
+  "Camera Setup",
   "ScalePoint Placement",
   "GPS Stabilisation",
   "Mission Setup & Camera",
@@ -48,6 +49,7 @@ const TOWER_STEPS = [
 
 const ROOFTOP_STEPS = [
   "Equipment & Pre-Flight",
+  "Camera Setup",
   "ScalePoint Placement",
   "GPS Stabilisation",
   "Rooftop Mission Setup",
@@ -63,18 +65,28 @@ const TOWER_CONFIGS = {
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'takeoff_clear', label: 'Takeoff area clear', sublabel: 'At least 5m from crowd/obstacles' },
+      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
+      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
+    ]
+  },
+  2: {
+    title: "Camera Setup",
+    subtitle: "Configure camera settings before flight",
+    info: {
+      title: "Required Camera Settings",
+      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
+    },
+    items: [
       { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
       { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
       { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
       { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
       { id: 'camera_iso', label: 'ISO - 100', critical: true },
       { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
-      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true },
-      { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
-      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
+      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
     ]
   },
-  2: {
+  3: {
     title: "ScalePoint Placement",
     subtitle: "Critical for accurate measurements",
     info: {
@@ -104,7 +116,7 @@ const TOWER_CONFIGS = {
       message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
-  4: {
+  5: {
     title: "Mission Setup & Camera",
     subtitle: "Configure mission parameters and validate camera settings",
     items: [
@@ -163,13 +175,6 @@ const ROOFTOP_CONFIGS = {
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Pilot/spotter MUST be on roof', critical: true },
-      { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
-      { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
-      { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
-      { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
-      { id: 'camera_iso', label: 'ISO - 100', critical: true },
-      { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
-      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
@@ -180,6 +185,23 @@ const ROOFTOP_CONFIGS = {
     }
   },
   2: {
+    title: "Camera Setup",
+    subtitle: "Configure camera settings before flight",
+    info: {
+      title: "Required Camera Settings",
+      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
+    },
+    items: [
+      { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
+      { id: 'camera_mechanical_shutter', label: 'Mechanical Shutter ON', critical: true },
+      { id: 'camera_wide_mode', label: 'Camera in Wide Mode', critical: true },
+      { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
+      { id: 'camera_iso', label: 'ISO - 100', critical: true },
+      { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
+      { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
+    ]
+  },
+  3: {
     title: "ScalePoint Placement",
     subtitle: "Critical for accurate measurements",
     info: {
@@ -197,7 +219,7 @@ const ROOFTOP_CONFIGS = {
       { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
     ]
   },
-  3: {
+  4: {
     title: "GPS Stabilisation (5 min)",
     subtitle: "Wait for stable satellite lock",
     info: {
@@ -209,7 +231,7 @@ const ROOFTOP_CONFIGS = {
       message: "Must reach 26-32 satellites. If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first.\n\nCamera Settings Reference: See SiteSee's 'Using the Mavic 3 E with Dronelink' guide for proper camera setup."
     }
   },
-  4: {
+  5: {
     title: "Rooftop Mission Setup & Camera",
     subtitle: "Configure mission parameters and camera settings",
     items: [
@@ -234,7 +256,7 @@ const ROOFTOP_CONFIGS = {
       message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
     }
   },
-  5: {
+  6: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -249,7 +271,7 @@ const ROOFTOP_CONFIGS = {
       message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
   },
-  6: {
+  7: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
@@ -322,8 +344,8 @@ export default function StartCapture() {
   }, []);
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
-  const totalSteps = 6;
-  const canProceed = currentStep === 3 ? gpsTimerComplete : allItemsChecked;
+  const totalSteps = 7;
+  const canProceed = currentStep === 4 ? gpsTimerComplete : allItemsChecked;
   
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -530,7 +552,7 @@ export default function StartCapture() {
             </div>
             
             {/* Battery Swap Mode */}
-            {batterySwapMode && currentStep === 5 && (
+            {batterySwapMode && currentStep === 6 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -587,8 +609,8 @@ export default function StartCapture() {
               </motion.div>
             )}
 
-            {/* Step 3: GPS Timer */}
-            {currentStep === 3 && !batterySwapMode && (
+            {/* Step 4: GPS Timer */}
+            {currentStep === 4 && !batterySwapMode && (
               <div className="space-y-4">
                 <Timer 
                   targetMinutes={5} 
@@ -724,14 +746,14 @@ export default function StartCapture() {
             )}
             
             {/* Warning Card */}
-            {config.warning && currentStep !== 3 && (
+            {config.warning && currentStep !== 4 && (
               <InfoCard variant="warning" title={config.warning.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.warning.message}</p>
               </InfoCard>
             )}
             
             {/* Info Card for Steps without items */}
-            {config.info && !config.items && currentStep !== 3 && (
+            {config.info && !config.items && currentStep !== 4 && (
               <InfoCard variant="info" title={config.info.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.info.message}</p>
               </InfoCard>
