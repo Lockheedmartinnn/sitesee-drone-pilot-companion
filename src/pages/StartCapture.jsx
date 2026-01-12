@@ -333,6 +333,7 @@ export default function StartCapture() {
   const [batterySwapGpsComplete, setBatterySwapGpsComplete] = useState(false);
   const [usingScalePoint, setUsingScalePoint] = useState(null);
   const [usingGCP, setUsingGCP] = useState(null);
+  const [needsBatteryChange, setNeedsBatteryChange] = useState(null);
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -384,9 +385,20 @@ export default function StartCapture() {
   const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : allItemsChecked));
+  // Step 7 can proceed if: battery change answered and (if no) all items checked
+  const step7CanProceed = needsBatteryChange === false ? allItemsChecked : needsBatteryChange === true;
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
+    // If on Step 7 and battery change is needed, go back to Step 5
+    if (currentStep === 7 && needsBatteryChange === true) {
+      setCurrentStep(5);
+      setGpsTimerComplete(false);
+      setCheckedItems({});
+      setNeedsBatteryChange(null);
+      return;
+    }
+    
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     }
@@ -947,8 +959,61 @@ export default function StartCapture() {
               </InfoCard>
             )}
 
+            {/* Step 7: Battery Change Yes/No */}
+            {currentStep === 7 && needsBatteryChange === null && !batterySwapMode && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <InfoCard variant="info" title="Battery Change">
+                  <p className="mb-4">Do you need to change the battery?</p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => setNeedsBatteryChange(true)}
+                      className="flex-1 bg-amber-500 hover:bg-amber-600"
+                    >
+                      <Battery className="w-4 h-4 mr-2" />
+                      Yes - Change Battery
+                    </Button>
+                    <Button
+                      onClick={() => setNeedsBatteryChange(false)}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      No - Continue
+                    </Button>
+                  </div>
+                </InfoCard>
+              </motion.div>
+            )}
+
+            {/* Step 7: Flight Execution Checklist (if no battery change) */}
+            {currentStep === 7 && needsBatteryChange === false && !batterySwapMode && (
+              <div className="space-y-3">
+                {config.items.map(item => (
+                  <ChecklistItem
+                    key={item.id}
+                    label={item.label}
+                    sublabel={item.sublabel}
+                    checked={checkedItems[item.id]}
+                    critical={item.critical}
+                    onToggle={() => toggleItem(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Step 7: Battery Change Redirect Message */}
+            {currentStep === 7 && needsBatteryChange === true && !batterySwapMode && (
+              <InfoCard variant="warning" title="Battery Change Required">
+                <p className="mb-3">You will be redirected to GPS Stabilisation (Step 5) to complete the battery change protocol.</p>
+                <p className="text-sm">After stabilization, you'll proceed through Mission Setup and return to Flight Execution.</p>
+              </InfoCard>
+            )}
+
             {/* Checklist Items (other steps) */}
-            {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && !batterySwapMode && (
+            {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && currentStep !== 7 && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
