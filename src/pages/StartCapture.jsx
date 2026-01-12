@@ -171,6 +171,7 @@ const TOWER_CONFIGS = {
     subtitle: "Quality check before leaving site",
     items: [
       { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Preferably same as takeoff point' },
+      { id: 'gps_variance_check', label: 'GPS variance verified', sublabel: 'Use GPS Altitude Verifier to check stability', critical: true },
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All planned captures done' },
       { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
