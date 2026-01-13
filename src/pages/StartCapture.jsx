@@ -323,6 +323,7 @@ export default function StartCapture() {
   const [gpsTimerComplete, setGpsTimerComplete] = useState(false);
   const [satelliteCheckPassed, setSatelliteCheckPassed] = useState(null);
   const [gpsTimerMinutes, setGpsTimerMinutes] = useState(5);
+  const [timerKey, setTimerKey] = useState(0);
   const [finalDecision, setFinalDecision] = useState(null);
   const [showPostMissionForm, setShowPostMissionForm] = useState(false);
   const [missionComplete, setMissionComplete] = useState(false);
@@ -696,6 +697,7 @@ export default function StartCapture() {
                 )}
 
                 <Timer 
+                  key={timerKey}
                   targetMinutes={gpsTimerMinutes} 
                   onComplete={() => {
                     setGpsTimerComplete(true);
@@ -729,6 +731,7 @@ export default function StartCapture() {
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
                             setGpsTimerMinutes(2);
+                            setTimerKey(prev => prev + 1);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
                           variant="outline"
