@@ -15,7 +15,8 @@ import {
   User,
   LogOut,
   Satellite,
-  MessageSquare
+  MessageSquare,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -37,6 +38,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'AI Copilot', onClick: () => { setChatOpen(true); setSidebarOpen(false); }, icon: MessageSquare, badge: 'NEW' },
     { name: 'Onboarding / Training', href: createPageUrl('ToolsLinks'), icon: BookOpen },
     { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
+    { name: 'Checklist Analytics', href: createPageUrl('ChecklistAnalytics'), icon: BarChart3 },
     { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: ExternalLink },
     { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
