@@ -726,17 +726,16 @@ export default function StartCapture() {
                         </Button>
                         <Button
                           onClick={() => {
-                            setSatelliteCheckPassed(false);
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
                             setGpsTimerMinutes(2);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
                           variant="outline"
-                          className="flex-1 border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                          className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10"
                         >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          No - Wait 2 More Min
+                          <XCircle className="w-4 h-4 mr-2" />
+                          No
                         </Button>
                       </div>
                     </InfoCard>
