@@ -413,12 +413,15 @@ export default function StartCapture() {
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 8;
   
-  // Remove enforcement - allow progression without checking all items
-  const step3CanProceed = usingScalePoint !== null;
-  const step4CanProceed = usingGCP !== null;
-  const step7CanProceed = needsBatteryChange !== null;
+  // Step 3 can proceed if: no scale point selected OR all items checked
+  const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
+  // Step 4 can proceed if: no GCP selected OR all items checked
+  const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
+  // Step 7 can proceed if: battery change answered NO and all items checked
+  const step7CanProceed = needsBatteryChange === false && allItemsChecked;
+  // Step 5 can proceed if: timer complete AND satellite check passed
   const step5CanProceed = gpsTimerComplete && satelliteCheckPassed === true;
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : true)));
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
     // Log step navigation
