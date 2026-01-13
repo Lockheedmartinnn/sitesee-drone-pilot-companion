@@ -161,6 +161,9 @@ export default function Home() {
         >
           v1.0 • Built for field operations
         </motion.p>
+
+        {/* Chat Widget */}
+        <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       </div>
     </div>
   );
