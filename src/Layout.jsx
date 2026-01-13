@@ -38,11 +38,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
-
-  // Admin-only navigation items
-  const adminNavigation = user?.role === 'admin' ? [
-    { name: 'User Management', href: createPageUrl('UserManagement'), icon: User },
-  ] : [];
   
   const isActive = (href) => {
     return location.pathname === href || location.pathname === href + '.html';
@@ -130,35 +125,6 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               );
             })}
-
-            {/* Admin-only section */}
-            {adminNavigation.length > 0 && (
-              <>
-                <div className="pt-4 pb-2 px-4">
-                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Admin</p>
-                </div>
-                {adminNavigation.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                        active
-                          ? "bg-amber-500/20 text-amber-400"
-                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </>
-            )}
           </nav>
 
           {/* User Info & Logout */}

@@ -18,7 +18,6 @@ import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import UserManagement from './pages/UserManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -43,7 +42,6 @@ export const PAGES = {
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "UserManagement": UserManagement,
 }
 
 export const pagesConfig = {
