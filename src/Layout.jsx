@@ -187,6 +187,17 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
 
+      {/* Floating Chat Button */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300 flex items-center justify-center group"
+        >
+          <MessageSquare className="w-7 h-7 text-white" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse" />
+        </button>
+      )}
+
       {/* Chat Widget */}
       <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       </div>

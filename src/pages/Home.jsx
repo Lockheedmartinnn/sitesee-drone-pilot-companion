@@ -8,15 +8,11 @@ import {
   PlayCircle, 
   Map, 
   ExternalLink,
-  Satellite,
-  MessageSquare
+  Satellite
 } from 'lucide-react';
 import ActionButton from '@/components/ActionButton';
-import ChatWidget from '@/components/ChatWidget';
 
 export default function Home() {
-  const [chatOpen, setChatOpen] = useState(false);
-  
   return (
     <div className="min-h-screen text-white">
       <div className="max-w-lg mx-auto px-5 py-8 pb-20 lg:px-8">
@@ -70,20 +66,6 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <button onClick={() => setChatOpen(true)} className="w-full">
-              <ActionButton
-                icon={MessageSquare}
-                label="AI Copilot"
-                sublabel="Ask questions, get instant help"
-                variant="primary"
-              />
-            </button>
-          </motion.div>
           </div>
 
             {/* Divider */}
@@ -160,11 +142,8 @@ export default function Home() {
           className="text-center text-xs text-slate-600 mt-12"
         >
           v1.0 • Built for field operations
-        </motion.p>
-
-        {/* Chat Widget */}
-        <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
-      </div>
-    </div>
-  );
-}
+          </motion.p>
+          </div>
+          </div>
+          );
+          }
