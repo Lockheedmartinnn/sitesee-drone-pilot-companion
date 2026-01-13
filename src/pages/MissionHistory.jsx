@@ -11,13 +11,22 @@ import {
   StickyNote,
   Shield,
   Mail,
-  MapPin
+  MapPin,
+  BarChart3
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAccessControl, filterMissionsByAccess } from '@/components/useAccessControl';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import ChecklistReport from '@/components/ChecklistReport';
 
-function LocalMissionCard({ mission }) {
+function LocalMissionCard({ mission, onViewReport }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -91,10 +100,19 @@ function LocalMissionCard({ mission }) {
           )}
         </div>
         
-        <div className="mt-4 pt-3 border-t border-slate-700">
+        <div className="mt-4 pt-3 border-t border-slate-700 flex items-center justify-between">
           <p className="text-xs text-slate-600 italic">
             For your personal reference only • Stored locally on this device
           </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onViewReport(mission)}
+            className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+          >
+            <BarChart3 className="w-4 h-4 mr-1" />
+            Report
+          </Button>
         </div>
       </div>
     </motion.div>
@@ -102,6 +120,8 @@ function LocalMissionCard({ mission }) {
 }
 
 export default function MissionHistory() {
+  const [viewReportSession, setViewReportSession] = useState(null);
+  
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -115,6 +135,11 @@ export default function MissionHistory() {
     initialData: [],
   });
 
+  const { data: allActivities = [] } = useQuery({
+    queryKey: ['checklistActivities'],
+    queryFn: () => base44.entities.ChecklistActivity.list('-created_date', 1000),
+  });
+
   const localMissions = useMemo(() => {
     if (!user) return [];
     
@@ -125,6 +150,19 @@ export default function MissionHistory() {
     
     return allMissions.filter(mission => mission.created_by === user.email);
   }, [allMissions, user]);
+
+  const getSessionActivities = (mission) => {
+    // Find activities around the mission completion time
+    const missionTime = new Date(mission.completion_timestamp);
+    const windowStart = new Date(missionTime.getTime() - 2 * 60 * 60 * 1000); // 2 hours before
+    const windowEnd = new Date(missionTime.getTime() + 30 * 60 * 1000); // 30 min after
+    
+    return allActivities.filter(activity => {
+      const activityTime = new Date(activity.created_date);
+      return activityTime >= windowStart && activityTime <= windowEnd &&
+             activity.pilot_email === mission.created_by;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
@@ -177,10 +215,29 @@ export default function MissionHistory() {
             </div>
           ) : (
             localMissions.map((mission) => (
-              <LocalMissionCard key={mission.id} mission={mission} />
+              <LocalMissionCard 
+                key={mission.id} 
+                mission={mission} 
+                onViewReport={setViewReportSession}
+              />
             ))
           )}
         </div>
+
+        {/* Report Dialog */}
+        <Dialog open={!!viewReportSession} onOpenChange={() => setViewReportSession(null)}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Mission Checklist Report</DialogTitle>
+            </DialogHeader>
+            {viewReportSession && (
+              <ChecklistReport
+                activities={getSessionActivities(viewReportSession)}
+                missionLog={viewReportSession}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
