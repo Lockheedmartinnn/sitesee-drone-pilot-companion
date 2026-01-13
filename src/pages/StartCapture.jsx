@@ -337,6 +337,7 @@ export default function StartCapture() {
   const [usingScalePoint, setUsingScalePoint] = useState(null);
   const [usingGCP, setUsingGCP] = useState(null);
   const [needsBatteryChange, setNeedsBatteryChange] = useState(null);
+  const [initialSetupComplete, setInitialSetupComplete] = useState(false);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   
   const { data: user } = useQuery({
@@ -412,21 +413,27 @@ export default function StartCapture() {
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 8;
   
-  // Step 3 can proceed if: no scale point selected OR all items checked
-  const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
-  // Step 4 can proceed if: no GCP selected OR all items checked
-  const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
-  // Step 7 can proceed if: battery change answered NO and all items checked
-  const step7CanProceed = needsBatteryChange === false && allItemsChecked;
-  // Step 5 can proceed if: timer complete AND satellite check passed
+  // Remove enforcement - allow progression without checking all items
+  const step3CanProceed = usingScalePoint !== null;
+  const step4CanProceed = usingGCP !== null;
+  const step7CanProceed = needsBatteryChange !== null;
   const step5CanProceed = gpsTimerComplete && satelliteCheckPassed === true;
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : true)));
   
   const nextStep = () => {
     // Log step navigation
     logActivity('step_navigation', `step_${currentStep}_to_${currentStep + 1}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[currentStep]}`, 'next');
     
-    if (currentStep < totalSteps) {
+    // Mark initial setup complete after step 6 (before flight execution)
+    if (currentStep === 6) {
+      setInitialSetupComplete(true);
+    }
+    
+    // If on step 5 (GPS) and initial setup is complete, skip to step 7 (flight execution)
+    if (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true) {
+      setCurrentStep(7);
+      setNeedsBatteryChange(null);
+    } else if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -1047,10 +1054,21 @@ export default function StartCapture() {
                     <Button
                       onClick={() => {
                         logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
-                        setCurrentStep(5);
-                        setGpsTimerComplete(false);
-                        setCheckedItems({});
-                        setNeedsBatteryChange(null);
+                        // If initial setup complete, skip to GPS step and then back to flight execution
+                        if (initialSetupComplete) {
+                          setCurrentStep(5);
+                          setGpsTimerComplete(false);
+                          setSatelliteCheckPassed(null);
+                          setGpsTimerMinutes(5);
+                          setTimerKey(prev => prev + 1);
+                          setNeedsBatteryChange(null);
+                        } else {
+                          // First time, go through full flow
+                          setCurrentStep(5);
+                          setGpsTimerComplete(false);
+                          setCheckedItems({});
+                          setNeedsBatteryChange(null);
+                        }
                       }}
                       className="flex-1 bg-amber-500 hover:bg-amber-600"
                     >

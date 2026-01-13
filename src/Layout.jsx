@@ -14,7 +14,8 @@ import {
   ExternalLink,
   User,
   LogOut,
-  Satellite
+  Satellite,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ import ChatWidget from '@/components/ChatWidget';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const location = useLocation();
   
   const { data: user } = useQuery({
@@ -32,6 +34,7 @@ export default function Layout({ children, currentPageName }) {
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
     { name: 'GPS Altitude Verifier', href: createPageUrl('GPSVerifier'), icon: Satellite },
+    { name: 'AI Copilot', onClick: () => { setChatOpen(true); setSidebarOpen(false); }, icon: MessageSquare, badge: 'NEW' },
     { name: 'Onboarding / Training', href: createPageUrl('ToolsLinks'), icon: BookOpen },
     { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
     { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: ExternalLink },
@@ -108,6 +111,28 @@ export default function Layout({ children, currentPageName }) {
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
+
+              if (item.onClick) {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={item.onClick}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative",
+                      "text-slate-400 hover:bg-slate-800 hover:text-white"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                    {item.badge && (
+                      <span className="ml-auto text-[10px] font-bold bg-blue-500 text-white px-2 py-0.5 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={item.name}
@@ -161,7 +186,7 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       {/* Chat Widget */}
-      <ChatWidget />
+      <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       </div>
       );
       }
