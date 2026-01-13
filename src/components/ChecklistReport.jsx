@@ -53,49 +53,42 @@ export default function ChecklistReport({ activities, missionLog }) {
   };
 
   const downloadReport = () => {
-    const reportLines = [];
-    reportLines.push('CHECKLIST REPORT');
-    reportLines.push('================\n');
+    const csvRows = [];
     
-    if (missionLog) {
-      reportLines.push(`Pilot: ${missionLog.pilot_id || 'N/A'}`);
-      reportLines.push(`Date: ${format(new Date(missionLog.completion_timestamp), 'PPpp')}`);
-      reportLines.push(`Job ID: ${missionLog.job_id || 'N/A'}`);
-      reportLines.push(`Company: ${missionLog.company || 'N/A'}`);
-      reportLines.push(`Notes: ${missionLog.notes || 'N/A'}`);
-      reportLines.push('\n');
-    }
-
+    // CSV Header
+    csvRows.push(['Step Number', 'Step Name', 'Time Spent (seconds)', 'Start Time', 'End Time', 'Action Time', 'Action Type', 'Item', 'Result']);
+    
+    // Add data rows
     Object.keys(stepGroups).sort((a, b) => a - b).forEach(stepNum => {
       const step = stepGroups[stepNum];
       const timing = stepTimings[stepNum];
       
-      reportLines.push(`STEP ${stepNum}: ${step.step_name}`);
-      if (timing) {
-        reportLines.push(`Time spent: ${formatDuration(timing.durationSec)}`);
-        reportLines.push(`Started: ${format(timing.start, 'HH:mm:ss')}`);
-        reportLines.push(`Ended: ${format(timing.end, 'HH:mm:ss')}`);
-      }
-      reportLines.push('');
-      
       step.activities.forEach(activity => {
         const time = format(new Date(activity.created_date), 'HH:mm:ss');
-        if (activity.action_type === 'checkbox_toggle') {
-          reportLines.push(`  [${time}] ${activity.item_label}: ${activity.new_state}`);
-        } else if (activity.action_type === 'yes_no_decision') {
-          reportLines.push(`  [${time}] ${activity.item_label}: ${activity.new_state}`);
-        } else if (activity.action_type === 'timer_complete') {
-          reportLines.push(`  [${time}] ${activity.item_label}: completed`);
-        }
+        csvRows.push([
+          stepNum,
+          step.step_name,
+          timing ? timing.durationSec : '',
+          timing ? format(timing.start, 'HH:mm:ss') : '',
+          timing ? format(timing.end, 'HH:mm:ss') : '',
+          time,
+          activity.action_type,
+          activity.item_label || '',
+          activity.new_state || ''
+        ]);
       });
-      reportLines.push('\n');
     });
 
-    const blob = new Blob([reportLines.join('\n')], { type: 'text/plain' });
+    // Convert to CSV string
+    const csvContent = csvRows.map(row => 
+      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `checklist-report-${missionLog?.job_id || 'mission'}-${format(new Date(), 'yyyy-MM-dd')}.txt`;
+    a.download = `checklist-report-${missionLog?.job_id || 'mission'}-${format(new Date(), 'yyyy-MM-dd')}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
