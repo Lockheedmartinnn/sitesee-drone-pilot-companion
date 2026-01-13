@@ -7,13 +7,22 @@ import { cn } from '@/lib/utils';
 export default function Timer({ 
   targetMinutes = 5, 
   onComplete,
-  label = "GPS Stabilisation Timer"
+  label = "GPS Stabilisation Timer",
+  isAdmin = false
 }) {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   
   const targetSeconds = targetMinutes * 60;
+  
+  // Admin quick-set function
+  const quickSet = useCallback((mins) => {
+    setSeconds(mins * 60);
+    setIsComplete(true);
+    setIsRunning(false);
+    onComplete?.();
+  }, [onComplete]);
   const progress = Math.min((seconds / targetSeconds) * 100, 100);
   
   useEffect(() => {
@@ -61,7 +70,19 @@ export default function Timer({
         ? "bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/30"
         : "bg-gradient-to-br from-slate-800 to-slate-800/50 border-2 border-slate-700/50"
     )}>
-      <p className="text-sm font-medium text-slate-400 mb-4 text-center">{label}</p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-medium text-slate-400 text-center flex-1">{label}</p>
+        {isAdmin && !isComplete && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => quickSet(targetMinutes)}
+            className="text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+          >
+            Skip ({targetMinutes}m)
+          </Button>
+        )}
+      </div>
       
       {/* Circular Progress */}
       <div className="relative w-40 h-40 mx-auto mb-6">

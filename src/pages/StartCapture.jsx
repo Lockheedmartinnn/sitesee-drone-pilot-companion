@@ -321,6 +321,8 @@ export default function StartCapture() {
   const [currentStep, setCurrentStep] = useState(1);
   const [checkedItems, setCheckedItems] = useState({});
   const [gpsTimerComplete, setGpsTimerComplete] = useState(false);
+  const [satelliteCheckPassed, setSatelliteCheckPassed] = useState(null);
+  const [gpsTimerMinutes, setGpsTimerMinutes] = useState(5);
   const [finalDecision, setFinalDecision] = useState(null);
   const [showPostMissionForm, setShowPostMissionForm] = useState(false);
   const [missionComplete, setMissionComplete] = useState(false);
@@ -415,7 +417,9 @@ export default function StartCapture() {
   const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
   // Step 7 can proceed if: battery change answered NO and all items checked
   const step7CanProceed = needsBatteryChange === false && allItemsChecked;
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? gpsTimerComplete : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
+  // Step 5 can proceed if: timer complete AND satellite check passed
+  const step5CanProceed = gpsTimerComplete && satelliteCheckPassed === true;
+  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked)));
   
   const nextStep = () => {
     // Log step navigation
@@ -692,23 +696,57 @@ export default function StartCapture() {
                 )}
 
                 <Timer 
-                  targetMinutes={5} 
+                  targetMinutes={gpsTimerMinutes} 
                   onComplete={() => {
                     setGpsTimerComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
                   }}
-                  label="GPS Stabilisation Timer"
+                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)`}
+                  isAdmin={user?.role === 'admin'}
                 />
                 
-                {user?.role === 'admin' && !gpsTimerComplete && (
-                  <Button
-                    onClick={() => setGpsTimerComplete(true)}
-                    variant="outline"
-                    className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                {/* Satellite Check Question (after timer completes) */}
+                {gpsTimerComplete && satelliteCheckPassed === null && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                   >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Admin: Skip Timer
-                  </Button>
+                    <InfoCard variant="info" title="Satellite Count Check">
+                      <p className="mb-4">Did you reach 26-32 satellites?</p>
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => {
+                            setSatelliteCheckPassed(true);
+                            logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'yes');
+                          }}
+                          className="flex-1 bg-emerald-500 hover:bg-emerald-600"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Yes
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSatelliteCheckPassed(false);
+                            setGpsTimerComplete(false);
+                            setSatelliteCheckPassed(null);
+                            setGpsTimerMinutes(2);
+                            logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
+                          }}
+                          variant="outline"
+                          className="flex-1 border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                        >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          No - Wait 2 More Min
+                        </Button>
+                      </div>
+                    </InfoCard>
+                  </motion.div>
+                )}
+                
+                {satelliteCheckPassed === true && (
+                  <InfoCard variant="success" title="GPS Ready">
+                    <p>Satellite count confirmed. GPS is stable. Proceed to next step.</p>
+                  </InfoCard>
                 )}
                 
                 {config.info && (
