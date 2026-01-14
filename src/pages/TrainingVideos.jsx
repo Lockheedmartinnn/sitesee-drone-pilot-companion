@@ -24,6 +24,54 @@ const VIDEOS = [
     videoUrl: "https://www.youtube.com/embed/ta1A0MXqLWI"
   },
   {
+    id: 13,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/uZwFc9uqKts/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/uZwFc9uqKts"
+  },
+  {
+    id: 14,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/jRtZF30265Y/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/jRtZF30265Y"
+  },
+  {
+    id: 15,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/M4t7QHfmgOA/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/M4t7QHfmgOA"
+  },
+  {
+    id: 16,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/GQoFmwoT06c/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/GQoFmwoT06c"
+  },
+  {
+    id: 17,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/97JINuxawVo/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/97JINuxawVo"
+  },
+  {
+    id: 18,
+    title: "Training Video",
+    description: "Mission training and walkthrough",
+    duration: "15:00",
+    thumbnail: "https://img.youtube.com/vi/Q5fDIXUTOlQ/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/Q5fDIXUTOlQ"
+  },
+  {
     id: 3,
     title: "Equipment & Pre-Flight",
     description: "Complete walkthrough of equipment checks and pre-flight preparation.",
