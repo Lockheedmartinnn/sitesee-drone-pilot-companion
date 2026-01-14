@@ -21,16 +21,25 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import ChatWidget from '@/components/ChatWidget';
+import TermsAcceptance from '@/components/TermsAcceptance';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const location = useLocation();
   
-  const { data: user } = useQuery({
+  const { data: user, refetch: refetchUser } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
   });
+
+  // Check if user needs to accept terms
+  React.useEffect(() => {
+    if (user && !user.terms_accepted) {
+      setShowTerms(true);
+    }
+  }, [user]);
   
   const navigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
@@ -52,6 +61,18 @@ export default function Layout({ children, currentPageName }) {
     await base44.auth.logout();
   };
   
+  // Show terms acceptance screen if needed
+  if (showTerms) {
+    return (
+      <TermsAcceptance 
+        onAccept={() => {
+          setShowTerms(false);
+          refetchUser();
+        }} 
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950">
       {/* Mobile Header */}
