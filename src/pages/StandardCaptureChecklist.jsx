@@ -162,9 +162,17 @@ export default function StandardCaptureChecklist() {
 
         <Section id="gps" title="GPS Stabilization">
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3 mb-3">
-            <p className="text-emerald-200 font-semibold">NEW: v9.7.0 Requirement</p>
+            <p className="text-emerald-200 font-semibold">CRITICAL: Required TWICE per mission</p>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <p className="text-red-200 font-semibold mb-2">Workflow Sequence:</p>
+              <ol className="text-sm space-y-1 ml-4">
+                <li>1. Stabilize BEFORE marking mission</li>
+                <li>2. Change battery AFTER marking</li>
+                <li>3. Stabilize AGAIN before capture mission</li>
+              </ol>
+            </div>
             <p><strong>M2P:</strong> Give drone minimum 2 minutes for GPS to stabilize if there have been GPS problems</p>
             <p><strong>M3E:</strong> Let drone stabilize after turn-on. Leave on takeoff spot for 2 mins in open area with line of sight to sky, no obstacles (trees/buildings)</p>
             <p><strong>Rooftop v9.7.0:</strong> GPS stabilization MUST be performed at ground level before takeoff due to 1-second capture interval</p>
@@ -211,25 +219,64 @@ export default function StandardCaptureChecklist() {
           </div>
 
           <div className="space-y-4">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+              <p className="text-red-200 font-semibold">⚠️ CRITICAL WORKFLOW</p>
+              <ol className="text-sm mt-2 space-y-1 ml-4">
+                <li>1. GPS Stabilization (ground level, 2-5 min)</li>
+                <li>2. Fly markup mission</li>
+                <li>3. Change battery</li>
+                <li>4. GPS Stabilization again (2-5 min)</li>
+                <li>5. Fly capture mission</li>
+              </ol>
+            </div>
+
             <div>
-              <p className="font-semibold text-white mb-2">Marking Workflow:</p>
+              <p className="font-semibold text-white mb-2">Step 1: Tower (Equipment) Marking</p>
               <ul className="space-y-1 ml-4">
-                <li>• <strong>Boundary:</strong> Mark corners in order (clockwise or anti-clockwise), NOT zig-zag pattern</li>
-                <li>• <strong>Equipment Radius:</strong> Mark radius of antenna only - offset added automatically</li>
-                <li>• <strong>Planar Height:</strong> Auto-calculated (highest equipment/obstacle + 7m offset)</li>
-                <li>• <strong>Multi-Level Sites:</strong> Mark equipment clusters at different elevations (high/low), with height/center/radius for each</li>
-                <li>• <strong>Obstacles:</strong> Mark on-roof enveloped obstacles, non-enveloped obstacles, and neighboring buildings with proper boundaries and heights</li>
-                <li>• <strong>Greenfields:</strong> CRITICAL - At least one obstacle or equipment MUST be marked to define rooftop geometry</li>
-                <li>• <strong>Height Constraints:</strong> Maximum height difference between equipment = 25m (contact SiteSee Support if exceeded)</li>
+                <li>• <strong>Tower Height:</strong> Fly to highest part of structure (often top of antenna panel) with gimbal at 0° and mark</li>
+                <li>• <strong>Equipment Center:</strong> Fly directly above structure with gimbal at -90° and mark center</li>
+                <li>• <strong>Equipment Radius:</strong> With gimbal at -90°, mark outer radius edge (no manual offset needed - added automatically)</li>
+                <li>• <strong>Clustering Logic:</strong> If equipment panels are less than 1m apart, mark as single cluster to avoid excessive overlap</li>
               </ul>
             </div>
 
             <div>
-              <p className="font-semibold text-white mb-2">Flight Settings:</p>
+              <p className="font-semibold text-white mb-2">Step 2: Obstacle Marking</p>
               <ul className="space-y-1 ml-4">
-                <li>• Enable "Heading and Gimbal Altitude", "Grid", and "Reticle" options for gimbal assist</li>
-                <li>• <strong>Capture Interval:</strong> Keep at 1 second (change only after consulting SiteSee)</li>
-                <li>• Monitor that antenna components stay in frame during planar (lower altitude than previous versions)</li>
+                <li>• <strong>Obstacle Height:</strong> Fly above highest point with gimbal at -90°, mark height (recommended at least 1m above object)</li>
+                <li>• <strong>Obstacle Boundary:</strong> Mark boundary with gimbal at -90°</li>
+                <li className="ml-4">→ Circular: Mark center and radius</li>
+                <li className="ml-4">→ Polygon: Mark 3+ points along outer edge</li>
+                <li>• <strong>Tolerance:</strong> Provide sufficient horizontal space between obstacle and marked points</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-white mb-2">Step 3: Optional Components (If Required)</p>
+              <ul className="space-y-1 ml-4">
+                <li>• <strong>Panorama Height:</strong> Mark highest point of interest with gimbal at 0° (recommended ~20m above roof)</li>
+                <li>• <strong>Panorama Center:</strong> Mark center point with gimbal at -90°</li>
+                <li>• <strong>Orthomosaic Height:</strong> Mark highest point in area with gimbal at 0° (recommended ~30m above roof)</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-white mb-2">Step 4: Planar Overview Boundary</p>
+              <ul className="space-y-1 ml-4">
+                <li>• <strong>Height Selection:</strong> Auto-calculated as highest equipment/obstacle height + 7m offset</li>
+                <li>• <strong>Corner Marking:</strong> Fly above roof and mark corners with gimbal at -90°</li>
+                <li className="ml-4">→ Mark points consecutively (order doesn't matter)</li>
+                <li className="ml-4">→ Avoid zig-zag pattern</li>
+                <li>• <strong>Points:</strong> Use minimum required; may mark both internal and external edges</li>
+                <li>• <strong>Antenna Components:</strong> Ensure components remain in frame during lower-altitude capture</li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold text-white mb-2">Step 5: Final Review</p>
+              <ul className="space-y-1 ml-4">
+                <li>• <strong>Parameter Check:</strong> Confirm no equipment orbit height is above planar overview height</li>
+                <li>• <strong>Flight Path:</strong> Review 3D flight plan for safe transitions and minimal collision risks</li>
               </ul>
             </div>
 
@@ -239,6 +286,7 @@ export default function StandardCaptureChecklist() {
                 <li>• Use in-flight controls to keep antenna/tower centered in frame</li>
                 <li>• Use in-flight controls to avoid obstacles when necessary</li>
                 <li>• <strong>WATCH OUT:</strong> Camera may glitch to "auto" mode during pano/orthomosaic - quickly switch back to "manual" WITHOUT pausing mission</li>
+                <li>• <strong>Capture Interval:</strong> Keep at 1 second (change only after consulting SiteSee)</li>
               </ul>
             </div>
 

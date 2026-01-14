@@ -15,11 +15,11 @@ import PortfolioOverview from './pages/PortfolioOverview';
 import Profile from './pages/Profile';
 import QuickReference from './pages/QuickReference';
 import Scenarios from './pages/Scenarios';
+import StandardCaptureChecklist from './pages/StandardCaptureChecklist';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import StandardCaptureChecklist from './pages/StandardCaptureChecklist';
 import __Layout from './Layout.jsx';
 
 
@@ -41,11 +41,11 @@ export const PAGES = {
     "Profile": Profile,
     "QuickReference": QuickReference,
     "Scenarios": Scenarios,
+    "StandardCaptureChecklist": StandardCaptureChecklist,
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "StandardCaptureChecklist": StandardCaptureChecklist,
 }
 
 export const pagesConfig = {
