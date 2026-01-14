@@ -74,7 +74,19 @@ export default function TermsAcceptance({ onAccept }) {
             </section>
 
             <section>
-              <h3 className="font-bold text-white mb-2">4. No Guarantee of Outcome</h3>
+              <h3 className="font-bold text-white mb-2">4. Third-Party Mission Planning (Scanlink by Dronelink)</h3>
+              <p className="mb-2">The Pilot Companion App may reference or integrate with Scanlink, a mission planning product provided by Dronelink, which is a third-party service not owned, operated, or controlled by SiteSee.</p>
+              <p className="mb-2">You acknowledge and agree that:</p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Your use of Scanlink is governed solely by Dronelink's own terms, conditions, and policies, which you are responsible for reviewing and accepting separately.</li>
+                <li>SiteSee does not warrant or guarantee the performance, accuracy, reliability, or availability of Scanlink or any third-party mission planning software.</li>
+                <li>Any mission planning, automation, or flight behaviour resulting from the use of ScanLink remains the sole responsibility of the pilot and RPIC.</li>
+              </ul>
+              <p className="mt-2">SiteSee shall not be liable for any loss, damage, injury, regulatory breach, failed capture, or processing failure arising from the use of, or reliance on, third-party software.</p>
+            </section>
+
+            <section>
+              <h3 className="font-bold text-white mb-2">5. No Guarantee of Outcome</h3>
               <p className="mb-2">Completing all training steps, checks, or recommendations does not guarantee that:</p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>A flight will be successful</li>
@@ -85,17 +97,17 @@ export default function TermsAcceptance({ onAccept }) {
             </section>
 
             <section>
-              <h3 className="font-bold text-white mb-2">5. Failed Sites and Re-Flight Responsibility</h3>
+              <h3 className="font-bold text-white mb-2">6. Failed Sites and Re-Flight Responsibility</h3>
               <p>If a site fails processing for any reason, it is the customer's responsibility to re-fly the site. SiteSee has no responsibility or liability for the outcome of pilot capture or rework required.</p>
             </section>
 
             <section>
-              <h3 className="font-bold text-white mb-2">6. No Warranty</h3>
+              <h3 className="font-bold text-white mb-2">7. No Warranty</h3>
               <p>The app and all associated guidance are provided "as is" and "as available", with no warranties or guarantees of accuracy, completeness, or fitness for purpose.</p>
             </section>
 
             <section>
-              <h3 className="font-bold text-white mb-2">7. Limitation of Liability</h3>
+              <h3 className="font-bold text-white mb-2">8. Limitation of Liability</h3>
               <p className="mb-2">To the maximum extent permitted by law, SiteSee shall not be liable for any:</p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>Physical injury or property damage</li>
@@ -106,7 +118,7 @@ export default function TermsAcceptance({ onAccept }) {
             </section>
 
             <section>
-              <h3 className="font-bold text-white mb-2">8. Relationship to SiteSee Terms</h3>
+              <h3 className="font-bold text-white mb-2">9. Relationship to SiteSee Terms</h3>
               <p>By tapping "I Agree", you confirm that you have read, understood, and accepted these terms.</p>
             </section>
           </div>
