@@ -148,6 +148,14 @@ const LINKS = [
     category: "Tools",
     items: [
       {
+        icon: FileText,
+        title: "Standard Capture Checklist",
+        description: "Complete capture process checklist (v20)",
+        url: createPageUrl('StandardCaptureChecklist'),
+        color: "text-purple-400 bg-purple-500/20",
+        internal: true
+      },
+      {
         icon: Camera,
         title: "GPS Altitude Verifier",
         description: "Check Y-axis altitude stability (battery swaps)",
