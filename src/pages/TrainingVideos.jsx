@@ -161,6 +161,9 @@ const VIDEOS = [
 export default function TrainingVideos() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   
+  const rooftopV970Videos = VIDEOS.filter(v => v.id >= 13 && v.id <= 17);
+  const generalVideos = VIDEOS.filter(v => v.id < 13 || v.id > 17);
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
       <div className="max-w-lg mx-auto px-5 py-6 pb-20">
@@ -206,20 +209,76 @@ export default function TrainingVideos() {
           </motion.div>
         </Link>
 
-        {/* Video Grid */}
-        <div className="space-y-4">
-          {VIDEOS.map((video, index) => (
-            <VideoCard
-              key={video.id}
-              title={video.title}
-              description={video.description}
-              duration={video.duration}
-              thumbnail={video.thumbnail}
-              index={index}
-              onClick={() => setSelectedVideo(video)}
-            />
-          ))}
-        </div>
+        {/* Rooftop Mission v9.7.0 Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-xl p-4 mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Rooftop Mission v9.7.0</h2>
+            <p className="text-sm text-blue-200/80">Latest version • 2x faster • Simplified workflow</p>
+          </div>
+          
+          <div className="space-y-4">
+            {rooftopV970Videos.map((video, index) => (
+              <div key={video.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div 
+                    className="flex-1 cursor-pointer"
+                    onClick={() => setSelectedVideo(video)}
+                  >
+                    <VideoCard
+                      title={video.title}
+                      description={video.description}
+                      duration={video.duration}
+                      thumbnail={video.thumbnail}
+                      index={index}
+                      onClick={() => setSelectedVideo(video)}
+                    />
+                  </div>
+                </div>
+                {video.docUrl && (
+                  <a
+                    href={video.docUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-4 py-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      <span className="text-sm font-medium">PDF Documentation</span>
+                    </div>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* General Training Videos */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h2 className="text-lg font-bold text-white mb-4">General Training & Techniques</h2>
+          <div className="space-y-4">
+            {generalVideos.map((video, index) => (
+              <VideoCard
+                key={video.id}
+                title={video.title}
+                description={video.description}
+                duration={video.duration}
+                thumbnail={video.thumbnail}
+                index={index}
+                onClick={() => setSelectedVideo(video)}
+              />
+            ))}
+          </div>
+        </motion.div>
         
         {/* Info */}
         <motion.p
