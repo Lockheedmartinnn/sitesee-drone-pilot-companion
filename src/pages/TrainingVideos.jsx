@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, X, BookOpen } from 'lucide-react';
+import { ArrowLeft, X, BookOpen, FileText, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import VideoCard from '@/components/VideoCard';
 
@@ -25,48 +25,53 @@ const VIDEOS = [
   },
   {
     id: 13,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
-    duration: "15:00",
+    title: "Rooftop Mission v9.7.0: Overview & Key Improvements",
+    description: "Introduction to v9.7.0 updates: 2x faster flight speeds, simplified marking, single-layer planar overview at -45°, enhanced detail reconstruction, and reduced site time. Learn about the new 1-second capture interval and GPS stabilization requirements.",
+    duration: "12:00",
     thumbnail: "https://img.youtube.com/vi/uZwFc9uqKts/hqdefault.jpg",
-    videoUrl: "https://www.youtube.com/embed/uZwFc9uqKts"
+    videoUrl: "https://www.youtube.com/embed/uZwFc9uqKts",
+    docUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69534bd8b3474c3c3a70cbc1/9bb19a332_Rooftopsv970Introductionandoverviewdocx.pdf"
   },
   {
     id: 14,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
-    duration: "15:00",
+    title: "Use Case 2: Multi-Level Rooftop Capture",
+    description: "Learn how to mark equipment clusters at two different elevations (high and low). Covers marking equipment height, center, and radius for each cluster, plus panorama/orthomosaic configuration. Includes trajectory logic for multi-level sites.",
+    duration: "3:00",
     thumbnail: "https://img.youtube.com/vi/jRtZF30265Y/hqdefault.jpg",
-    videoUrl: "https://www.youtube.com/embed/jRtZF30265Y"
+    videoUrl: "https://www.youtube.com/embed/jRtZF30265Y",
+    docUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69534bd8b3474c3c3a70cbc1/bbc313207_Rooftopv970usecase2docx.pdf"
   },
   {
     id: 15,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
-    duration: "15:00",
+    title: "Use Case 3: Complex Obstacle Environment",
+    description: "Master marking on-roof enveloped obstacles, non-enveloped obstacles, and neighboring high-rise buildings. Learn proper boundary marking, height settings, and flight path optimization around multiple obstacle types. Includes 3D plan color-coding.",
+    duration: "3:30",
     thumbnail: "https://img.youtube.com/vi/M4t7QHfmgOA/hqdefault.jpg",
-    videoUrl: "https://www.youtube.com/embed/M4t7QHfmgOA"
+    videoUrl: "https://www.youtube.com/embed/M4t7QHfmgOA",
+    docUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69534bd8b3474c3c3a70cbc1/94530344a_Rooftopv970usecase3docx.pdf"
   },
   {
     id: 16,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
-    duration: "15:00",
+    title: "Use Case 4: Greenfields (No Equipment/Obstacles)",
+    description: "Handle rooftops with no visible equipment or obstacles. Learn the critical system requirement: at least one obstacle or equipment must be marked to define rooftop geometry. Shows error handling and resolution steps.",
+    duration: "2:30",
     thumbnail: "https://img.youtube.com/vi/GQoFmwoT06c/hqdefault.jpg",
-    videoUrl: "https://www.youtube.com/embed/GQoFmwoT06c"
+    videoUrl: "https://www.youtube.com/embed/GQoFmwoT06c",
+    docUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69534bd8b3474c3c3a70cbc1/c6da4cd02_Rooftopv970usecase4docx.pdf"
   },
   {
     id: 17,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
-    duration: "15:00",
+    title: "Use Case 5: Large Height Differences (>25m)",
+    description: "Understand the Maximum Height Difference constraint (25m limit) when marking equipment at significantly different elevations. Learn when missions require manual adjustment and how to contact SiteSee Support for assistance.",
+    duration: "2:00",
     thumbnail: "https://img.youtube.com/vi/97JINuxawVo/hqdefault.jpg",
-    videoUrl: "https://www.youtube.com/embed/97JINuxawVo"
+    videoUrl: "https://www.youtube.com/embed/97JINuxawVo",
+    docUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69534bd8b3474c3c3a70cbc1/34353262a_Rooftopv970usecase5docx.pdf"
   },
   {
     id: 18,
-    title: "Training Video",
-    description: "Mission training and walkthrough",
+    title: "Advanced Rooftop Techniques",
+    description: "Additional rooftop mission planning strategies and best practices for complex scenarios.",
     duration: "15:00",
     thumbnail: "https://img.youtube.com/vi/Q5fDIXUTOlQ/hqdefault.jpg",
     videoUrl: "https://www.youtube.com/embed/Q5fDIXUTOlQ"
@@ -276,9 +281,21 @@ export default function TrainingVideos() {
               )}
             </div>
             
-            {/* Description */}
-            <div className="px-5 py-4 border-t border-slate-800">
+            {/* Description & PDF Link */}
+            <div className="px-5 py-4 border-t border-slate-800 space-y-3">
               <p className="text-sm text-slate-300">{selectedVideo.description}</p>
+              {selectedVideo.docUrl && (
+                <a
+                  href={selectedVideo.docUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors text-sm font-medium"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Download PDF Guide</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
           </motion.div>
         )}
