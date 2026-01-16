@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +18,14 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,8 +38,12 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
   useEffect(() => {
     if (isOpen && !conversation) {
       initConversation();
+      // Track session start
+      if (user) {
+        trackFeatureUsage(user, 'tool_use', { action: 'chat_opened' });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, user]);
 
   useEffect(() => {
     if (!conversation) return;
@@ -45,6 +56,21 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
     return () => unsubscribe();
   }, [conversation]);
 
+  const trackFeatureUsage = async (user, action = 'tool_use', metadata = null) => {
+    try {
+      await base44.entities.FeatureUsage.create({
+        user_email: user?.email,
+        pilot_id: user?.pilot_id,
+        company: user?.company,
+        feature_name: 'chatbot',
+        action_type: action,
+        metadata: metadata ? JSON.stringify(metadata) : null
+      });
+    } catch (error) {
+      console.error('Failed to track feature usage:', error);
+    }
+  };
+
   const initConversation = async () => {
     try {
       const conv = await base44.agents.createConversation({
@@ -55,6 +81,18 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
         }
       });
       setConversation(conv);
+
+      // Create session record
+      if (user) {
+        const session = await base44.entities.ChatbotSession.create({
+          user_email: user.email,
+          pilot_id: user.pilot_id,
+          company: user.company,
+          session_started_at: new Date().toISOString(),
+          conversation_id: conv.id
+        });
+        setSessionId(session.id);
+      }
     } catch (error) {
       console.error('Failed to create conversation:', error);
     }
@@ -98,6 +136,18 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
         ? `${userMessage}\n\n[Images attached for analysis]`
         : userMessage;
 
+      // Log user message
+      if (sessionId && user) {
+        await base44.entities.ChatbotMessage.create({
+          session_id: sessionId,
+          user_email: user.email,
+          message_type: 'user',
+          message_content: userMessage,
+          message_timestamp: new Date().toISOString(),
+          had_image_attachment: images.length > 0
+        });
+      }
+
       await base44.agents.addMessage(conversation, {
         role: 'user',
         content: messageContent,
@@ -115,6 +165,18 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
       handleSend();
     }
   };
+
+  // Track session end when unmounting
+  useEffect(() => {
+    return () => {
+      if (sessionId && user) {
+        base44.entities.ChatbotSession.update(sessionId, {
+          session_ended_at: new Date().toISOString(),
+          total_messages: messages.filter(m => m.role === 'user').length
+        }).catch(err => console.error('Failed to update session:', err));
+      }
+    };
+  }, [sessionId, messages, user]);
 
   return (
     <>

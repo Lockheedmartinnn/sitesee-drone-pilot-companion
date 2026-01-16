@@ -10,7 +10,8 @@ import {
   Camera,
   Shield,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Compass
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import InfoCard from '@/components/InfoCard';
@@ -176,6 +177,31 @@ export default function QuickReference() {
             </div>
           </Section>
         </div>
+
+        {/* Panorama Guide Link */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8"
+        >
+          <Link to={createPageUrl('PanoramaGuide')}>
+            <Button className="w-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 hover:bg-purple-500/30">
+              <Compass className="w-4 h-4 mr-2" />
+              Panorama Capture Guide
+            </Button>
+          </Link>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-xs text-slate-600 mt-8"
+        >
+          Field operations reference
+        </motion.p>
       </div>
     </div>
   );
