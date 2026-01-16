@@ -141,6 +141,10 @@ const TOWER_CONFIGS = {
   6: {
     title: "Mission Setup & Camera",
     subtitle: "Configure mission parameters",
+    info: {
+      title: "Panorama (If Required)",
+      message: "If panorama is requested:\n• Select Panorama mission type in Dronelink\n• Position at mid-tower or above equipment\n• Use 360° Spherical (recommended) or Horizontal\n• Keep camera settings consistent (Manual, f/4, ISO 100)"
+    },
     items: [
       { id: 'tower_type', label: 'Tower type selected', sublabel: 'Correct type for this site' },
       { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID' },
@@ -267,6 +271,10 @@ const ROOFTOP_CONFIGS = {
   6: {
     title: "Rooftop Mission Setup & Camera",
     subtitle: "Configure mission parameters and camera settings",
+    info: {
+      title: "Panorama (If Required)",
+      message: "If panorama is requested:\n• Panorama Height: Mark with gimbal at 0° (~20m above roof)\n• Panorama Center: Mark with gimbal at -90° (directly above location)\n• Will auto-capture during mission execution"
+    },
     items: [
       { id: 'shutter_adjusted', label: 'Shutter speed adjusted for roof', sublabel: 'e.g., 1/2000 → 1/1500 for reflection', critical: true },
       { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID + date' },
@@ -880,8 +888,8 @@ export default function StartCapture() {
               </InfoCard>
             )}
             
-            {/* Info Card for Steps without items */}
-            {config.info && !config.items && currentStep !== 5 && (
+            {/* Info Card for Steps with or without items */}
+            {config.info && currentStep !== 5 && currentStep !== 3 && currentStep !== 4 && !batterySwapMode && (
               <InfoCard variant="info" title={config.info.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.info.message}</p>
               </InfoCard>
