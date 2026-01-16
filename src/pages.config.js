@@ -21,6 +21,7 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
 import PanoramaGuideon from './pages/PanoramaGuideon';
+import PanoramaGuide from './pages/PanoramaGuide';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
     "PanoramaGuideon": PanoramaGuideon,
+    "PanoramaGuide": PanoramaGuide,
 }
 
 export const pagesConfig = {
