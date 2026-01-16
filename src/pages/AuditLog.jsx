@@ -19,6 +19,16 @@ export default function AuditLog() {
     queryFn: () => base44.entities.AuditLog.list('-created_date', 100),
   });
 
+  const { data: chatSessions = [] } = useQuery({
+    queryKey: ['chatbotSessions'],
+    queryFn: () => base44.entities.ChatbotSession.list('-created_date', 50),
+  });
+
+  const { data: chatMessages = [] } = useQuery({
+    queryKey: ['chatbotMessages'],
+    queryFn: () => base44.entities.ChatbotMessage.list('-created_date', 100),
+  });
+
   // Redirect non-managers away from this page
   useEffect(() => {
     if (!isLoading && !permissions.canManageCompany) {
@@ -38,7 +48,10 @@ export default function AuditLog() {
     checklist_complete: 'Completed Checklist',
     user_invited: 'Invited User',
     export_data: 'Exported Data',
-    settings_changed: 'Changed Settings'
+    settings_changed: 'Changed Settings',
+    chatbot_session_start: 'Started Chat Session',
+    chatbot_session_end: 'Ended Chat Session',
+    chatbot_message_sent: 'Sent Chat Message'
   };
 
   const actionColors = {
@@ -49,8 +62,68 @@ export default function AuditLog() {
     checklist_complete: 'text-emerald-400',
     user_invited: 'text-amber-400',
     export_data: 'text-orange-400',
-    settings_changed: 'text-yellow-400'
+    settings_changed: 'text-yellow-400',
+    chatbot_session_start: 'text-cyan-400',
+    chatbot_session_end: 'text-indigo-400',
+    chatbot_message_sent: 'text-pink-400'
   };
+
+  // Combine all data into a unified activity feed
+  const allActivities = useMemo(() => {
+    const activities = [];
+
+    // Add audit logs
+    logs.forEach(log => {
+      activities.push({
+        id: `log-${log.id}`,
+        timestamp: log.created_date,
+        user_email: log.user_email,
+        action: log.action,
+        details: log.details,
+        type: 'audit_log'
+      });
+    });
+
+    // Add chat sessions
+    chatSessions.forEach(session => {
+      activities.push({
+        id: `session-start-${session.id}`,
+        timestamp: session.session_started_at,
+        user_email: session.user_email,
+        action: 'chatbot_session_start',
+        details: `${session.total_messages} messages`,
+        type: 'chat_session'
+      });
+
+      if (session.session_ended_at) {
+        activities.push({
+          id: `session-end-${session.id}`,
+          timestamp: session.session_ended_at,
+          user_email: session.user_email,
+          action: 'chatbot_session_end',
+          details: `${session.total_messages} messages`,
+          type: 'chat_session'
+        });
+      }
+    });
+
+    // Add chat messages
+    chatMessages.forEach(msg => {
+      if (msg.message_type === 'user') {
+        activities.push({
+          id: `msg-${msg.id}`,
+          timestamp: msg.message_timestamp,
+          user_email: msg.user_email,
+          action: 'chatbot_message_sent',
+          details: msg.message_content.substring(0, 100) + (msg.message_content.length > 100 ? '...' : ''),
+          type: 'chat_message'
+        });
+      }
+    });
+
+    // Sort by timestamp descending
+    return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  }, [logs, chatSessions, chatMessages]);
 
   if (isLoading) {
     return (
@@ -83,9 +156,9 @@ export default function AuditLog() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/30">
-                {logs.map((log, idx) => (
+                {allActivities.map((activity, idx) => (
                   <motion.tr
-                    key={log.id}
+                    key={activity.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
@@ -94,26 +167,26 @@ export default function AuditLog() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-sm text-slate-400">
                         <Calendar className="w-4 h-4" />
-                        {format(new Date(log.created_date), 'MMM d, yyyy HH:mm')}
+                        {format(new Date(activity.timestamp), 'MMM d, yyyy HH:mm')}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <UserIcon className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm text-white">{log.user_email}</span>
+                        <span className="text-sm text-white">{activity.user_email}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-slate-500" />
-                        <span className={`text-sm font-medium ${actionColors[log.action] || 'text-slate-300'}`}>
-                          {actionLabels[log.action] || log.action}
+                        <span className={`text-sm font-medium ${actionColors[activity.action] || 'text-slate-300'}`}>
+                          {actionLabels[activity.action] || activity.action}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-slate-400">
-                        {log.details || '-'}
+                        {activity.details || '-'}
                       </span>
                     </td>
                   </motion.tr>
@@ -123,10 +196,10 @@ export default function AuditLog() {
           </div>
         </motion.div>
 
-        {logs.length === 0 && (
+        {allActivities.length === 0 && (
           <div className="text-center py-20">
             <Shield className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <p className="text-slate-400">No audit logs yet</p>
+            <p className="text-slate-400">No activity yet</p>
           </div>
         )}
       </div>
