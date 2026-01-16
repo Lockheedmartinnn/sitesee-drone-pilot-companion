@@ -441,10 +441,8 @@ export default function StartCapture() {
     }
   };
   
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
-    }
+  const goToHome = () => {
+    window.location.href = createPageUrl('Home');
   };
   
   const handleDecision = (decision) => {
@@ -603,11 +601,14 @@ export default function StartCapture() {
       <div className="max-w-lg mx-auto px-5 py-6 pb-32">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <Link to={createPageUrl('Home')}>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-slate-800">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={goToHome}
+            className="text-slate-400 hover:text-white hover:bg-slate-800"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
           <div className="flex-1">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
@@ -1155,9 +1156,8 @@ export default function StartCapture() {
           <div className="max-w-lg mx-auto flex gap-3">
             <Button
               variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="flex-1 border-slate-700 bg-slate-800 hover:bg-slate-700 disabled:opacity-30"
+              onClick={goToHome}
+              className="flex-1 border-slate-700 bg-slate-800 hover:bg-slate-700"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
