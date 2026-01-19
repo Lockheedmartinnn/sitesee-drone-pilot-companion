@@ -77,15 +77,25 @@ export default function Home() {
 
         {/* Onboarding & Training Section */}
         <div className="space-y-3">
-          <Link to={createPageUrl('MissionMarkupQuiz')}>
+          <a href="https://forms.gle/3VdjyDQ9LK8UkjgHA" target="_blank" rel="noopener noreferrer">
             <ActionButton
               icon={BookOpen}
-              label="Mission Markup Quiz"
-              sublabel="Rooftop + Tower: 20 questions total"
+              label="Rooftop Markup Quiz"
+              sublabel="Required before rooftop captures"
               variant="primary"
               index={0}
             />
-          </Link>
+          </a>
+
+          <a href="https://forms.gle/671jRKFk27ybs82eA" target="_blank" rel="noopener noreferrer">
+            <ActionButton
+              icon={BookOpen}
+              label="Tower Markup Quiz"
+              sublabel="Required before tower captures"
+              variant="primary"
+              index={1}
+            />
+          </a>
 
           <Link to={createPageUrl('TrainingVideos')}>
             <ActionButton

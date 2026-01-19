@@ -295,7 +295,7 @@ export default function TrainingResources() {
           </div>
 
           <div className="space-y-2">
-            <Link to={createPageUrl('MissionMarkupQuiz')}>
+            <a href="https://forms.gle/3VdjyDQ9LK8UkjgHA" target="_blank" rel="noopener noreferrer">
               <motion.div
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border-2 border-emerald-500/50 hover:border-emerald-500 transition-all duration-200"
@@ -309,14 +309,33 @@ export default function TrainingResources() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white">Mission Markup Quiz</p>
-                  <p className="text-sm text-emerald-300">START HERE: Rooftop + Tower (20 questions)</p>
+                  <p className="font-semibold text-white">Rooftop Markup Quiz</p>
+                  <p className="text-sm text-emerald-300">START HERE: Required before rooftop captures</p>
                 </div>
                 <ExternalLink className="w-4 h-4 text-emerald-500 flex-shrink-0" />
               </motion.div>
-            </Link>
+            </a>
 
-
+            <a href="https://forms.gle/671jRKFk27ybs82eA" target="_blank" rel="noopener noreferrer">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-2 border-blue-500/50 hover:border-blue-500 transition-all duration-200"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                    2
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <BookOpen className="w-5 h-5 text-blue-400" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white">Tower Markup Quiz</p>
+                  <p className="text-sm text-blue-300">Required before tower captures</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-blue-500 flex-shrink-0" />
+              </motion.div>
+            </a>
           </div>
         </motion.div>
 
