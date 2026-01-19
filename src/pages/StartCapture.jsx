@@ -1192,7 +1192,14 @@ export default function StartCapture() {
                     className="space-y-3"
                   >
                     <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
-                      <p className="text-sm font-semibold text-blue-300">Panorama Setup</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-blue-300">Panorama Setup</p>
+                        <Link to={createPageUrl('PanoramaGuide')}>
+                          <Button variant="ghost" size="sm" className="text-xs text-blue-400 hover:text-blue-300">
+                            View Guide
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                     {config.panoramaItems.map(item => (
                       <ChecklistItem
