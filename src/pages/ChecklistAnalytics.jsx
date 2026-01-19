@@ -149,11 +149,20 @@ export default function ChecklistAnalytics() {
       'End Time',
       'Duration (seconds)',
       'Steps Completed',
+      'Steps Completed List',
+      'Final Pass Decision',
+      'Location (Lat, Lon)',
       'Job ID'
     ]);
 
     // Data rows
     filteredSessions.forEach(session => {
+      const stepsCompletedList = [...session.steps].sort((a, b) => a - b).join(', ');
+      const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+      const location = session.activities[0]?.latitude && session.activities[0]?.longitude 
+        ? `${session.activities[0].latitude}, ${session.activities[0].longitude}`
+        : '';
+      
       csvRows.push([
         session.session_id,
         session.pilot_email,
@@ -164,6 +173,9 @@ export default function ChecklistAnalytics() {
         format(session.endTime, 'yyyy-MM-dd HH:mm:ss'),
         session.durationSec,
         session.stepsCompleted,
+        stepsCompletedList,
+        finalDecision?.new_state || '',
+        location,
         session.missionLog?.job_id || ''
       ]);
     });
@@ -342,7 +354,7 @@ export default function ChecklistAnalytics() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
+                      <div className="flex items-center gap-4 text-sm text-slate-400 flex-wrap">
                         <span>{format(session.startTime, 'MMM d, yyyy HH:mm')}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
@@ -350,7 +362,7 @@ export default function ChecklistAnalytics() {
                           {formatDuration(session.durationSec)}
                         </span>
                         <span>•</span>
-                        <span>{session.stepsCompleted}/8 steps</span>
+                        <span>Steps: {[...session.steps].sort((a, b) => a - b).join(', ')}</span>
                         {session.company && (
                           <>
                             <span>•</span>
@@ -369,6 +381,41 @@ export default function ChecklistAnalytics() {
 
                 {expandedSession === session.session_id && (
                   <div className="border-t border-slate-700 p-5 space-y-4">
+                    {/* Final Decision */}
+                    {(() => {
+                      const finalDecision = session.activities.find(
+                        a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision'
+                      );
+                      if (finalDecision) {
+                        return (
+                          <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
+                            <div className="flex items-center gap-3">
+                              <CheckCircle2 className={cn(
+                                "w-5 h-5",
+                                finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
+                              )} />
+                              <div>
+                                <p className="font-semibold text-white">Final Decision</p>
+                                <p className="text-sm text-slate-400">
+                                  {finalDecision.item_label}: <span className={cn(
+                                    "font-medium",
+                                    finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
+                                  )}>{finalDecision.new_state === 'yes' ? 'Pass' : 'Rework'}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
+
+                    {/* Location */}
+                    {session.activities[0]?.latitude && session.activities[0]?.longitude && (
+                      <div className="text-sm text-slate-400">
+                        <span className="font-medium text-slate-300">Location:</span> {session.activities[0].latitude.toFixed(6)}, {session.activities[0].longitude.toFixed(6)}
+                      </div>
+                    )}
+
                     {/* Step-by-step activities */}
                     {[...session.steps].sort((a, b) => a - b).map(stepNum => {
                       const stepActivities = session.activities.filter(a => a.step_number === stepNum);
