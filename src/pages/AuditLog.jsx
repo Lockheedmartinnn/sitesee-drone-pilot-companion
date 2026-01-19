@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useAccessControl } from '@/components/useAccessControl';
-import { Loader2, Shield, FileText, User as UserIcon, Calendar } from 'lucide-react';
+import { Loader2, Shield, FileText, User as UserIcon, Calendar, Download } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
 
 export default function AuditLog() {
   const { data: user } = useQuery({
@@ -29,6 +30,16 @@ export default function AuditLog() {
     queryFn: () => base44.entities.ChatbotMessage.list('-created_date', 100),
   });
 
+  const { data: localMissions = [] } = useQuery({
+    queryKey: ['localMissionLogs'],
+    queryFn: () => base44.entities.LocalMissionLog.list('-created_date', 500),
+  });
+
+  const { data: checklistActivities = [] } = useQuery({
+    queryKey: ['checklistActivities'],
+    queryFn: () => base44.entities.ChecklistActivity.list('-created_date', 1000),
+  });
+
   // Redirect non-managers away from this page
   useEffect(() => {
     if (!isLoading && !permissions.canManageCompany) {
@@ -39,6 +50,116 @@ export default function AuditLog() {
   if (!permissions.canManageCompany) {
     return null;
   }
+
+  const exportMissionDataToCSV = () => {
+    // Group activities by session_id
+    const sessionMap = {};
+    
+    checklistActivities.forEach(activity => {
+      const sessionId = activity.session_id || 'unknown';
+      if (!sessionMap[sessionId]) {
+        sessionMap[sessionId] = [];
+      }
+      sessionMap[sessionId].push(activity);
+    });
+
+    // Build CSV rows
+    const rows = [];
+    rows.push([
+      'Session ID',
+      'Pilot Email',
+      'Pilot ID',
+      'Company',
+      'Site Type',
+      'Completion Date',
+      'Job ID',
+      'Notes',
+      'Latitude',
+      'Longitude',
+      'Step Number',
+      'Step Name',
+      'Action Type',
+      'Item ID',
+      'Item Label',
+      'State',
+      'Activity Timestamp'
+    ]);
+
+    localMissions.forEach(mission => {
+      const missionActivities = checklistActivities.filter(
+        act => act.pilot_email === mission.pilot_id && 
+        new Date(act.created_date).getTime() >= new Date(mission.completion_timestamp).getTime() - 3600000 &&
+        new Date(act.created_date).getTime() <= new Date(mission.completion_timestamp).getTime()
+      );
+
+      if (missionActivities.length === 0) {
+        // Mission with no activities
+        rows.push([
+          'N/A',
+          mission.pilot_id || '',
+          mission.pilot_id || '',
+          mission.company || '',
+          'N/A',
+          mission.completion_timestamp ? format(new Date(mission.completion_timestamp), 'yyyy-MM-dd HH:mm:ss') : '',
+          mission.job_id || '',
+          mission.notes || '',
+          mission.latitude || '',
+          mission.longitude || '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          ''
+        ]);
+      } else {
+        missionActivities.forEach(activity => {
+          rows.push([
+            activity.session_id || 'N/A',
+            activity.pilot_email || '',
+            activity.pilot_id || '',
+            activity.company || '',
+            activity.site_type || '',
+            mission.completion_timestamp ? format(new Date(mission.completion_timestamp), 'yyyy-MM-dd HH:mm:ss') : '',
+            mission.job_id || '',
+            mission.notes || '',
+            mission.latitude || '',
+            mission.longitude || '',
+            activity.step_number || '',
+            activity.step_name || '',
+            activity.action_type || '',
+            activity.item_id || '',
+            activity.item_label || '',
+            activity.new_state || '',
+            activity.created_date ? format(new Date(activity.created_date), 'yyyy-MM-dd HH:mm:ss') : ''
+          ]);
+        });
+      }
+    });
+
+    // Convert to CSV string
+    const csvContent = rows.map(row => 
+      row.map(cell => {
+        const cellStr = String(cell);
+        if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+          return `"${cellStr.replace(/"/g, '""')}"`;
+        }
+        return cellStr;
+      }).join(',')
+    ).join('\n');
+
+    // Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `mission_checklist_data_${format(new Date(), 'yyyy-MM-dd_HHmmss')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const actionLabels = {
     mission_log_create: 'Created Mission Log',
@@ -137,9 +258,18 @@ export default function AuditLog() {
     <div className="min-h-screen text-white">
       <div className="max-w-7xl mx-auto px-5 py-8 pb-20">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-8 h-8 text-blue-400" />
-            <h1 className="text-3xl font-bold">Audit Log</h1>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <Shield className="w-8 h-8 text-blue-400" />
+              <h1 className="text-3xl font-bold">Audit Log</h1>
+            </div>
+            <Button
+              onClick={exportMissionDataToCSV}
+              className="bg-emerald-500 hover:bg-emerald-600"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export Mission Data (CSV)
+            </Button>
           </div>
           <p className="text-slate-400">System activity and user actions</p>
         </motion.div>
