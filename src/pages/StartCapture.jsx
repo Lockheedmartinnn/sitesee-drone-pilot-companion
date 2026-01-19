@@ -184,7 +184,7 @@ const TOWER_CONFIGS = {
       message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Re-center tower before resuming"
     }
   },
-  8: {
+  9: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
