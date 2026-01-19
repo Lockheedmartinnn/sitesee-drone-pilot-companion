@@ -425,19 +425,20 @@ export default function StartCapture() {
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 8;
+  const isAdmin = user?.role === 'admin';
   
   // Step 3 can proceed if: no scale point selected OR all items checked
-  const step3CanProceed = usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
+  const step3CanProceed = isAdmin || usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
-  const step4CanProceed = usingGCP === false || (usingGCP === true && allItemsChecked);
+  const step4CanProceed = isAdmin || usingGCP === false || (usingGCP === true && allItemsChecked);
   // Step 6 can proceed if: all main items checked AND (no panorama OR panorama items checked)
   const panoramaItemsChecked = config?.panoramaItems?.every(item => checkedItems[item.id]) ?? true;
-  const step6CanProceed = allItemsChecked && (needsPanorama === false || (needsPanorama === true && panoramaItemsChecked));
+  const step6CanProceed = isAdmin || (allItemsChecked && (needsPanorama === false || (needsPanorama === true && panoramaItemsChecked)));
   // Step 7 can proceed if: battery change answered NO and all items checked
-  const step7CanProceed = needsBatteryChange === false && allItemsChecked;
+  const step7CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
   // Step 5 can proceed if: timer complete AND satellite check passed
-  const step5CanProceed = gpsTimerComplete && satelliteCheckPassed === true;
-  const canProceed = currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 ? step6CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked))));
+  const step5CanProceed = isAdmin || (gpsTimerComplete && satelliteCheckPassed === true);
+  const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 ? step6CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked)))));
   
   const nextStep = () => {
     // Log step navigation
