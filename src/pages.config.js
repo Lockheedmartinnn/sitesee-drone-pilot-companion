@@ -9,7 +9,6 @@ import LocationQuality from './pages/LocationQuality';
 import MissionDataManagement from './pages/MissionDataManagement';
 import MissionDetail from './pages/MissionDetail';
 import MissionHistory from './pages/MissionHistory';
-import MissionMarkupQuiz from './pages/MissionMarkupQuiz';
 import PanoramaGuide from './pages/PanoramaGuide';
 import PilotGroupTrends from './pages/PilotGroupTrends';
 import PortfolioOverview from './pages/PortfolioOverview';
@@ -36,7 +35,6 @@ export const PAGES = {
     "MissionDataManagement": MissionDataManagement,
     "MissionDetail": MissionDetail,
     "MissionHistory": MissionHistory,
-    "MissionMarkupQuiz": MissionMarkupQuiz,
     "PanoramaGuide": PanoramaGuide,
     "PilotGroupTrends": PilotGroupTrends,
     "PortfolioOverview": PortfolioOverview,
