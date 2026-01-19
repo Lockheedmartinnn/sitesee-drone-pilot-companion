@@ -30,10 +30,15 @@ export default function ChecklistAnalytics() {
 
   const permissions = useAccessControl(user);
 
-  const { data: activities = [], isLoading } = useQuery({
+  const { data: allActivities = [], isLoading } = useQuery({
     queryKey: ['checklistActivities'],
     queryFn: () => base44.entities.ChecklistActivity.list('-created_date', 2000),
   });
+
+  // Filter out current user's activities to avoid skewing data
+  const activities = useMemo(() => {
+    return allActivities.filter(a => a.pilot_email !== user?.email);
+  }, [allActivities, user]);
 
   const { data: localMissions = [] } = useQuery({
     queryKey: ['localMissionLogs'],
@@ -369,6 +374,24 @@ export default function ChecklistAnalytics() {
                             <span>{session.company}</span>
                           </>
                         )}
+                        {(() => {
+                          const finalDecision = session.activities.find(
+                            a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision'
+                          );
+                          if (finalDecision) {
+                            return (
+                              <>
+                                <span>•</span>
+                                <span className={cn(
+                                  "font-medium",
+                                  finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
+                                )}>
+                                  {finalDecision.new_state === 'yes' ? 'Pass ✓' : 'Rework ✗'}
+                                </span>
+                              </>
+                            );
+                          }
+                        })()}
                       </div>
                     </div>
                     {expandedSession === session.session_id ? (
