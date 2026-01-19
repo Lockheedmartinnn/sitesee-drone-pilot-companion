@@ -44,6 +44,7 @@ const TOWER_STEPS = [
   "GCP Placement",
   "GPS Stabilisation",
   "Mission Setup & Camera",
+  "Panorama Setup",
   "Flight Execution",
   "Post-Flight QC"
 ];
@@ -55,6 +56,7 @@ const ROOFTOP_STEPS = [
   "GCP Placement",
   "GPS Stabilisation",
   "Rooftop Mission Setup",
+  "Panorama Setup",
   "Flight Execution",
   "Post-Flight QC"
 ];
@@ -151,16 +153,25 @@ const TOWER_CONFIGS = {
       { id: 'tower_edge', label: 'Tower edge marked', sublabel: '-90° gimbal (radius ~4.5m for SST)' },
       { id: 'obstacles_checked', label: 'Obstacles checked & marked', sublabel: 'All boundaries marked' },
       { id: 'obstacle_altitude', label: 'Obstacle altitudes set', sublabel: '+4m buffer from actual height' }
-    ],
-    panoramaItems: [
-      { id: 'pano_mission_loaded', label: 'Panorama mission loaded in Dronelink', critical: true },
-      { id: 'pano_position', label: 'Positioned 10m above Tower Height', sublabel: 'Centered above tower', critical: true },
-      { id: 'pano_point_marked', label: 'Panorama point(s) marked', critical: true },
-      { id: 'pano_spherical_360', label: 'Pattern set to "Spherical 360"', sublabel: 'Standard deliverable', critical: true },
-      { id: 'pano_mission_named', label: 'Mission named with "Pano" suffix', sublabel: 'e.g., "Brisbane Site 001 Pano"' }
     ]
   },
   7: {
+    title: "Panorama Setup",
+    subtitle: "Configure panorama capture (if required)",
+    info: {
+      title: "Panorama Capture Guide",
+      message: "This is a supplementary mission to the main tower capture.\n\nFollow these steps to set up a panorama capture at the tower location."
+    },
+    items: [
+      { id: 'pano_mission_loaded', label: 'Panorama mission loaded in Dronelink', critical: true },
+      { id: 'pano_position', label: 'Fly to 10m above Tower Height', sublabel: 'Position drone at center of tower', critical: true },
+      { id: 'pano_point_marked', label: 'Panorama point(s) marked', sublabel: 'Mark location for panorama', critical: true },
+      { id: 'pano_spherical_360', label: 'Pattern set to "Spherical 360"', sublabel: 'Standard panorama deliverable', critical: true },
+      { id: 'pano_mission_named', label: 'Mission named with "Pano" suffix', sublabel: 'e.g., "Brisbane Site 001 Pano"' },
+      { id: 'pano_monitor', label: 'Ready to fly panorama mission', sublabel: 'Monitor capture and obstacles' }
+    ]
+  },
+  8: {
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -284,13 +295,24 @@ const ROOFTOP_CONFIGS = {
       { id: 'obstacles_marked', label: 'Obstacles marked', sublabel: 'Buildings, trees with buffer' },
       { id: 'pano_ortho_selected', label: 'Panorama/Orthomosaic selected (if needed)', sublabel: 'Optional components' },
       { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
-    ],
-    panoramaItems: [
-      { id: 'pano_height_marked', label: 'Panorama Height marked', sublabel: 'Gimbal 0° (~20m above roof)', critical: true },
-      { id: 'pano_center_marked', label: 'Panorama Center marked', sublabel: 'Gimbal -90° (directly above location)', critical: true },
-      { id: 'pano_auto_capture', label: 'Auto-capture confirmed', sublabel: 'Will execute during mission' }
-    ],
-    facadeOrbits: [
+    },
+    7: {
+      title: "Panorama Setup",
+      subtitle: "Configure panorama capture (if required)",
+      info: {
+        title: "Rooftop Panorama Guide",
+        message: "For rooftop panoramas:\n• Mark Panorama Height with gimbal at 0° (~20m above roof)\n• Mark Panorama Center with gimbal at -90° (directly above location)\n• Auto-capture will execute during mission"
+      },
+      items: [
+        { id: 'pano_height_marked', label: 'Panorama Height marked', sublabel: 'Gimbal 0° (~20m above roof)', critical: true },
+        { id: 'pano_center_marked', label: 'Panorama Center marked', sublabel: 'Gimbal -90° (directly above location)', critical: true },
+        { id: 'pano_auto_capture', label: 'Auto-capture confirmed', sublabel: 'Will execute during mission' }
+      ]
+    },
+    8: {
+      title: "Rooftop Mission Setup",
+      subtitle: "Facade orbits configuration",
+      facadeOrbits: [
       { name: "First Facade (Overview)", altitude: "30m above MSA", distance: "11m away", gimbal: "-65°" },
       { name: "Second Facade (Top)", altitude: "25m above MSA", distance: "11m away", gimbal: "-55°" },
       { name: "Third Facade (Mid)", altitude: "22m above MSA", distance: "11m away", gimbal: "-45°" },
@@ -424,34 +446,46 @@ export default function StartCapture() {
   }, [config, logActivity]);
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
-  const totalSteps = 8;
+  const totalSteps = 9;
   const isAdmin = user?.role === 'admin';
   
   // Step 3 can proceed if: no scale point selected OR all items checked
   const step3CanProceed = isAdmin || usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = isAdmin || usingGCP === false || (usingGCP === true && allItemsChecked);
-  // Step 6 can proceed if: all main items checked AND (no panorama OR panorama items checked)
-  const panoramaItemsChecked = config?.panoramaItems?.every(item => checkedItems[item.id]) ?? true;
-  const step6CanProceed = isAdmin || (allItemsChecked && (needsPanorama === false || (needsPanorama === true && panoramaItemsChecked)));
-  // Step 7 can proceed if: battery change answered NO and all items checked
-  const step7CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
+  // Step 7 (panorama) can proceed if: no panorama OR all items checked
+  const step7CanProceed = isAdmin || needsPanorama === false || (needsPanorama === true && allItemsChecked);
+  // Step 8 can proceed if: battery change answered NO and all items checked
+  const step8CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
   // Step 5 can proceed if: timer complete AND satellite check passed
   const step5CanProceed = isAdmin || (gpsTimerComplete && satelliteCheckPassed === true);
-  const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 ? step6CanProceed : (currentStep === 7 ? step7CanProceed : allItemsChecked)))));
+  const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked)))));
   
   const nextStep = () => {
     // Log step navigation
     logActivity('step_navigation', `step_${currentStep}_to_${currentStep + 1}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[currentStep]}`, 'next');
     
-    // Mark initial setup complete after step 6 (before flight execution)
-    if (currentStep === 6) {
+    // Mark initial setup complete after step 7 (before flight execution)
+    if (currentStep === 7) {
       setInitialSetupComplete(true);
     }
     
-    // If on step 5 (GPS) and initial setup is complete, skip to step 7 (flight execution)
-    if (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true) {
-      setCurrentStep(7);
+    // Special navigation logic
+    if (currentStep === 6) {
+      // After mission setup, ask about panorama or skip to step 7
+      if (needsPanorama === null) {
+        // Ask the question first
+        return;
+      } else if (needsPanorama === false) {
+        // Skip panorama step, go to flight execution
+        setCurrentStep(8);
+      } else {
+        // Go to panorama step
+        setCurrentStep(7);
+      }
+    } else if (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true) {
+      // Battery swap GPS - skip to flight execution
+      setCurrentStep(8);
       setNeedsBatteryChange(null);
     } else if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
@@ -1065,8 +1099,8 @@ export default function StartCapture() {
               </InfoCard>
             )}
 
-            {/* Step 7: Battery Change and Flight Execution */}
-            {currentStep === 7 && !batterySwapMode && (
+            {/* Step 8: Battery Change and Flight Execution */}
+            {currentStep === 8 && !batterySwapMode && (
               <div className="space-y-4">
                 {/* Battery Change Question */}
                 <InfoCard variant="info" title="Battery Change">
@@ -1132,7 +1166,7 @@ export default function StartCapture() {
               </div>
             )}
 
-            {/* Step 6: Mission Setup with Panorama */}
+            {/* Step 6: Mission Setup - Ask about Panorama */}
             {currentStep === 6 && !batterySwapMode && (
               <div className="space-y-4">
                 {/* Main mission setup items */}
@@ -1184,47 +1218,65 @@ export default function StartCapture() {
                   </motion.div>
                 )}
 
-                {/* Panorama Checklist (if yes) */}
-                {needsPanorama === true && config.panoramaItems && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-3"
-                  >
-                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-blue-300">Panorama Setup</p>
-                        <Link to={createPageUrl('PanoramaGuide')}>
-                          <Button variant="ghost" size="sm" className="text-xs text-blue-400 hover:text-blue-300">
-                            View Guide
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                    {config.panoramaItems.map(item => (
-                      <ChecklistItem
-                        key={item.id}
-                        label={item.label}
-                        sublabel={item.sublabel}
-                        checked={checkedItems[item.id]}
-                        critical={item.critical}
-                        onToggle={() => toggleItem(item.id)}
-                      />
-                    ))}
-                  </motion.div>
+                {/* Confirmation message */}
+                {needsPanorama === true && (
+                  <InfoCard variant="success" title="Panorama Confirmed">
+                    <p>Next step will be panorama setup. Click Next to continue.</p>
+                  </InfoCard>
                 )}
 
-                {/* No Panorama Confirmation */}
                 {needsPanorama === false && (
                   <InfoCard variant="info" title="Skipping Panorama">
-                    <p>No panorama will be captured for this mission. You can proceed to flight execution.</p>
+                    <p>No panorama will be captured. Click Next to proceed to flight execution.</p>
                   </InfoCard>
                 )}
               </div>
             )}
 
+            {/* Step 7: Panorama Setup (dedicated page) */}
+            {currentStep === 7 && !batterySwapMode && (
+              <div className="space-y-4">
+                {config.info && (
+                  <InfoCard variant="info" title={config.info.title}>
+                    <p className="whitespace-pre-line">{config.info.message}</p>
+                  </InfoCard>
+                )}
+
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-blue-300">Panorama Checklist</p>
+                    <Link to={createPageUrl('PanoramaGuide')}>
+                      <Button variant="ghost" size="sm" className="text-xs text-blue-400 hover:text-blue-300">
+                        View Full Guide
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {config.items.map(item => (
+                    <ChecklistItem
+                      key={item.id}
+                      label={item.label}
+                      sublabel={item.sublabel}
+                      checked={checkedItems[item.id]}
+                      critical={item.critical}
+                      onToggle={() => toggleItem(item.id)}
+                    />
+                  ))}
+                </div>
+
+                <InfoCard variant="warning" title="Upload Instructions">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <p>Include panorama images in the upload <strong>along with</strong> the main mission images in the same job</p>
+                  </div>
+                </InfoCard>
+              </div>
+            )}
+
             {/* Checklist Items (other steps) */}
-            {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && currentStep !== 6 && currentStep !== 7 && !batterySwapMode && (
+            {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && currentStep !== 6 && currentStep !== 7 && currentStep !== 8 && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
                   <ChecklistItem
