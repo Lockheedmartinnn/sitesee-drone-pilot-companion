@@ -10,6 +10,7 @@ import MissionDataManagement from './pages/MissionDataManagement';
 import MissionDetail from './pages/MissionDetail';
 import MissionHistory from './pages/MissionHistory';
 import MissionMarkupQuiz from './pages/MissionMarkupQuiz';
+import PanoramaGuide from './pages/PanoramaGuide';
 import PilotGroupTrends from './pages/PilotGroupTrends';
 import PortfolioOverview from './pages/PortfolioOverview';
 import Profile from './pages/Profile';
@@ -20,7 +21,6 @@ import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import PanoramaGuide from './pages/PanoramaGuide';
 import __Layout from './Layout.jsx';
 
 
@@ -37,6 +37,7 @@ export const PAGES = {
     "MissionDetail": MissionDetail,
     "MissionHistory": MissionHistory,
     "MissionMarkupQuiz": MissionMarkupQuiz,
+    "PanoramaGuide": PanoramaGuide,
     "PilotGroupTrends": PilotGroupTrends,
     "PortfolioOverview": PortfolioOverview,
     "Profile": Profile,
@@ -47,7 +48,6 @@ export const PAGES = {
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "PanoramaGuide": PanoramaGuide,
 }
 
 export const pagesConfig = {
