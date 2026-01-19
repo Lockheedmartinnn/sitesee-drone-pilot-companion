@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -295,24 +296,8 @@ const ROOFTOP_CONFIGS = {
       { id: 'obstacles_marked', label: 'Obstacles marked', sublabel: 'Buildings, trees with buffer' },
       { id: 'pano_ortho_selected', label: 'Panorama/Orthomosaic selected (if needed)', sublabel: 'Optional components' },
       { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
-    },
-    7: {
-      title: "Panorama Setup",
-      subtitle: "Configure panorama capture (if required)",
-      info: {
-        title: "Rooftop Panorama Guide",
-        message: "For rooftop panoramas:\n• Mark Panorama Height with gimbal at 0° (~20m above roof)\n• Mark Panorama Center with gimbal at -90° (directly above location)\n• Auto-capture will execute during mission"
-      },
-      items: [
-        { id: 'pano_height_marked', label: 'Panorama Height marked', sublabel: 'Gimbal 0° (~20m above roof)', critical: true },
-        { id: 'pano_center_marked', label: 'Panorama Center marked', sublabel: 'Gimbal -90° (directly above location)', critical: true },
-        { id: 'pano_auto_capture', label: 'Auto-capture confirmed', sublabel: 'Will execute during mission' }
-      ]
-    },
-    8: {
-      title: "Rooftop Mission Setup",
-      subtitle: "Facade orbits configuration",
-      facadeOrbits: [
+    ],
+    facadeOrbits: [
       { name: "First Facade (Overview)", altitude: "30m above MSA", distance: "11m away", gimbal: "-65°" },
       { name: "Second Facade (Top)", altitude: "25m above MSA", distance: "11m away", gimbal: "-55°" },
       { name: "Third Facade (Mid)", altitude: "22m above MSA", distance: "11m away", gimbal: "-45°" },
@@ -323,7 +308,20 @@ const ROOFTOP_CONFIGS = {
       message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
     }
   },
-  7: {
+  7: { // This is the new Panorama Setup for Rooftop
+    title: "Panorama Setup",
+    subtitle: "Configure panorama capture (if required)",
+    info: {
+      title: "Rooftop Panorama Guide",
+      message: "For rooftop panoramas:\n• Mark Panorama Height with gimbal at 0° (~20m above roof)\n• Mark Panorama Center with gimbal at -90° (directly above location)\n• Auto-capture will execute during mission"
+    },
+    items: [
+      { id: 'pano_height_marked', label: 'Panorama Height marked', sublabel: 'Gimbal 0° (~20m above roof)', critical: true },
+      { id: 'pano_center_marked', label: 'Panorama Center marked', sublabel: 'Gimbal -90° (directly above location)', critical: true },
+      { id: 'pano_auto_capture', label: 'Auto-capture confirmed', sublabel: 'Will execute during mission' }
+    ]
+  },
+  8: { // This is the re-indexed Flight Execution for Rooftop
     title: "Flight Execution",
     subtitle: "Monitor during active mission",
     items: [
@@ -336,7 +334,7 @@ const ROOFTOP_CONFIGS = {
       message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
     }
   },
-  9: {
+  9: { // This is the re-indexed Post-Flight QC for Rooftop
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
     items: [
@@ -477,14 +475,14 @@ export default function StartCapture() {
         // Ask the question first
         return;
       } else if (needsPanorama === false) {
-        // Skip panorama step, go to flight execution
+        // Skip panorama step, go to flight execution (step 8)
         setCurrentStep(8);
       } else {
-        // Go to panorama step
+        // Go to panorama step (step 7)
         setCurrentStep(7);
       }
     } else if (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true) {
-      // Battery swap GPS - skip to flight execution
+      // Battery swap GPS - skip to flight execution (step 8)
       setCurrentStep(8);
       setNeedsBatteryChange(null);
     } else if (currentStep < totalSteps) {
@@ -538,11 +536,11 @@ export default function StartCapture() {
     setFinalDecision(null);
   };
 
-  const startBatterySwap = () => {
-    setBatterySwapMode(true);
-    setBatterySwapChecks({});
-    setBatterySwapGpsComplete(false);
-  };
+  // const startBatterySwap = () => { // This function is not used
+  //   setBatterySwapMode(true);
+  //   setBatterySwapChecks({});
+  //   setBatterySwapGpsComplete(false);
+  // };
 
   const completeBatterySwap = () => {
     setBatterySwapMode(false);
@@ -692,7 +690,7 @@ export default function StartCapture() {
             </div>
             
             {/* Battery Swap Mode */}
-            {batterySwapMode && currentStep === 7 && (
+            {batterySwapMode && currentStep === 8 && ( /* Changed currentStep from 7 to 8 */
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -932,7 +930,7 @@ export default function StartCapture() {
             )}
             
             {/* Info Card for Steps with or without items */}
-            {config.info && currentStep !== 5 && currentStep !== 3 && currentStep !== 4 && !batterySwapMode && (
+            {config.info && currentStep !== 5 && currentStep !== 3 && currentStep !== 4 && currentStep !== 7 && !batterySwapMode && (
               <InfoCard variant="info" title={config.info.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.info.message}</p>
               </InfoCard>
@@ -961,7 +959,7 @@ export default function StartCapture() {
               </InfoCard>
             )}
             
-            {/* Facade Orbits Info (Rooftop Step 4) */}
+            {/* Facade Orbits Info (Rooftop Step 6) */}
             {config.facadeOrbits && (
               <InfoCard variant="info" title="4 Facade Orbits (Auto-Set)" className="mb-4">
                 <div className="text-xs space-y-2">
@@ -1099,73 +1097,6 @@ export default function StartCapture() {
               </InfoCard>
             )}
 
-            {/* Step 8: Battery Change and Flight Execution */}
-            {currentStep === 8 && !batterySwapMode && (
-              <div className="space-y-4">
-                {/* Battery Change Question */}
-                <InfoCard variant="info" title="Battery Change">
-                  <p className="mb-4">Do you need to change the battery?</p>
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => {
-                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
-                        // If initial setup complete, skip to GPS step and then back to flight execution
-                        if (initialSetupComplete) {
-                          setCurrentStep(5);
-                          setGpsTimerComplete(false);
-                          setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(5);
-                          setTimerKey(prev => prev + 1);
-                          setNeedsBatteryChange(null);
-                        } else {
-                          // First time, go through full flow
-                          setCurrentStep(5);
-                          setGpsTimerComplete(false);
-                          setCheckedItems({});
-                          setNeedsBatteryChange(null);
-                        }
-                      }}
-                      className="flex-1 bg-amber-500 hover:bg-amber-600"
-                    >
-                      <Battery className="w-4 h-4 mr-2" />
-                      Yes - Change Battery
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setNeedsBatteryChange(false);
-                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'no');
-                      }}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600"
-                      disabled={needsBatteryChange === false}
-                    >
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      {needsBatteryChange === false ? '✓ No Battery Change' : 'No - Continue'}
-                    </Button>
-                  </div>
-                </InfoCard>
-
-                {/* Flight Execution Checklist (shown after No is selected) */}
-                {needsBatteryChange === false && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-3"
-                  >
-                    {config.items.map(item => (
-                      <ChecklistItem
-                        key={item.id}
-                        label={item.label}
-                        sublabel={item.sublabel}
-                        checked={checkedItems[item.id]}
-                        critical={item.critical}
-                        onToggle={() => toggleItem(item.id)}
-                      />
-                    ))}
-                  </motion.div>
-                )}
-              </div>
-            )}
-
             {/* Step 6: Mission Setup - Ask about Panorama */}
             {currentStep === 6 && !batterySwapMode && (
               <div className="space-y-4">
@@ -1184,7 +1115,7 @@ export default function StartCapture() {
                 </div>
 
                 {/* Panorama Yes/No (after main items are checked) */}
-                {allItemsChecked && needsPanorama === null && (
+                {(allItemsChecked || isAdmin) && needsPanorama === null && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1275,7 +1206,74 @@ export default function StartCapture() {
               </div>
             )}
 
-            {/* Checklist Items (other steps) */}
+            {/* Step 8: Battery Change and Flight Execution */}
+            {currentStep === 8 && !batterySwapMode && (
+              <div className="space-y-4">
+                {/* Battery Change Question */}
+                <InfoCard variant="info" title="Battery Change">
+                  <p className="mb-4">Do you need to change the battery?</p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
+                        // If initial setup complete, skip to GPS step and then back to flight execution (Step 8)
+                        if (initialSetupComplete) {
+                          setCurrentStep(5);
+                          setGpsTimerComplete(false);
+                          setSatelliteCheckPassed(null);
+                          setGpsTimerMinutes(5);
+                          setTimerKey(prev => prev + 1);
+                          setNeedsBatteryChange(null);
+                        } else {
+                          // First time, go through full flow
+                          setCurrentStep(5);
+                          setGpsTimerComplete(false);
+                          setCheckedItems({}); // Reset checked items for step 5
+                          setNeedsBatteryChange(null);
+                        }
+                      }}
+                      className="flex-1 bg-amber-500 hover:bg-amber-600"
+                    >
+                      <Battery className="w-4 h-4 mr-2" />
+                      Yes - Change Battery
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setNeedsBatteryChange(false);
+                        logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'no');
+                      }}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600"
+                      disabled={needsBatteryChange === false}
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      {needsBatteryChange === false ? '✓ No Battery Change' : 'No - Continue'}
+                    </Button>
+                  </div>
+                </InfoCard>
+
+                {/* Flight Execution Checklist (shown after No is selected) */}
+                {needsBatteryChange === false && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3"
+                  >
+                    {config.items.map(item => (
+                      <ChecklistItem
+                        key={item.id}
+                        label={item.label}
+                        sublabel={item.sublabel}
+                        checked={checkedItems[item.id]}
+                        critical={item.critical}
+                        onToggle={() => toggleItem(item.id)}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            )}
+
+            {/* Checklist Items (other steps - 1, 2) */}
             {config.items && currentStep !== totalSteps && currentStep !== 3 && currentStep !== 4 && currentStep !== 6 && currentStep !== 7 && currentStep !== 8 && !batterySwapMode && (
               <div className="space-y-3">
                 {config.items.map(item => (
