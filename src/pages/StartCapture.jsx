@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -497,6 +496,8 @@ export default function StartCapture() {
   const handleDecision = (decision) => {
     setFinalDecision(decision);
     setShowPostMissionForm(true);
+    // Log the final decision
+    logActivity('yes_no_decision', 'final_pass_decision', 'Based on your QC checks, would you leave the site confident this capture will pass?', decision);
   };
   
   const handlePostMissionSubmit = async (e) => {
