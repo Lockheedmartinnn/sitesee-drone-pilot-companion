@@ -14,7 +14,8 @@ import {
   User,
   LogOut,
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -56,6 +57,7 @@ export default function Layout({ children, currentPageName }) {
 
   const bottomNavigation = [
     { name: 'My Capture Logbook', href: createPageUrl('MissionHistory'), icon: ClipboardList },
+    { name: 'Checklist Analytics', href: createPageUrl('ChecklistAnalytics'), icon: BarChart3 },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   
