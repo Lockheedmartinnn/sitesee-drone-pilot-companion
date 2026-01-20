@@ -174,11 +174,7 @@ export default function Layout({ children, currentPageName }) {
             })}
           </nav>
 
-          {/* Middle Section - Dynamic Tiles */}
-          <div className="flex-1 overflow-y-auto p-4">
-          </div>
-
-          {/* Bottom Navigation */}
+              {/* Bottom Navigation */}
           <nav className="p-4 space-y-1 border-t border-slate-800">
             {bottomNavigation.map((item) => {
               const Icon = item.icon;
