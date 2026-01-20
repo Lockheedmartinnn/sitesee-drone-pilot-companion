@@ -51,7 +51,7 @@ export default function Layout({ children, currentPageName }) {
   const topNavigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
     { name: 'Field Operations', href: createPageUrl('FieldOperationsHub'), icon: Rocket },
-    { name: 'Training', href: createPageUrl('TrainingHub'), icon: GraduationCap },
+    { name: 'Academy', href: createPageUrl('TrainingHub'), icon: GraduationCap },
     { name: 'Resources', href: createPageUrl('ToolsLinks'), icon: BookOpen },
   ];
 
