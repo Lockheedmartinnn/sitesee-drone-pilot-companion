@@ -176,16 +176,6 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Middle Section - Dynamic Tiles */}
           <div className="flex-1 overflow-y-auto p-4">
-            {!sidebarCollapsed && (
-              <>
-                <div className="text-xs font-bold uppercase tracking-wider px-3 mb-3 text-slate-500">
-                  Quick Access
-                </div>
-                <div className="text-sm text-slate-500 px-3">
-                  Select a section from above to see quick links here.
-                </div>
-              </>
-            )}
           </div>
 
           {/* Bottom Navigation */}
