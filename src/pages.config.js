@@ -3,6 +3,7 @@ import Billing from './pages/Billing';
 import ChecklistActivityLog from './pages/ChecklistActivityLog';
 import ChecklistAnalytics from './pages/ChecklistAnalytics';
 import EquipmentCorrelation from './pages/EquipmentCorrelation';
+import FieldOperationsHub from './pages/FieldOperationsHub';
 import GPSVerifier from './pages/GPSVerifier';
 import Home from './pages/Home';
 import LocationQuality from './pages/LocationQuality';
@@ -18,10 +19,9 @@ import Scenarios from './pages/Scenarios';
 import StandardCaptureChecklist from './pages/StandardCaptureChecklist';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
+import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import FieldOperationsHub from './pages/FieldOperationsHub';
-import TrainingHub from './pages/TrainingHub';
 import __Layout from './Layout.jsx';
 
 
@@ -31,6 +31,7 @@ export const PAGES = {
     "ChecklistActivityLog": ChecklistActivityLog,
     "ChecklistAnalytics": ChecklistAnalytics,
     "EquipmentCorrelation": EquipmentCorrelation,
+    "FieldOperationsHub": FieldOperationsHub,
     "GPSVerifier": GPSVerifier,
     "Home": Home,
     "LocationQuality": LocationQuality,
@@ -46,10 +47,9 @@ export const PAGES = {
     "StandardCaptureChecklist": StandardCaptureChecklist,
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
+    "TrainingHub": TrainingHub,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "FieldOperationsHub": FieldOperationsHub,
-    "TrainingHub": TrainingHub,
 }
 
 export const pagesConfig = {

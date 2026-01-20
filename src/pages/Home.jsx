@@ -102,7 +102,7 @@ export default function Home() {
           transition={{ delay: 0.5 }}
           className="text-center text-xs text-slate-600 mt-12"
         >
-          v1.0 • Built for field operations
+          v1.1 • Built for field operations
           </motion.p>
           </div>
           </div>
