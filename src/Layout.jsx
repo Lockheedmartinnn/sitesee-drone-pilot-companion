@@ -9,14 +9,11 @@ import {
   Home, 
   ClipboardList, 
   BookOpen,
-  PlayCircle,
-  Map,
-  ExternalLink,
+  Rocket,
+  GraduationCap,
   User,
   LogOut,
-  Satellite,
-  MessageSquare,
-  BarChart3
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -27,7 +24,15 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
+
+  // Listen for custom event to open chat
+  React.useEffect(() => {
+    const handleOpenChat = () => setChatOpen(true);
+    window.addEventListener('openChat', handleOpenChat);
+    return () => window.removeEventListener('openChat', handleOpenChat);
+  }, []);
   
   const { data: user, refetch: refetchUser } = useQuery({
     queryKey: ['currentUser'],
@@ -41,15 +46,15 @@ export default function Layout({ children, currentPageName }) {
     }
   }, [user]);
   
-  const navigation = [
+  const topNavigation = [
     { name: 'Home', href: createPageUrl('Home'), icon: Home },
-    { name: 'GPS Altitude Verifier', href: createPageUrl('GPSVerifier'), icon: Satellite },
-    { name: 'AI Copilot', onClick: () => { setChatOpen(true); setSidebarOpen(false); }, icon: MessageSquare, badge: 'NEW' },
-    { name: 'Onboarding / Training', href: createPageUrl('ToolsLinks'), icon: BookOpen },
-    { name: 'My Captures', href: createPageUrl('MissionHistory'), icon: ClipboardList },
-    { name: 'Checklist Analytics', href: createPageUrl('ChecklistAnalytics'), icon: BarChart3 },
-    { name: 'Quick Reference', href: createPageUrl('QuickReference'), icon: ExternalLink },
-    { name: 'Scenarios', href: createPageUrl('Scenarios'), icon: Map },
+    { name: 'Field Operations', href: createPageUrl('FieldOperationsHub'), icon: Rocket },
+    { name: 'Training', href: createPageUrl('TrainingHub'), icon: GraduationCap },
+    { name: 'Resources', href: createPageUrl('ToolsLinks'), icon: BookOpen },
+  ];
+
+  const bottomNavigation = [
+    { name: 'My Capture Logbook', href: createPageUrl('MissionHistory'), icon: ClipboardList },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   
@@ -107,54 +112,84 @@ export default function Layout({ children, currentPageName }) {
       
       {/* Sidebar */}
       <aside className={cn(
-        "fixed top-0 left-0 z-40 h-full w-72 bg-slate-900 border-r border-slate-800 transition-transform duration-300",
+        "fixed top-0 left-0 z-40 h-full bg-slate-900 border-r border-slate-800 transition-all duration-300",
         "lg:translate-x-0",
+        sidebarCollapsed ? "w-20" : "w-72",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-slate-800">
-            <div className="flex flex-col gap-3">
+            {!sidebarCollapsed ? (
+              <div className="flex flex-col gap-3">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
+                  alt="SiteSee"
+                  className="h-8"
+                />
+                <div>
+                  <h1 className="font-bold text-white">SiteSee</h1>
+                  <p className="text-xs text-slate-400">Pilot Companion</p>
+                </div>
+              </div>
+            ) : (
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png"
                 alt="SiteSee"
-                className="h-8"
+                className="h-8 mx-auto"
               />
-              <div>
-                <h1 className="font-bold text-white">Pilot Companion</h1>
-                <p className="text-xs text-slate-400">Field Operations Guide</p>
-              </div>
-            </div>
+            )}
           </div>
           
-
-          
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navigation.map((item) => {
+          {/* Top Navigation */}
+          <nav className="p-4 space-y-1 border-b border-slate-800">
+            <div className={cn("text-xs font-bold uppercase tracking-wider mb-3", sidebarCollapsed ? "text-center" : "px-3", "text-slate-500")}>
+              {!sidebarCollapsed && 'Navigation'}
+            </div>
+            {topNavigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
 
-              if (item.onClick) {
-                return (
-                  <button
-                    key={item.name}
-                    onClick={item.onClick}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative",
-                      "text-slate-400 hover:bg-slate-800 hover:text-white"
-                    )}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                    {item.badge && (
-                      <span className="ml-auto text-[10px] font-bold bg-blue-500 text-white px-2 py-0.5 rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              }
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                    active
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  )}
+                  title={sidebarCollapsed ? item.name : ''}
+                >
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="font-medium">{item.name}</span>}
+                  {!sidebarCollapsed && <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Middle Section - Dynamic Tiles */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {!sidebarCollapsed && (
+              <>
+                <div className="text-xs font-bold uppercase tracking-wider px-3 mb-3 text-slate-500">
+                  Quick Access
+                </div>
+                <div className="text-sm text-slate-500 px-3">
+                  Select a section from above to see quick links here.
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Bottom Navigation */}
+          <nav className="p-4 space-y-1 border-t border-slate-800">
+            {bottomNavigation.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
 
               return (
                 <Link
@@ -167,9 +202,10 @@ export default function Layout({ children, currentPageName }) {
                       ? "bg-blue-500/20 text-blue-400"
                       : "text-slate-400 hover:bg-slate-800 hover:text-white"
                   )}
+                  title={sidebarCollapsed ? item.name : ''}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.name}</span>
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  {!sidebarCollapsed && <span className="font-medium">{item.name}</span>}
                 </Link>
               );
             })}
@@ -177,32 +213,30 @@ export default function Layout({ children, currentPageName }) {
 
           {/* User Info & Logout */}
           <div className="p-4 border-t border-slate-800 space-y-3">
-            {user && (
+            {!sidebarCollapsed && user && (
               <div className="text-center">
                 <p className="text-sm text-white font-medium">{user.full_name || 'User'}</p>
                 <p className="text-xs text-slate-500">{user.access_level || 'pilot'}</p>
-                {user.pilot_id && (
-                  <p className="text-xs text-slate-600 mt-1">ID: {user.pilot_id}</p>
-                )}
               </div>
             )}
             <Button
               variant="ghost"
               onClick={() => base44.auth.logout()}
-              className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-800"
+              className={cn(
+                "w-full text-slate-400 hover:text-white hover:bg-slate-800",
+                sidebarCollapsed ? "justify-center px-2" : "justify-start"
+              )}
+              title={sidebarCollapsed ? "Logout" : ''}
             >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              <LogOut className="w-4 h-4" />
+              {!sidebarCollapsed && <span className="ml-2">Logout</span>}
             </Button>
-            <p className="text-xs text-slate-600 text-center pt-2 border-t border-slate-700">
-              Training companion • Local storage
-            </p>
           </div>
         </div>
       </aside>
       
       {/* Main Content */}
-      <div className="lg:pl-72">
+      <div className={cn("transition-all duration-300", sidebarCollapsed ? "lg:pl-20" : "lg:pl-72")}>
         <div className="pt-16 lg:pt-0">
           {children}
         </div>
