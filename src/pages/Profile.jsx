@@ -326,7 +326,7 @@ export default function Profile() {
           className="mt-6"
         >
           <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">
-            Training Progress
+            Academy Progress
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatCard

@@ -181,7 +181,7 @@ export default function TrainingVideos() {
               className="h-6"
             />
             <div>
-              <h1 className="text-lg font-semibold">Training Videos</h1>
+              <h1 className="text-lg font-semibold">Academy Videos</h1>
               <p className="text-sm text-slate-400">Short IRL tutorials</p>
             </div>
           </div>
@@ -264,7 +264,7 @@ export default function TrainingVideos() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="text-lg font-bold text-white mb-4">General Training & Techniques</h2>
+          <h2 className="text-lg font-bold text-white mb-4">General Learning & Techniques</h2>
           <div className="space-y-4">
             {generalVideos.map((video, index) => (
               <VideoCard

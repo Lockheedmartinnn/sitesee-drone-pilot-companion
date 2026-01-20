@@ -23,7 +23,7 @@ export default function TrainingHub() {
   const hubTiles = [
     {
       icon: PlayCircle,
-      title: 'Mission Training',
+      title: 'Mission Academy',
       description: 'Video tutorials and guides for all capture types',
       onClick: () => setCurrentLevel('mission-training'),
       variant: 'primary'
@@ -97,7 +97,7 @@ export default function TrainingHub() {
     },
     {
       icon: PlayCircle,
-      title: 'Other Training Videos',
+      title: 'Other Academy Videos',
       description: 'Additional tutorials and guides',
       onClick: () => navigate(createPageUrl('TrainingVideos')),
       variant: 'default'
@@ -153,11 +153,11 @@ export default function TrainingHub() {
             )}
             <div>
               <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">
-                {currentLevel === 'hub' ? 'Training & Onboarding' : 'Mission Training'}
+                {currentLevel === 'hub' ? 'Academy & Onboarding' : 'Mission Academy'}
               </p>
               <h1 className="text-3xl font-bold text-white">
-                {currentLevel === 'hub' && 'Training Hub'}
-                {currentLevel === 'mission-training' && 'Mission Training'}
+                {currentLevel === 'hub' && 'Academy'}
+                {currentLevel === 'mission-training' && 'Mission Academy'}
                 {currentLevel === 'content' && `${selectedCategory === 'rooftop' ? 'Rooftop' : 'Tower'} Capture`}
               </h1>
             </div>
@@ -190,7 +190,7 @@ export default function TrainingHub() {
             <div>
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                 <PlayCircle className="w-5 h-5 text-blue-400" />
-                Training Videos
+                Academy Videos
               </h2>
               <div className="grid grid-cols-1 gap-3">
                 {contentData[selectedCategory].videos.map((video, index) => (
