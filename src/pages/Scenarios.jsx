@@ -10,7 +10,8 @@ import {
   Satellite,
   AlertTriangle,
   Camera,
-  MapPin
+  MapPin,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -198,6 +199,26 @@ export default function Scenarios() {
               onToggle={() => setOpenId(openId === scenario.id ? null : scenario.id)}
             />
           ))}
+          
+          {/* Contribute Scenario Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 overflow-hidden"
+          >
+            <button
+              onClick={() => window.dispatchEvent(new Event('openChat'))}
+              className="w-full flex items-center gap-4 p-4 text-left hover:bg-blue-500/10 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <Plus className="w-6 h-6 text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-blue-300">Contribute a Scenario</h3>
+                <p className="text-sm text-slate-400">Experienced something not listed? Share it with us</p>
+              </div>
+            </button>
+          </motion.div>
         </div>
       </div>
     </div>
