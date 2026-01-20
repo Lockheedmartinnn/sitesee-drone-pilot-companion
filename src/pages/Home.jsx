@@ -35,7 +35,7 @@ export default function Home() {
         </motion.div>
 
         {/* Primary Actions */}
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -66,82 +66,33 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Link to={createPageUrl('FieldOperationsHub')}>
+              <ActionButton
+                icon={Rocket}
+                label="Field Operations Hub"
+                sublabel="Quick reference, scenarios & tools"
+              />
+            </Link>
+          </motion.div>
 
-            {/* Divider */}
-            <div className="flex items-center gap-4 mb-6">
-          <div className="flex-1 h-px bg-slate-700/50" />
-          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Onboarding & Training</span>
-          <div className="flex-1 h-px bg-slate-700/50" />
-        </div>
-
-        {/* Onboarding & Training Section */}
-        <div className="space-y-3">
-          <a href="https://forms.gle/3VdjyDQ9LK8UkjgHA" target="_blank" rel="noopener noreferrer">
-            <ActionButton
-              icon={BookOpen}
-              label="Rooftop Markup Quiz"
-              sublabel="Required before rooftop captures"
-              variant="primary"
-              index={0}
-            />
-          </a>
-
-          <a href="https://forms.gle/671jRKFk27ybs82eA" target="_blank" rel="noopener noreferrer">
-            <ActionButton
-              icon={BookOpen}
-              label="Tower Markup Quiz"
-              sublabel="Required before tower captures"
-              variant="primary"
-              index={1}
-            />
-          </a>
-
-          <Link to={createPageUrl('TrainingVideos')}>
-            <ActionButton
-              icon={PlayCircle}
-              label="Training Videos"
-              sublabel="Mission markup & tutorials"
-              index={1}
-            />
-          </Link>
-
-          <Link to={createPageUrl('ToolsLinks')}>
-            <ActionButton
-              icon={BookOpen}
-              label="Resources & Guides"
-              sublabel="Complete onboarding materials"
-              index={2}
-            />
-          </Link>
-        </div>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-slate-700/50" />
-          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Field Operations</span>
-          <div className="flex-1 h-px bg-slate-700/50" />
-        </div>
-
-        {/* Field Operations Section */}
-        <div className="space-y-3">
-          <Link to={createPageUrl('QuickReference')}>
-            <ActionButton
-              icon={BookOpen}
-              label="Quick Reference"
-              sublabel="Field bible & checklists"
-              index={0}
-            />
-          </Link>
-
-          <Link to={createPageUrl('Scenarios')}>
-            <ActionButton
-              icon={Map}
-              label="Scenarios"
-              sublabel="What-if field situations"
-              index={1}
-            />
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.25 }}
+          >
+            <Link to={createPageUrl('TrainingHub')}>
+              <ActionButton
+                icon={BookOpen}
+                label="Training & Onboarding"
+                sublabel="Videos, quizzes & documentation"
+              />
+            </Link>
+          </motion.div>
         </div>
 
         {/* Footer */}
