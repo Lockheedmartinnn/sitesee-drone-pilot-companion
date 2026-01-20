@@ -13,7 +13,8 @@ import {
   GraduationCap,
   User,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
