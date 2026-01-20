@@ -20,6 +20,8 @@ import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import FieldOperationsHub from './pages/FieldOperationsHub';
+import TrainingHub from './pages/TrainingHub';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +48,8 @@ export const PAGES = {
     "ToolsLinks": ToolsLinks,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
+    "FieldOperationsHub": FieldOperationsHub,
+    "TrainingHub": TrainingHub,
 }
 
 export const pagesConfig = {
