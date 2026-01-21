@@ -95,7 +95,7 @@ export default function ChecklistAnalytics() {
         stepsCompleted: session.steps.size,
         missionLog
       };
-    }).sort((a, b) => b.startTime - a.startTime);
+    }).filter(session => session.durationSec >= 600).sort((a, b) => b.startTime - a.startTime);
   }, [activities, localMissions]);
 
   // Filter sessions
