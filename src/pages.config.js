@@ -23,6 +23,11 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import RooftopModule1 from './pages/RooftopModule1';
+import RooftopModule2 from './pages/RooftopModule2';
+import RooftopModule3 from './pages/RooftopModule3';
+import RooftopModule4 from './pages/RooftopModule4';
+import RooftopModule5 from './pages/RooftopModule5';
 import __Layout from './Layout.jsx';
 
 
@@ -52,6 +57,11 @@ export const PAGES = {
     "TrainingHub": TrainingHub,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
+    "RooftopModule1": RooftopModule1,
+    "RooftopModule2": RooftopModule2,
+    "RooftopModule3": RooftopModule3,
+    "RooftopModule4": RooftopModule4,
+    "RooftopModule5": RooftopModule5,
 }
 
 export const pagesConfig = {
