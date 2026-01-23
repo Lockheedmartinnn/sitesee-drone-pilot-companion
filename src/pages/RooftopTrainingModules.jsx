@@ -874,62 +874,34 @@ const MODULES = [
 ];
 
 export default function RooftopTrainingModules() {
-  const [expandedModule, setExpandedModule] = useState(null);
-  const [expandedSection, setExpandedSection] = useState({});
-  const [quizAnswers, setQuizAnswers] = useState({});
-  const [completedModules, setCompletedModules] = useState(new Set());
-
+  const navigate = useNavigate();
+  
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
 
-  const toggleModule = (moduleId) => {
-    setExpandedModule(expandedModule === moduleId ? null : moduleId);
+  // Get completed modules from localStorage
+  const getCompletedModules = () => {
+    try {
+      const stored = localStorage.getItem('rooftop_completed_modules');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
   };
 
-  const toggleSection = (moduleId, sectionIndex) => {
-    const key = `${moduleId}-${sectionIndex}`;
-    setExpandedSection(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  const handleQuizAnswer = (moduleId, questionIndex, answerIndex) => {
-    setQuizAnswers(prev => ({
-      ...prev,
-      [`${moduleId}-${questionIndex}`]: answerIndex
-    }));
-  };
-
-  const calculateQuizScore = (moduleId) => {
-    const module = MODULES.find(m => m.id === moduleId);
-    if (!module?.quiz) return 0;
-
-    let correct = 0;
-    module.quiz.forEach((q, i) => {
-      if (quizAnswers[`${moduleId}-${i}`] === q.correct) {
-        correct++;
-      }
-    });
-    return Math.round((correct / module.quiz.length) * 100);
-  };
-
-  const isModuleComplete = (moduleId) => {
-    const module = MODULES.find(m => m.id === moduleId);
-    if (!module?.quiz) return false;
-
-    return module.quiz.every((_, i) => 
-      quizAnswers[`${moduleId}-${i}`] !== undefined
-    );
-  };
+  const completedModules = getCompletedModules();
 
   const canAccessModule = (module) => {
     // Admins can access all modules
     if (user?.role === 'admin') return true;
     if (!module.prerequisite) return true;
     return completedModules.has(module.prerequisite);
+  };
+
+  const handleModuleClick = (moduleId) => {
+    navigate(createPageUrl(`RooftopModule${moduleId.replace('module', '')}`));
   };
 
   return (
@@ -971,257 +943,68 @@ export default function RooftopTrainingModules() {
         </div>
 
         {/* Modules List */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4">
           {MODULES.map((module) => {
-            const isExpanded = expandedModule === module.id;
             const isComplete = completedModules.has(module.id);
             const canAccess = canAccessModule(module);
-            const quizScore = calculateQuizScore(module.id);
-            const quizComplete = isModuleComplete(module.id);
 
             return (
-              <motion.div
+              <motion.button
                 key={module.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: module.number * 0.1 }}
+                onClick={() => canAccess && handleModuleClick(module.id)}
+                disabled={!canAccess}
                 className={cn(
-                  "rounded-2xl border overflow-hidden",
+                  "rounded-2xl border p-6 text-left transition-all",
                   canAccess 
-                    ? "bg-slate-800/50 border-slate-700/50" 
-                    : "bg-slate-800/20 border-slate-700/20 opacity-60"
+                    ? "bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/50 cursor-pointer" 
+                    : "bg-slate-800/20 border-slate-700/20 opacity-60 cursor-not-allowed"
                 )}
               >
-                {/* Module Header */}
-                <button
-                  onClick={() => canAccess && toggleModule(module.id)}
-                  disabled={!canAccess}
-                  className="w-full p-6 text-left hover:bg-slate-700/30 transition-colors disabled:cursor-not-allowed"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
-                      isComplete ? "bg-emerald-500/20" : "bg-blue-500/20"
-                    )}>
-                      {isComplete ? (
-                        <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-                      ) : (
-                        <span className="text-xl font-bold text-blue-400">{module.number}</span>
+                <div className="flex items-start gap-4">
+                  <div className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
+                    isComplete ? "bg-emerald-500/20" : "bg-blue-500/20"
+                  )}>
+                    {isComplete ? (
+                      <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                    ) : (
+                      <span className="text-xl font-bold text-blue-400">{module.number}</span>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-1">{module.title}</h3>
+                        <p className="text-sm text-slate-400">{module.description}</p>
+                      </div>
+                      {canAccess && (
+                        <ChevronRight className="w-5 h-5 text-slate-400 flex-shrink-0" />
                       )}
                     </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-1">{module.title}</h3>
-                          <p className="text-sm text-slate-400">{module.description}</p>
-                        </div>
-                        {canAccess && (
-                          <ChevronDown className={cn(
-                            "w-5 h-5 text-slate-400 transition-transform flex-shrink-0",
-                            isExpanded && "rotate-180"
-                          )} />
-                        )}
-                      </div>
 
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <Badge variant="outline" className="text-xs bg-transparent">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {module.estimatedTime}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <Badge variant="outline" className="text-xs bg-transparent">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {module.estimatedTime}
+                      </Badge>
+                      {module.prerequisite && !canAccess && (
+                        <Badge variant="outline" className="text-xs text-amber-400 border-amber-400/30">
+                          Requires Module {MODULES.find(m => m.id === module.prerequisite)?.number}
                         </Badge>
-                        {module.prerequisite && (
-                          <Badge variant="outline" className="text-xs text-amber-400 border-amber-400/30">
-                            Requires Module {MODULES.find(m => m.id === module.prerequisite)?.number}
-                          </Badge>
-                        )}
-                        {quizComplete && (
-                          <Badge className={cn(
-                            "text-xs",
-                            quizScore >= 70 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                          )}>
-                            Quiz: {quizScore}%
-                          </Badge>
-                        )}
-                      </div>
+                      )}
+                      {isComplete && (
+                        <Badge className="text-xs bg-emerald-500/20 text-emerald-400">
+                          Completed
+                        </Badge>
+                      )}
                     </div>
                   </div>
-                </button>
-
-                {/* Module Content */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-slate-700/50"
-                    >
-                      <div className="p-6 space-y-6">
-                        {/* Goals */}
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Target className="w-5 h-5 text-blue-400" />
-                            <h4 className="font-semibold">Module Goals</h4>
-                          </div>
-                          <ul className="space-y-2">
-                            {module.goals.map((goal, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                                <ChevronRight className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                                {goal}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        {/* Video */}
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            <PlayCircle className="w-5 h-5 text-red-400" />
-                            <h4 className="font-semibold">Training Video</h4>
-                          </div>
-                          <div className="aspect-video rounded-xl overflow-hidden bg-slate-900">
-                            <iframe
-                              width="100%"
-                              height="100%"
-                              src={`https://www.youtube.com/embed/${module.videoId}`}
-                              title={module.title}
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          </div>
-                        </div>
-
-                        {/* Sections */}
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            <BookOpen className="w-5 h-5 text-emerald-400" />
-                            <h4 className="font-semibold">Key Topics</h4>
-                          </div>
-                          <div className="space-y-2">
-                            {module.sections.map((section, idx) => (
-                              <div key={idx} className="rounded-xl border border-slate-700/50 overflow-hidden">
-                                <button
-                                  onClick={() => toggleSection(module.id, idx)}
-                                  className="w-full p-4 text-left hover:bg-slate-700/30 transition-colors flex items-center justify-between"
-                                >
-                                  <span className="font-medium">{section.title}</span>
-                                  <ChevronDown className={cn(
-                                    "w-4 h-4 text-slate-400 transition-transform",
-                                    expandedSection[`${module.id}-${idx}`] && "rotate-180"
-                                  )} />
-                                </button>
-                                <AnimatePresence>
-                                  {expandedSection[`${module.id}-${idx}`] && (
-                                    <motion.div
-                                      initial={{ height: 0, opacity: 0 }}
-                                      animate={{ height: 'auto', opacity: 1 }}
-                                      exit={{ height: 0, opacity: 0 }}
-                                      className="border-t border-slate-700/50 p-4 bg-slate-900/30"
-                                    >
-                                      <p className="text-sm text-slate-300 mb-3">{section.content}</p>
-                                      <ul className="space-y-2">
-                                        {section.keyPoints.map((point, i) => (
-                                          <li key={i} className="flex items-start gap-2 text-sm text-slate-400">
-                                            <Circle className="w-2 h-2 fill-blue-400 text-blue-400 flex-shrink-0 mt-1.5" />
-                                            {point}
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Quiz */}
-                        {module.quiz && (
-                          <div>
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-semibold">Knowledge Check</h4>
-                              {quizComplete && (
-                                <Badge className={cn(
-                                  quizScore >= 70 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                                )}>
-                                  Score: {quizScore}%
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="space-y-4">
-                              {module.quiz.map((question, qIdx) => {
-                                const userAnswer = quizAnswers[`${module.id}-${qIdx}`];
-                                const hasAnswered = userAnswer !== undefined;
-                                const isCorrect = userAnswer === question.correct;
-
-                                return (
-                                  <div key={qIdx} className="rounded-xl border border-slate-700/50 p-4 bg-slate-900/30">
-                                    <p className="font-medium mb-3">{qIdx + 1}. {question.question}</p>
-                                    <div className="space-y-2">
-                                      {question.options.map((option, oIdx) => {
-                                        const isSelected = userAnswer === oIdx;
-                                        const isCorrectOption = oIdx === question.correct;
-                                        
-                                        return (
-                                          <button
-                                            key={oIdx}
-                                            onClick={() => handleQuizAnswer(module.id, qIdx, oIdx)}
-                                            className={cn(
-                                              "w-full text-left p-3 rounded-lg border transition-all",
-                                              isSelected && hasAnswered && isCorrect && "border-emerald-500 bg-emerald-500/10",
-                                              isSelected && hasAnswered && !isCorrect && "border-red-500 bg-red-500/10",
-                                              !isSelected && hasAnswered && isCorrectOption && "border-emerald-500/50 bg-emerald-500/5",
-                                              !hasAnswered && "border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/50"
-                                            )}
-                                            disabled={hasAnswered}
-                                          >
-                                            <div className="flex items-center gap-3">
-                                              <div className={cn(
-                                                "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0",
-                                                isSelected && hasAnswered && isCorrect && "border-emerald-500 bg-emerald-500",
-                                                isSelected && hasAnswered && !isCorrect && "border-red-500 bg-red-500",
-                                                !isSelected && hasAnswered && isCorrectOption && "border-emerald-500",
-                                                !hasAnswered && "border-slate-600"
-                                              )}>
-                                                {isSelected && hasAnswered && (
-                                                  isCorrect ? (
-                                                    <CheckCircle2 className="w-3 h-3 text-white" />
-                                                  ) : (
-                                                    <span className="text-white text-xs">✕</span>
-                                                  )
-                                                )}
-                                                {!isSelected && hasAnswered && isCorrectOption && (
-                                                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                                )}
-                                              </div>
-                                              <span className="text-sm">{option}</span>
-                                            </div>
-                                          </button>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            
-                            {((quizComplete && quizScore >= 70) || user?.role === 'admin') && !isComplete && (
-                              <Button
-                                onClick={() => setCompletedModules(prev => new Set([...prev, module.id]))}
-                                className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700"
-                              >
-                                <CheckCircle2 className="w-4 h-4 mr-2" />
-                                Mark Module as Complete {user?.role === 'admin' && '(Admin)'}
-                              </Button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                </div>
+              </motion.button>
             );
           })}
         </div>
