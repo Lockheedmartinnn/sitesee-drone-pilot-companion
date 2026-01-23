@@ -155,8 +155,7 @@ export default function QuickReference() {
               </InfoCard>
               
               <div className="space-y-1">
-                <RuleItem positive>Check histogram before takeoff</RuleItem>
-                <RuleItem positive>Verify no highlight clipping</RuleItem>
+                <RuleItem positive>Verify proper exposure before takeoff</RuleItem>
                 <RuleItem positive>Keep settings consistent across battery swaps</RuleItem>
                 <RuleItem>Never use Auto in the field</RuleItem>
               </div>

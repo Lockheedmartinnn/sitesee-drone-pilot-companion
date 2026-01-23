@@ -68,7 +68,6 @@ const TOWER_CONFIGS = {
     items: [
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
-      { id: 'takeoff_clear', label: 'Takeoff area clear', sublabel: 'At least 5m from crowd/obstacles' },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
@@ -205,15 +204,11 @@ const ROOFTOP_CONFIGS = {
     items: [
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
-      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Pilot/spotter MUST be on roof', critical: true },
+      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
-    ],
-    warning: {
-      title: "Rooftop Safety",
-      message: "Pilot or spotter MUST be present on roof during marking and capture. DO NOT attempt without rooftop access."
-    }
+    ]
   },
   2: {
     title: "Camera Setup",
@@ -486,6 +481,13 @@ export default function StartCapture() {
       setNeedsBatteryChange(null);
     } else if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
+    }
+  };
+  
+  const previousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+      logActivity('step_navigation', `step_${currentStep}_to_${currentStep - 1}`, `Navigated back from ${STEPS[currentStep - 1]} to ${STEPS[currentStep - 2]}`, 'back');
     }
   };
   
@@ -1315,7 +1317,7 @@ export default function StartCapture() {
           <div className="max-w-lg mx-auto flex gap-3">
             <Button
               variant="outline"
-              onClick={goToHome}
+              onClick={currentStep === 1 ? goToHome : previousStep}
               className="flex-1 border-slate-700 bg-slate-800 hover:bg-slate-700"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

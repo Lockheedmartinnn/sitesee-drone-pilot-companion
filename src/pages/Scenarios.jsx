@@ -23,11 +23,11 @@ const SCENARIOS = [
     icon: Cloud,
     title: "Weather Changes Mid-Mission",
     situation: "You're halfway through a capture when clouds roll in and lighting conditions change significantly.",
-    solution: "Complete the current mission component without changing exposure. If the change is dramatic (bright sun to overcast), you may need to complete the mission with current settings and potentially re-fly affected sections another day. Never change exposure mid-component.",
+    solution: "Complete the current mission. If lighting change is dramatic, consider re-flying the full mission on the same day if conditions improve, or schedule for another day to maintain consistency.",
     key_points: [
-      "Finish current component first",
-      "Don't touch exposure settings",
-      "Note affected components for possible re-flight"
+      "Finish current mission as-is",
+      "Don't change exposure settings",
+      "Re-fly full mission if needed for consistency"
     ]
   },
   {
@@ -54,18 +54,7 @@ const SCENARIOS = [
       "Check for interference sources"
     ]
   },
-  {
-    id: 4,
-    icon: AlertTriangle,
-    title: "Drone Shows Low Battery Warning Early",
-    situation: "Battery shows 30% but drone is warning about low battery much earlier than expected.",
-    solution: "Trust the drone's warning over the percentage. Initiate RTH immediately. After landing, check battery health in app. Mark this battery for inspection. Use a different battery for remaining mission.",
-    key_points: [
-      "Trust warnings, not percentages",
-      "RTH immediately",
-      "Mark battery for inspection"
-    ]
-  },
+
   {
     id: 5,
     icon: Camera,
@@ -206,8 +195,10 @@ export default function Scenarios() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 overflow-hidden"
           >
-            <button
-              onClick={() => window.dispatchEvent(new Event('openChat'))}
+            <a
+              href="https://sitesee.io/support"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full flex items-center gap-4 p-4 text-left hover:bg-blue-500/10 transition-colors"
             >
               <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
@@ -215,9 +206,9 @@ export default function Scenarios() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-blue-300">Contribute a Scenario</h3>
-                <p className="text-sm text-slate-400">Experienced something not listed? Share it with us</p>
+                <p className="text-sm text-slate-400">Contact SiteSee support to contribute your scenario</p>
               </div>
-            </button>
+            </a>
           </motion.div>
         </div>
       </div>
