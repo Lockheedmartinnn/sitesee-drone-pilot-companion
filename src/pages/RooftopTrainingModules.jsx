@@ -169,11 +169,11 @@ const MODULES = [
   {
     id: 'module3',
     number: 3,
-    title: 'Use Case 3: Complex Obstacle Environment',
-    estimatedTime: '35-45 minutes',
+    title: 'Module 3: Complex Obstacle Environment',
+    estimatedTime: '3.5 minutes',
     prerequisite: 'module2',
-    videoId: 'M82GH-ZcWEM',
-    description: 'Safely plan missions in obstacle-dense rooftop environments with enveloped and non-enveloped obstacles.',
+    videoId: 'M4t7QHfmgOA',
+    description: 'Master marking on-roof enveloped obstacles, non-enveloped obstacles, and neighboring high-rise buildings. Learn proper boundary marking, height settings, and flight path optimization around multiple obstacle types.',
     goals: [
       'Safely plan missions in obstacle-dense rooftop environments',
       'Correctly classify and mark enveloped vs non-enveloped obstacles',
