@@ -70,12 +70,9 @@ export default function TrainingHub() {
   const missionTrainingTiles = [
     {
       icon: PlayCircle,
-      title: 'Rooftop Capture',
-      description: 'Complete guide for rooftop site captures',
-      onClick: () => {
-        setSelectedCategory('rooftop');
-        setCurrentLevel('content');
-      },
+      title: 'Rooftop Mission v9.7.0',
+      description: 'Complete 5-module training course with video tutorials',
+      onClick: () => navigate(createPageUrl('RooftopTrainingModules')),
       variant: 'primary'
     },
     {
