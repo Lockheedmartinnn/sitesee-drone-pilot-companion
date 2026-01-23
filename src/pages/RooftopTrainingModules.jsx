@@ -237,11 +237,11 @@ const MODULES = [
   {
     id: 'module4',
     number: 4,
-    title: 'Use Case 4: Greenfields Rooftop',
-    estimatedTime: '20-30 minutes',
+    title: 'Module 4: Greenfields (No Equipment/Obstacles)',
+    estimatedTime: '2.5 minutes',
     prerequisite: 'module1',
-    videoId: 'M82GH-ZcWEM',
-    description: 'Handle rooftops with no visible equipment or obstacles by understanding system geometry requirements.',
+    videoId: 'GQoFmwoT06c',
+    description: 'Handle rooftops with no visible equipment or obstacles. Learn the critical system requirement: at least one obstacle or equipment must be marked to define rooftop geometry.',
     goals: [
       'Correctly plan a Greenfields rooftop mission',
       'Understand why the system requires a reference object',
