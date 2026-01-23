@@ -77,7 +77,7 @@ const TOWER_CONFIGS = {
     subtitle: "Configure camera settings before flight",
     info: {
       title: "Required Camera Settings",
-      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
+      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Shutter Speed - Select appropriate speed (e.g., 1/1000 - 1/2000)\n• Camera - Manual Mode"
     },
     items: [
       { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
@@ -215,7 +215,7 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Configure camera settings before flight",
     info: {
       title: "Required Camera Settings",
-      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Camera - Manual Mode\n\nThe histogram is currently not available, please select an appropriate shutter speed."
+      message: "Please ensure you use the following camera settings:\n\n• Dewarping → On\n• Mechanical Shutter → On\n• Camera in Wide Mode\n• Zoom set to 1x\n• ISO - 100\n• F-stop - 4.0\n• Shutter Speed - Select appropriate speed (e.g., 1/1000 - 1/2000)\n• Camera - Manual Mode"
     },
     items: [
       { id: 'camera_dewarping', label: 'Dewarping ON', critical: true },
