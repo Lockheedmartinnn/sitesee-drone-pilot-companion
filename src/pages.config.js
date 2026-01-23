@@ -22,6 +22,7 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import RooftopTrainingModules from './pages/RooftopTrainingModules';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "TrainingHub": TrainingHub,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
+    "RooftopTrainingModules": RooftopTrainingModules,
 }
 
 export const pagesConfig = {
