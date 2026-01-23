@@ -13,11 +13,13 @@ export default function TermsAcceptance({ onAccept }) {
     
     setIsSubmitting(true);
     try {
-      await base44.auth.updateMe({ terms_accepted: true, terms_accepted_date: new Date().toISOString() });
+      // Log acceptance timestamp without persisting to user record
+      await base44.auth.updateMe({ last_terms_view: new Date().toISOString() });
       onAccept();
     } catch (error) {
-      console.error('Failed to update terms acceptance:', error);
-      setIsSubmitting(false);
+      console.error('Failed to log terms acceptance:', error);
+      // Still allow acceptance even if logging fails
+      onAccept();
     }
   };
 

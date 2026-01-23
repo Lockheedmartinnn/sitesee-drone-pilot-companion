@@ -41,10 +41,14 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me(),
   });
 
-  // Check if user needs to accept terms
+  // Check if user needs to accept terms on every login
   React.useEffect(() => {
-    if (user && !user.terms_accepted) {
-      setShowTerms(true);
+    if (user) {
+      const sessionKey = `terms_accepted_session_${user.email}`;
+      const acceptedThisSession = sessionStorage.getItem(sessionKey);
+      if (!acceptedThisSession) {
+        setShowTerms(true);
+      }
     }
   }, [user]);
   
@@ -74,8 +78,10 @@ export default function Layout({ children, currentPageName }) {
     return (
       <TermsAcceptance 
         onAccept={() => {
+          if (user?.email) {
+            sessionStorage.setItem(`terms_accepted_session_${user.email}`, 'true');
+          }
           setShowTerms(false);
-          refetchUser();
         }} 
       />
     );
