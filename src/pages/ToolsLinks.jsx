@@ -39,63 +39,21 @@ const LINKS = [
     ]
   },
   {
-    category: "Mission Markup & Capture Guides",
+    category: "Resources & Documentation",
     items: [
       {
         icon: BookOpen,
-        title: "Automatic Image Acquisition (Scanlink)",
-        description: "v2.1.22 - Primary tower capture method",
-        url: "https://sitesee.io/automatic-image-acquisition-scanlink",
+        title: "How to Capture",
+        description: "Complete capture documentation and guides",
+        url: "https://learn.sitesee.io/hc/en-us/sections/360011082631-How-to-Capture",
         color: "text-blue-400 bg-blue-500/20"
       },
       {
-        icon: BookOpen,
-        title: "How to Capture Rooftops",
-        description: "v9.6.0 - Complete rooftop workflow",
-        url: "https://sitesee.io/how-to-capture-rooftops",
-        color: "text-amber-400 bg-amber-500/20"
-      },
-      {
-        icon: FileText,
-        title: "Generic Capture Instructions",
-        description: "General capture guidelines",
-        url: "https://sitesee.io/generic-capture-instructions",
-        color: "text-emerald-400 bg-emerald-500/20"
-      },
-      {
         icon: Settings,
-        title: "Using M3E with Dronelink",
-        description: "Drone configuration guide",
-        url: "https://sitesee.io/m3e-dronelink",
+        title: "Web Portal Guide",
+        description: "Portal documentation and user guides",
+        url: "https://learn.sitesee.io/hc/en-us/sections/360011118711-Web-Portal",
         color: "text-violet-400 bg-violet-500/20"
-      },
-      {
-        icon: Map,
-        title: "User Guide to GCP",
-        description: "Ground Control Points setup",
-        url: "https://sitesee.io/gcp-guide",
-        color: "text-cyan-400 bg-cyan-500/20"
-      },
-      {
-        icon: Cloud,
-        title: "Uploading Images",
-        description: "Data transfer procedures",
-        url: "https://sitesee.io/uploading-images",
-        color: "text-slate-400 bg-slate-500/20"
-      },
-      {
-        icon: MessageSquare,
-        title: "Customer Support Portal",
-        description: "Get help and submit tickets",
-        url: "https://sitesee.io/support",
-        color: "text-pink-400 bg-pink-500/20"
-      },
-      {
-        icon: Camera,
-        title: "Panorama Capture for Towers",
-        description: "How to capture panoramas",
-        url: "https://sitesee.io/panorama-tower-missions",
-        color: "text-orange-400 bg-orange-500/20"
       },
       {
         icon: BookOpen,
@@ -104,8 +62,8 @@ const LINKS = [
         url: "https://support.dronelink.com/hc/en-us/articles/360063769833-Introduction-to-Scanlink-and-What-to-Expect",
         color: "text-purple-400 bg-purple-500/20"
       }
-      ]
-      },
+    ]
+  },
   {
     category: "Weather & Airspace",
     items: [
@@ -125,25 +83,7 @@ const LINKS = [
       }
     ]
   },
-  {
-    category: "SiteSee Resources",
-    items: [
-      {
-        icon: BookOpen,
-        title: "How to Capture",
-        description: "Complete capture documentation and guides",
-        url: "https://learn.sitesee.io/hc/en-us/sections/360011082631-How-to-Capture",
-        color: "text-emerald-400 bg-emerald-500/20"
-      },
-      {
-        icon: Settings,
-        title: "Web Portal",
-        description: "Portal documentation and user guides",
-        url: "https://learn.sitesee.io/hc/en-us/sections/360011118711-Web-Portal",
-        color: "text-violet-400 bg-violet-500/20"
-      }
-    ]
-  },
+
   {
     category: "Tools",
     items: [
