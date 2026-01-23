@@ -419,6 +419,8 @@ export default function RooftopTrainingModules() {
   };
 
   const canAccessModule = (module) => {
+    // Admins can access all modules
+    if (user?.role === 'admin') return true;
     if (!module.prerequisite) return true;
     return completedModules.has(module.prerequisite);
   };
@@ -516,7 +518,7 @@ export default function RooftopTrainingModules() {
                       </div>
 
                       <div className="flex flex-wrap gap-2 mt-3">
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs bg-transparent">
                           <Clock className="w-3 h-3 mr-1" />
                           {module.estimatedTime}
                         </Badge>
@@ -697,13 +699,13 @@ export default function RooftopTrainingModules() {
                               })}
                             </div>
                             
-                            {quizComplete && quizScore >= 70 && !isComplete && (
+                            {((quizComplete && quizScore >= 70) || user?.role === 'admin') && !isComplete && (
                               <Button
                                 onClick={() => setCompletedModules(prev => new Set([...prev, module.id]))}
                                 className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700"
                               >
                                 <CheckCircle2 className="w-4 h-4 mr-2" />
-                                Mark Module as Complete
+                                Mark Module as Complete {user?.role === 'admin' && '(Admin)'}
                               </Button>
                             )}
                           </div>
