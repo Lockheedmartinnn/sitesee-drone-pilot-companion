@@ -15,6 +15,7 @@ import PilotGroupTrends from './pages/PilotGroupTrends';
 import PortfolioOverview from './pages/PortfolioOverview';
 import Profile from './pages/Profile';
 import QuickReference from './pages/QuickReference';
+import RooftopTrainingModules from './pages/RooftopTrainingModules';
 import Scenarios from './pages/Scenarios';
 import StandardCaptureChecklist from './pages/StandardCaptureChecklist';
 import StartCapture from './pages/StartCapture';
@@ -22,7 +23,6 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import RooftopTrainingModules from './pages/RooftopTrainingModules';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +44,7 @@ export const PAGES = {
     "PortfolioOverview": PortfolioOverview,
     "Profile": Profile,
     "QuickReference": QuickReference,
+    "RooftopTrainingModules": RooftopTrainingModules,
     "Scenarios": Scenarios,
     "StandardCaptureChecklist": StandardCaptureChecklist,
     "StartCapture": StartCapture,
@@ -51,7 +52,6 @@ export const PAGES = {
     "TrainingHub": TrainingHub,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
-    "RooftopTrainingModules": RooftopTrainingModules,
 }
 
 export const pagesConfig = {

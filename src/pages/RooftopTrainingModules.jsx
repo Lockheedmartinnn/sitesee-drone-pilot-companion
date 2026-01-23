@@ -23,11 +23,11 @@ const MODULES = [
   {
     id: 'module1',
     number: 1,
-    title: 'Rooftop Mission v9.7.0 (Foundations & Workflow)',
-    estimatedTime: '25-35 minutes',
+    title: 'Module 1: Overview & Key Improvements',
+    estimatedTime: '12 minutes',
     prerequisite: null,
-    videoId: 'M82GH-ZcWEM',
-    description: 'Understand what changed in v9.7.0, configure flight settings correctly, and execute rooftop captures faster and safer.',
+    videoId: 'uZwFc9uqKts',
+    description: 'Introduction to v9.7.0 updates: 2x faster flight speeds, simplified marking, single-layer planar overview at -45°, enhanced detail reconstruction, and reduced site time.',
     goals: [
       'Understand what changed in Rooftop Mission v9.7.0',
       'Configure flight settings correctly for the new mission',
