@@ -304,11 +304,11 @@ const MODULES = [
   {
     id: 'module5',
     number: 5,
-    title: 'Use Case 5: Incompatible Mission Parameters',
-    estimatedTime: '15-25 minutes',
+    title: 'Module 5: Large Height Differences (>25m)',
+    estimatedTime: '2 minutes',
     prerequisite: 'module2',
-    videoId: 'M82GH-ZcWEM',
-    description: 'Understand maximum height difference constraints and when to escalate to support.',
+    videoId: '97JINuxawVo',
+    description: 'Understand the Maximum Height Difference constraint (25m limit) when marking equipment at significantly different elevations. Learn when missions require manual adjustment and how to contact SiteSee Support.',
     goals: [
       'Understand the Maximum Height Difference constraint',
       'Correctly identify when a mission cannot be generated',
