@@ -129,17 +129,17 @@ const LINKS = [
     category: "SiteSee Resources",
     items: [
       {
-        icon: FileText,
-        title: "Mission Planning Guide",
-        description: "Official documentation",
-        url: "#",
+        icon: BookOpen,
+        title: "How to Capture",
+        description: "Complete capture documentation and guides",
+        url: "https://learn.sitesee.io/hc/en-us/sections/360011082631-How-to-Capture",
         color: "text-emerald-400 bg-emerald-500/20"
       },
       {
-        icon: MessageSquare,
-        title: "Support Channel",
-        description: "Get help from the team",
-        url: "#",
+        icon: Settings,
+        title: "Web Portal",
+        description: "Portal documentation and user guides",
+        url: "https://learn.sitesee.io/hc/en-us/sections/360011118711-Web-Portal",
         color: "text-violet-400 bg-violet-500/20"
       }
     ]
