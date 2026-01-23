@@ -103,11 +103,11 @@ const MODULES = [
   {
     id: 'module2',
     number: 2,
-    title: 'Use Case 2: Multi-Level Rooftop Capture',
-    estimatedTime: '25-35 minutes',
+    title: 'Module 2: Multi-Level Rooftop Capture',
+    estimatedTime: '3 minutes',
     prerequisite: 'module1',
-    videoId: 'M82GH-ZcWEM',
-    description: 'Learn to correctly plan and execute multi-level rooftop captures with equipment clusters at different elevations.',
+    videoId: 'jRtZF30265Y',
+    description: 'Learn how to mark equipment clusters at two different elevations (high and low). Covers marking equipment height, center, and radius for each cluster, plus panorama/orthomosaic configuration.',
     goals: [
       'Correctly plan and execute a multi-level rooftop capture',
       'Mark multiple equipment clusters at different elevations',
