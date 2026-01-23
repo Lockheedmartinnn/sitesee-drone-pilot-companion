@@ -30,46 +30,86 @@ const MODULES = [
     videoId: 'uZwFc9uqKts',
     description: 'Introduction to v9.7.0 updates: 2x faster flight speeds, simplified marking, single-layer planar overview at -45°, enhanced detail reconstruction, and reduced site time.',
     goals: [
-      'Understand what changed in Rooftop Mission v9.7.0',
-      'Configure flight settings correctly for the new mission',
+      'Understand what changed in Rooftop Mission v9.7.0 and why these changes matter',
+      'Configure flight settings correctly for the new mission architecture',
       'Execute rooftop captures faster, safer, and with higher reconstruction accuracy',
-      'Avoid common failure modes (ghosting, poor overlap, battery-related GPS drift)'
+      'Avoid common failure modes (ghosting, poor overlap, battery-related GPS drift)',
+      'Recognize when to use single vs multi-battery strategies',
+      'Understand the relationship between flight speed and capture interval'
     ],
     sections: [
       {
         title: 'What Changed in Rooftop Mission v9.7.0',
-        content: 'Rooftop Mission v9.7.0 was designed to remove unnecessary complexity while improving output quality and reducing time on site.',
+        content: 'Rooftop Mission v9.7.0 represents a fundamental redesign of the capture architecture. The changes were driven by analysis of thousands of rooftop missions and pilot feedback about time pressure, battery management, and reconstruction quality.',
         keyPoints: [
-          'Enhanced detail - High-resolution textures for component inspection',
-          'Reduced site time - Faster flight speed, fewer images, lower battery swap likelihood',
-          'Simplified flight path - Single-layer planar overview at −45°'
+          'Enhanced detail reconstruction - High-resolution textures for component-level inspection',
+          'Reduced site time by ~50% - Faster flight speed, fewer images, lower battery swap likelihood',
+          'Simplified flight path - Single-layer planar overview at −45° instead of multi-layer approach',
+          'Auto-calculated planar height - System determines optimal altitude based on equipment marking',
+          'Faster processing times - Fewer images = faster upload and reconstruction pipeline',
+          'Lower risk of GPS drift - Shorter missions reduce exposure to battery swap altitude shifts'
         ]
       },
       {
         title: 'Technical Flight Settings (Must-Know)',
-        content: 'This section is non-negotiable. Incorrect settings = failed capture.',
+        content: 'This section is non-negotiable. Incorrect settings will result in failed captures due to insufficient image overlap. These settings work together as a system - changing one without adjusting others breaks the reconstruction pipeline.',
         keyPoints: [
-          'Drone speed increased 2× for planar and equipment orbit capture',
-          'Capture interval MUST be set to 1 second (not 2 seconds)',
-          'At higher speed, 2 seconds = insufficient overlap'
+          'Drone speed increased 2× for planar and equipment orbit capture (from ~3 m/s to ~6 m/s)',
+          'Capture interval MUST be set to 1 second (not 2 seconds) - this is critical',
+          'At 6 m/s with 2-second interval = 12m gaps between images = reconstruction failure',
+          'At 6 m/s with 1-second interval = 6m gaps = sufficient 80% overlap maintained',
+          'Camera settings remain unchanged: Auto exposure, Auto white balance, Auto focus',
+          'DO NOT manually adjust shutter speed or ISO unless explicitly instructed by support'
         ]
       },
       {
         title: 'Mission Marking - What\'s Now Simpler',
-        content: 'The marking process has been intentionally simplified.',
+        content: 'The marking process has been intentionally simplified to reduce pilot cognitive load and mission setup time. The system now handles calculations that were previously manual.',
         keyPoints: [
-          'Planar height → auto-calculated',
-          'No need to mark mid-equipment heights or MSA',
-          'Rooftop boundaries can be marked clockwise OR anti-clockwise'
+          'Planar height → auto-calculated based on highest marked equipment cluster',
+          'No need to mark mid-equipment heights or MSA (Maximum Safe Altitude)',
+          'Rooftop boundaries can be marked clockwise OR anti-clockwise (system adapts)',
+          'Equipment clusters still require height marking at actual elevation',
+          'Obstacle marking process unchanged - height and boundary still required',
+          'Fewer total marking steps = faster mission prep = more time for GPS stabilization'
         ]
       },
       {
         title: 'GPS Stabilization & Battery Strategy',
-        content: 'Even with faster missions, GPS discipline still matters.',
+        content: 'Even with faster missions, GPS discipline remains the #1 failure prevention factor. The shorter mission duration actually makes single-battery flights viable for most rooftops, which eliminates the most common source of altitude drift.',
         keyPoints: [
-          'Typical rooftop missions: ~20 minutes (previously ~40)',
-          'Single battery strategy preferred - prevents altitude jumps',
-          'Initial manual GPS stabilization still required before takeoff'
+          'Typical rooftop missions: ~20 minutes (previously ~40 minutes)',
+          'Single battery strategy now preferred for most sites - prevents altitude jumps',
+          'Initial manual GPS stabilization still required: Hover at takeoff height for 90-120 seconds',
+          'If battery swap required: Land, swap, hover at exact same altitude for 90 seconds before resuming',
+          'Monitor GPS satellite count throughout - maintain 28+ satellites for stable reference',
+          'Battery swap protocol: Check Y-axis altitude stability before and after swap (use GPS Verifier tool)'
+        ]
+      },
+      {
+        title: 'Common Mistakes to Avoid',
+        content: 'These mistakes account for 80% of rooftop mission failures in v9.7.0.',
+        keyPoints: [
+          'Setting capture interval to 2 seconds (causes ghosting and reconstruction failure)',
+          'Skipping initial GPS stabilization (causes altitude drift throughout mission)',
+          'Not checking battery percentage before takeoff (forced emergency landing mid-mission)',
+          'Marking equipment at wrong heights (causes orbit collision risk)',
+          'Flying in high winds without checking wind speed limits (DJI M3E max: 12 m/s)',
+          'Not validating 3D mission plan before takeoff (missing obstacles or incorrect boundaries)'
+        ]
+      },
+      {
+        title: 'Quality Assurance Checklist',
+        content: 'Use this checklist before every rooftop mission to ensure settings are correct.',
+        keyPoints: [
+          '✓ Capture interval = 1 second',
+          '✓ Battery > 85% before takeoff',
+          '✓ GPS satellites ≥ 28',
+          '✓ Wind speed < 10 m/s',
+          '✓ All equipment clusters marked at correct heights',
+          '✓ Obstacles and neighboring buildings marked if present',
+          '✓ 3D mission plan reviewed and validated',
+          '✓ Initial GPS stabilization completed (90-120 seconds hover)'
         ]
       }
     ],
@@ -82,22 +122,62 @@ const MODULES = [
       {
         question: 'Which marking requirements were removed in v9.7.0?',
         options: [
-          'Mid-equipment heights only',
-          'Manual MSA calculations only',
-          'All of the above',
-          'None - all still required'
+          'Mid-equipment heights and MSA calculations',
+          'Equipment cluster marking',
+          'Rooftop boundary marking',
+          'Obstacle height marking'
+        ],
+        correct: 0
+      },
+      {
+        question: 'Why is a single battery strategy preferred in v9.7.0?',
+        options: [
+          'Faster uploads',
+          'Better video quality',
+          'Prevents GPS altitude drift at battery swap',
+          'Less pilot fatigue'
         ],
         correct: 2
       },
       {
-        question: 'Why is a single battery strategy preferred?',
+        question: 'What happens if you use 2-second capture interval at 6 m/s flight speed?',
         options: [
-          'Faster uploads',
-          'Better video quality',
-          'More consistent GPS reference',
-          'Less pilot fatigue'
+          'Better image quality',
+          'Insufficient overlap causing reconstruction failure',
+          'Faster mission completion',
+          'No difference from 1-second interval'
+        ],
+        correct: 1
+      },
+      {
+        question: 'How long should initial GPS stabilization hover be?',
+        options: [
+          '30 seconds',
+          '60 seconds',
+          '90-120 seconds',
+          'No stabilization needed in v9.7.0'
         ],
         correct: 2
+      },
+      {
+        question: 'What is the approximate time reduction for typical rooftop missions in v9.7.0?',
+        options: [
+          '10% faster',
+          '25% faster',
+          '50% faster (40 min → 20 min)',
+          'Same duration as previous version'
+        ],
+        correct: 2
+      },
+      {
+        question: 'Which setting change is the most critical to avoid reconstruction failure?',
+        options: [
+          'Camera ISO setting',
+          'Capture interval must be 1 second',
+          'White balance mode',
+          'Maximum flight altitude'
+        ],
+        correct: 1
       }
     ]
   },
@@ -110,37 +190,85 @@ const MODULES = [
     videoId: 'jRtZF30265Y',
     description: 'Learn how to mark equipment clusters at two different elevations (high and low). Covers marking equipment height, center, and radius for each cluster, plus panorama/orthomosaic configuration.',
     goals: [
-      'Correctly plan and execute a multi-level rooftop capture',
-      'Mark multiple equipment clusters at different elevations',
-      'Understand why orbit count differs between high and low clusters',
-      'Validate the generated 3D mission plan before takeoff'
+      'Correctly plan and execute a multi-level rooftop capture with equipment at different heights',
+      'Mark multiple equipment clusters at different elevations accurately',
+      'Understand why orbit count differs between high and low clusters and why this is correct',
+      'Validate the generated 3D mission plan before takeoff to catch marking errors',
+      'Recognize when equipment height differences exceed system limitations',
+      'Properly configure panorama and orthomosaic deliverables for multi-level sites'
     ],
     sections: [
       {
         title: 'Scenario Overview',
-        content: 'Rooftop with two equipment clusters at different elevations. Each cluster must be treated as its own vertical system.',
+        content: 'Multi-level rooftops are common in telecom infrastructure where equipment has been added over time at different elevations. Each cluster must be treated as its own independent vertical system - the mission planner cannot average or interpolate heights between clusters.',
         keyPoints: [
-          'Each equipment cluster exists in its own vertical plane',
-          'Each cluster must be marked independently',
-          'Heights cannot be assumed or averaged'
+          'Each equipment cluster exists in its own vertical plane and requires independent marking',
+          'Each cluster must be marked at its actual physical height above the rooftop surface',
+          'Heights cannot be assumed, averaged, or extrapolated from other clusters',
+          'The system generates orbits around each cluster based on its specific height marking',
+          'Planar overview altitude is auto-calculated based on the highest cluster',
+          'Common scenario: Lower cluster at 8-10m, higher cluster at 12-15m above rooftop'
         ]
       },
       {
-        title: 'Marking Equipment Clusters',
-        content: 'Each cluster is marked separately at its specific height.',
+        title: 'Step-by-Step Marking Process',
+        content: 'The marking sequence is critical. Equipment must be marked before obstacles, and each cluster must be marked at its actual elevation.',
         keyPoints: [
-          'Lower cluster: Fly to equipment height (e.g., 8m), mark height/center/radius',
-          'Higher cluster: Fly to its height (e.g., 13m), repeat marking process',
-          'Do NOT reuse values from Cluster 1'
+          'Step 1: Identify all distinct equipment clusters and their approximate heights',
+          'Step 2: Start with LOWER cluster - Fly drone to equipment height (e.g., 8m)',
+          'Step 3: Mark equipment height, center point, and radius for lower cluster',
+          'Step 4: Move to HIGHER cluster - Fly drone to its height (e.g., 13m)',
+          'Step 5: Mark height, center, radius for higher cluster (do NOT reuse values from Cluster 1)',
+          'Step 6: Review 3D mission plan to validate both clusters are correctly represented',
+          'Critical: Each cluster marking is independent - never assume heights or copy values'
         ]
       },
       {
         title: 'Understanding Orbit Logic',
-        content: 'Lower clusters often require more orbits to properly tie into the planar model.',
+        content: 'The system automatically calculates orbit requirements based on cluster height and its relationship to the planar overview. Lower clusters often require more orbits because they need stronger tie-in to the main model.',
         keyPoints: [
-          'Lower clusters: More orbits (e.g., 4) for stronger tie-in',
-          'Higher clusters: Fewer orbits (e.g., 2) as they\'re covered by planar passes',
-          'This is intentional system logic, not an error'
+          'Lower clusters: Typically 3-4 orbits for stronger geometric tie-in to planar model',
+          'Higher clusters: Typically 2 orbits as they\'re partially covered by planar passes',
+          'This is intentional system logic designed to optimize reconstruction quality',
+          'More orbits = more images = stronger feature matching = better reconstruction',
+          'The orbit count difference is NOT an error - do not try to "fix" it',
+          'Review the 3D flight path to see how orbits relate to planar coverage'
+        ]
+      },
+      {
+        title: 'Common Multi-Level Mistakes',
+        content: 'These mistakes lead to orbit collision risks, reconstruction failure, or incomplete coverage.',
+        keyPoints: [
+          'Mistake #1: Marking both clusters at the same height (causes orbit collision risk)',
+          'Mistake #2: Not flying drone to actual cluster height before marking (incorrect orbit reference)',
+          'Mistake #3: Copying radius from one cluster to another (equipment sizes differ)',
+          'Mistake #4: Marking equipment center incorrectly (causes off-center orbits)',
+          'Mistake #5: Not validating 3D plan before takeoff (missed errors become expensive)',
+          'Mistake #6: Assuming system will "figure out" heights automatically (it will not)'
+        ]
+      },
+      {
+        title: 'Height Difference Limitations',
+        content: 'The system has a maximum height difference constraint between lowest and highest marked points. Understanding this limit prevents wasted field time.',
+        keyPoints: [
+          'Maximum height difference: 25 meters between lowest and highest points',
+          'This includes equipment clusters AND obstacles',
+          'Example violation: Lower cluster at 8m, higher cluster at 40m = 32m delta (EXCEEDS)',
+          'If you encounter this error, contact SiteSee Support immediately',
+          'Do NOT attempt to work around this by under-marking equipment heights',
+          'Support can sometimes split the mission into two separate captures'
+        ]
+      },
+      {
+        title: 'Panorama and Orthomosaic Configuration',
+        content: 'Deliverable selection impacts mission duration and output types. Understanding what you need before marking saves time.',
+        keyPoints: [
+          'Panorama: Single 360° image from rooftop center - adds ~3-5 minutes',
+          'Orthomosaic: Top-down 2D map of entire rooftop - adds ~5-7 minutes to flight time',
+          'Both can be enabled simultaneously without conflicts',
+          'Panorama altitude auto-calculated based on rooftop size and equipment height',
+          'Orthomosaic requires sufficient rooftop boundary marking for proper coverage',
+          'If time-constrained, prioritize 3D reconstruction over optional deliverables'
         ]
       }
     ],
@@ -148,20 +276,60 @@ const MODULES = [
       {
         question: 'Why must the drone be physically flown to the cluster height before marking?',
         options: [
-          'For GPS accuracy',
-          'To correctly define the vertical orbit reference',
-          'To speed up marking',
-          'To reduce image count'
+          'For GPS accuracy improvements',
+          'To correctly define the vertical orbit reference plane',
+          'To speed up the marking process',
+          'To reduce total image count'
         ],
         correct: 1
       },
       {
         question: 'What is the biggest mistake pilots make on multi-level rooftops?',
         options: [
-          'Flying too high',
+          'Flying too high during initial GPS stabilization',
           'Treating multiple clusters as one height',
-          'Marking too many points',
-          'Choosing wrong deliverables'
+          'Marking too many boundary points',
+          'Choosing wrong panorama deliverables'
+        ],
+        correct: 1
+      },
+      {
+        question: 'Why do lower equipment clusters typically get more orbits than higher clusters?',
+        options: [
+          'System error that should be reported',
+          'Lower clusters need stronger tie-in to the planar model',
+          'To increase image count for billing purposes',
+          'Random system behavior'
+        ],
+        correct: 1
+      },
+      {
+        question: 'What is the maximum allowed height difference between equipment clusters?',
+        options: [
+          '15 meters',
+          '20 meters',
+          '25 meters',
+          'No limit exists'
+        ],
+        correct: 2
+      },
+      {
+        question: 'What should you do if both clusters appear at the same height in the 3D plan?',
+        options: [
+          'Proceed with flight - system will correct it',
+          'Delete and re-mark both clusters at their actual heights',
+          'Only re-mark the higher cluster',
+          'Contact support and proceed with flight'
+        ],
+        correct: 1
+      },
+      {
+        question: 'When marking Cluster 2, should you reuse the radius value from Cluster 1?',
+        options: [
+          'Yes, to maintain consistency',
+          'No, each cluster needs its own accurate radius measurement',
+          'Only if clusters are similar size',
+          'Yes, if they are on the same rooftop'
         ],
         correct: 1
       }
