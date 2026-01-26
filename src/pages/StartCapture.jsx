@@ -1231,7 +1231,7 @@ export default function StartCapture() {
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
                           setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(5);
+                          setGpsTimerMinutes(user?.customer === 'customer_b' ? 2 : 5);
                           setTimerKey(prev => prev + 1);
                           setNeedsBatteryChange(null);
                         } else {
