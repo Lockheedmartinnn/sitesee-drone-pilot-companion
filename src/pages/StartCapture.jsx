@@ -127,7 +127,7 @@ const TOWER_CONFIGS = {
     ]
   },
   5: {
-    title: "GPS Stabilisation (5 min)",
+    title: "GPS Stabilisation",
     subtitle: "Wait for stable satellite lock",
     info: {
       title: "Model-Specific Instructions",
@@ -196,16 +196,14 @@ const TOWER_CONFIGS = {
   }
 };
 
-const ROOFTOP_CONFIGS = {
+const TOWER_CONFIGS = {
   1: {
     title: "Equipment & Pre-Flight Checklist",
     subtitle: "Complete before any flight activity",
     items: [
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
-      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
-      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
   },
@@ -264,15 +262,15 @@ const ROOFTOP_CONFIGS = {
     ]
   },
   5: {
-    title: "GPS Stabilisation (5 min)",
+    title: "GPS Stabilisation",
     subtitle: "Wait for stable satellite lock",
     info: {
       title: "Model-Specific Instructions",
-      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
+      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover after takeoff"
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after stabilization, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
