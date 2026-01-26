@@ -196,14 +196,16 @@ const TOWER_CONFIGS = {
   }
 };
 
-const TOWER_CONFIGS = {
+const ROOFTOP_CONFIGS = {
   1: {
     title: "Equipment & Pre-Flight Checklist",
     subtitle: "Complete before any flight activity",
     items: [
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
+      { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
+      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
   },
