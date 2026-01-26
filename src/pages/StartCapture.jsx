@@ -370,6 +370,15 @@ export default function StartCapture() {
     queryFn: () => base44.auth.me(),
   });
   
+  // Set GPS timer duration based on customer
+  useEffect(() => {
+    if (user?.customer === 'customer_b') {
+      setGpsTimerMinutes(2);
+    } else {
+      setGpsTimerMinutes(5);
+    }
+  }, [user]);
+  
   useEffect(() => {
     if (user?.email && !pilotId) {
       setPilotId(user.email);
@@ -702,9 +711,9 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={5} 
+                  targetMinutes={user?.customer === 'customer_b' ? 2 : 5} 
                   onComplete={() => setBatterySwapGpsComplete(true)}
-                  label="GPS Stabilisation (5 min)"
+                  label={`GPS Stabilisation (${user?.customer === 'customer_b' ? 2 : 5} min)`}
                 />
 
                 <Link to={createPageUrl('GPSVerifier')} target="_blank">
@@ -791,7 +800,7 @@ export default function StartCapture() {
                           onClick={() => {
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
-                            setGpsTimerMinutes(2);
+                            setGpsTimerMinutes(user?.customer === 'customer_b' ? 2 : 2);
                             setTimerKey(prev => prev + 1);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
@@ -1229,6 +1238,9 @@ export default function StartCapture() {
                           // First time, go through full flow
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
+                          setSatelliteCheckPassed(null);
+                          setGpsTimerMinutes(user?.customer === 'customer_b' ? 2 : 5);
+                          setTimerKey(prev => prev + 1);
                           setCheckedItems({}); // Reset checked items for step 5
                           setNeedsBatteryChange(null);
                         }
