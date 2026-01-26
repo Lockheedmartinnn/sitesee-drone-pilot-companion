@@ -372,10 +372,10 @@ export default function StartCapture() {
   
   // Set GPS timer duration based on company
   useEffect(() => {
-    if (user?.company === 'waveconn') {
-      setGpsTimerMinutes(2);
-    } else {
+    if (user?.company === 'QNSI') {
       setGpsTimerMinutes(5);
+    } else {
+      setGpsTimerMinutes(2);
     }
   }, [user]);
   
@@ -711,9 +711,9 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={user?.company === 'waveconn' ? 2 : 5} 
+                  targetMinutes={user?.company === 'QNSI' ? 5 : 2} 
                   onComplete={() => setBatterySwapGpsComplete(true)}
-                  label={`GPS Stabilisation (${user?.company === 'waveconn' ? 2 : 5} min)`}
+                  label={`GPS Stabilisation (${user?.company === 'QNSI' ? 5 : 2} min)`}
                 />
 
                 <Link to={createPageUrl('GPSVerifier')} target="_blank">
@@ -800,7 +800,7 @@ export default function StartCapture() {
                           onClick={() => {
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
-                            setGpsTimerMinutes(user?.company === 'waveconn' ? 2 : 5);
+                            setGpsTimerMinutes(user?.company === 'QNSI' ? 5 : 2);
                             setTimerKey(prev => prev + 1);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
@@ -1231,7 +1231,7 @@ export default function StartCapture() {
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
                           setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company === 'waveconn' ? 2 : 5);
+                          setGpsTimerMinutes(user?.company === 'QNSI' ? 5 : 2);
                           setTimerKey(prev => prev + 1);
                           setNeedsBatteryChange(null);
                         } else {
@@ -1239,7 +1239,7 @@ export default function StartCapture() {
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
                           setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company === 'waveconn' ? 2 : 5);
+                          setGpsTimerMinutes(user?.company === 'QNSI' ? 5 : 2);
                           setTimerKey(prev => prev + 1);
                           setCheckedItems({}); // Reset checked items for step 5
                           setNeedsBatteryChange(null);
