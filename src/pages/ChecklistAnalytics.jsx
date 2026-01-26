@@ -10,7 +10,8 @@ import {
   BarChart3,
   ChevronDown,
   ChevronUp,
-  Download
+  Download,
+  Building2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -22,6 +23,7 @@ import { useAccessControl } from '@/components/useAccessControl';
 export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
+  const [companyFilter, setCompanyFilter] = useState('all');
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -116,8 +118,13 @@ export default function ChecklistAnalytics() {
       filtered = filtered.filter(s => s.site_type === siteFilter);
     }
 
+    // Company filter
+    if (companyFilter !== 'all') {
+      filtered = filtered.filter(s => s.company === companyFilter);
+    }
+
     return filtered;
-  }, [sessions, siteFilter, permissions, user]);
+  }, [sessions, siteFilter, companyFilter, permissions, user]);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -290,34 +297,73 @@ export default function ChecklistAnalytics() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3 mb-6">
-          <Button
-            variant={siteFilter === 'all' ? 'default' : 'outline'}
-            onClick={() => setSiteFilter('all')}
-            className={cn(
-              siteFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
-            )}
-          >
-            All Sites
-          </Button>
-          <Button
-            variant={siteFilter === 'tower' ? 'default' : 'outline'}
-            onClick={() => setSiteFilter('tower')}
-            className={cn(
-              siteFilter === 'tower' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
-            )}
-          >
-            Tower
-          </Button>
-          <Button
-            variant={siteFilter === 'rooftop' ? 'default' : 'outline'}
-            onClick={() => setSiteFilter('rooftop')}
-            className={cn(
-              siteFilter === 'rooftop' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
-            )}
-          >
-            Rooftop
-          </Button>
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-slate-400" />
+            <span className="text-sm text-slate-400">Company:</span>
+            <div className="flex gap-2">
+              <Button
+                variant={companyFilter === 'all' ? 'default' : 'outline'}
+                onClick={() => setCompanyFilter('all')}
+                size="sm"
+                className={cn(
+                  companyFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                )}
+              >
+                All Companies
+              </Button>
+              <Button
+                variant={companyFilter === 'QNSI' ? 'default' : 'outline'}
+                onClick={() => setCompanyFilter('QNSI')}
+                size="sm"
+                className={cn(
+                  companyFilter === 'QNSI' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                )}
+              >
+                QNSI
+              </Button>
+              <Button
+                variant={companyFilter === 'waveconn' ? 'default' : 'outline'}
+                onClick={() => setCompanyFilter('waveconn')}
+                size="sm"
+                className={cn(
+                  companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                )}
+              >
+                Waveconn
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button
+              variant={siteFilter === 'all' ? 'default' : 'outline'}
+              onClick={() => setSiteFilter('all')}
+              className={cn(
+                siteFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              )}
+            >
+              All Sites
+            </Button>
+            <Button
+              variant={siteFilter === 'tower' ? 'default' : 'outline'}
+              onClick={() => setSiteFilter('tower')}
+              className={cn(
+                siteFilter === 'tower' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              )}
+            >
+              Tower
+            </Button>
+            <Button
+              variant={siteFilter === 'rooftop' ? 'default' : 'outline'}
+              onClick={() => setSiteFilter('rooftop')}
+              className={cn(
+                siteFilter === 'rooftop' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              )}
+            >
+              Rooftop
+            </Button>
+          </div>
         </div>
 
         {/* Sessions List */}
