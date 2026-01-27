@@ -86,6 +86,7 @@ const TOWER_CONFIGS = {
       { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
       { id: 'camera_iso', label: 'ISO - 100', critical: true },
       { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
+      { id: 'camera_shutter_speed', label: 'Shutter Speed adjusted to suit', sublabel: 'e.g., 1/1000 - 1/2000', critical: true },
       { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
     ]
   },
@@ -223,6 +224,7 @@ const ROOFTOP_CONFIGS = {
       { id: 'camera_zoom', label: 'Zoom set to 1x', critical: true },
       { id: 'camera_iso', label: 'ISO - 100', critical: true },
       { id: 'camera_fstop', label: 'F-stop - 4.0', critical: true },
+      { id: 'camera_shutter_speed', label: 'Shutter Speed adjusted to suit', sublabel: 'e.g., 1/1000 - 1/2000', critical: true },
       { id: 'camera_manual_mode', label: 'Camera - Manual Mode', critical: true }
     ]
   },
