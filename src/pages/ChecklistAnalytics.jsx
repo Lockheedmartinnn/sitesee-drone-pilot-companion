@@ -60,7 +60,7 @@ export default function ChecklistAnalytics() {
   // Company display name mapping
   const getCompanyDisplayName = (company) => {
     const mapping = {
-      'QNSI': 'Pilot Group 1',
+      'Pilot Group 1': 'Pilot Group 1',
       'waveconn': 'Pilot Group 2'
     };
     // Treat unknown/null companies as Pilot Group 1
@@ -139,8 +139,8 @@ export default function ChecklistAnalytics() {
   const filteredSessions = useMemo(() => {
     let filtered = sessions.map(s => ({
       ...s,
-      // Normalize company - treat unknown/null as QNSI
-      company: s.company || 'QNSI'
+      // Normalize company - treat unknown/null as Pilot Group 1
+      company: s.company || 'Pilot Group 1'
     }));
 
     // Only include completed sessions (8 steps completed)
@@ -568,11 +568,11 @@ export default function ChecklistAnalytics() {
                 All Companies
               </Button>
               <Button
-                variant={companyFilter === 'QNSI' ? 'default' : 'outline'}
-                onClick={() => setCompanyFilter('QNSI')}
+                variant={companyFilter === 'Pilot Group 1' ? 'default' : 'outline'}
+                onClick={() => setCompanyFilter('Pilot Group 1')}
                 size="sm"
                 className={cn(
-                  companyFilter === 'QNSI' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  companyFilter === 'Pilot Group 1' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
                 Pilot Group 1
