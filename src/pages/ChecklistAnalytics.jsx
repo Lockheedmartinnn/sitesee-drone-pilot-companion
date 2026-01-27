@@ -148,7 +148,7 @@ export default function ChecklistAnalytics() {
       ? Math.floor(filteredSessions.reduce((sum, s) => sum + s.durationSec, 0) / filteredSessions.length)
       : 0;
     const completedSessions = filteredSessions.filter(s => s.stepsCompleted >= 8).length;
-    const shortCaptures = filteredSessions.filter(s => s.durationSec < 1500).length; // Under 25 min
+    const shortChecklists = filteredSessions.filter(s => s.durationSec < 1500).length; // Under 25 min
     const passDecisions = filteredSessions.filter(s => {
       const finalDecision = s.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
       return finalDecision?.new_state === 'yes';
@@ -158,7 +158,7 @@ export default function ChecklistAnalytics() {
       return finalDecision?.new_state === 'no';
     }).length;
 
-    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortCaptures, passDecisions, reworkDecisions };
+    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortChecklists, passDecisions, reworkDecisions };
   }, [filteredSessions]);
 
   // Pilot performance data
@@ -172,22 +172,22 @@ export default function ChecklistAnalytics() {
           email,
           pilot_id: session.pilot_id,
           company: session.company,
-          totalCaptures: 0,
-          towerCaptures: 0,
-          rooftopCaptures: 0,
+          totalChecklists: 0,
+          towerChecklists: 0,
+          rooftopChecklists: 0,
           totalDuration: 0,
-          shortCaptures: 0,
+          shortChecklists: 0,
           passDecisions: 0,
           reworkDecisions: 0,
           completedSessions: 0
         };
       }
 
-      pilotMap[email].totalCaptures++;
-      if (session.site_type === 'tower') pilotMap[email].towerCaptures++;
-      if (session.site_type === 'rooftop') pilotMap[email].rooftopCaptures++;
+      pilotMap[email].totalChecklists++;
+      if (session.site_type === 'tower') pilotMap[email].towerChecklists++;
+      if (session.site_type === 'rooftop') pilotMap[email].rooftopChecklists++;
       pilotMap[email].totalDuration += session.durationSec;
-      if (session.durationSec < 1500) pilotMap[email].shortCaptures++;
+      if (session.durationSec < 1500) pilotMap[email].shortChecklists++;
       if (session.stepsCompleted >= 8) pilotMap[email].completedSessions++;
 
       const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
@@ -197,11 +197,8 @@ export default function ChecklistAnalytics() {
 
     return Object.values(pilotMap).map(pilot => ({
       ...pilot,
-      avgDuration: Math.floor(pilot.totalDuration / pilot.totalCaptures),
-      passRate: pilot.passDecisions + pilot.reworkDecisions > 0 
-        ? Math.round((pilot.passDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)
-        : 0
-    })).sort((a, b) => b.totalCaptures - a.totalCaptures);
+      avgDuration: Math.floor(pilot.totalDuration / pilot.totalChecklists)
+    })).sort((a, b) => b.totalChecklists - a.totalChecklists);
   }, [filteredSessions]);
 
   const formatDuration = (seconds) => {
@@ -532,7 +529,7 @@ export default function ChecklistAnalytics() {
               <AlertTriangle className="w-4 h-4 text-red-400" />
               <p className="text-xs text-slate-400">Short (&lt;25m)</p>
             </div>
-            <p className="text-2xl font-bold text-red-400">{stats.shortCaptures}</p>
+            <p className="text-2xl font-bold text-red-400">{stats.shortChecklists}</p>
           </motion.div>
 
           <motion.div
@@ -652,7 +649,7 @@ export default function ChecklistAnalytics() {
                   ).sort((a, b) => b[1] - a[1]).map(([company, count]) => (
                     <div key={company} className="flex items-center justify-between">
                       <span className="text-slate-300">{company}</span>
-                      <span className="text-white font-semibold">{count} captures</span>
+                      <span className="text-white font-semibold">{count} checklists</span>
                     </div>
                   ))}
                 </div>
@@ -672,7 +669,7 @@ export default function ChecklistAnalytics() {
                   ).map(([type, count]) => (
                     <div key={type} className="flex items-center justify-between">
                       <span className="text-slate-300 capitalize">{type}</span>
-                      <span className="text-white font-semibold">{count} captures</span>
+                      <span className="text-white font-semibold">{count} checklists</span>
                     </div>
                   ))}
                 </div>
@@ -730,16 +727,16 @@ export default function ChecklistAnalytics() {
                             {pilot.company}
                           </span>
                         )}
-                        {pilot.shortCaptures > 0 && (
+                        {pilot.shortChecklists > 0 && (
                           <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-300">
-                            {pilot.shortCaptures} short
+                            {pilot.shortChecklists} short
                           </span>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
-                          <p className="text-slate-400">Total Captures</p>
-                          <p className="text-white font-semibold text-lg">{pilot.totalCaptures}</p>
+                          <p className="text-slate-400">Total Checklists</p>
+                          <p className="text-white font-semibold text-lg">{pilot.totalChecklists}</p>
                         </div>
                         <div>
                           <p className="text-slate-400">Avg Duration</p>
@@ -747,14 +744,7 @@ export default function ChecklistAnalytics() {
                         </div>
                         <div>
                           <p className="text-slate-400">Tower / Rooftop</p>
-                          <p className="text-white font-semibold">{pilot.towerCaptures} / {pilot.rooftopCaptures}</p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400">Pass Rate</p>
-                          <p className={cn(
-                            "font-semibold",
-                            pilot.passRate >= 80 ? "text-emerald-400" : pilot.passRate >= 60 ? "text-amber-400" : "text-red-400"
-                          )}>{pilot.passRate}%</p>
+                          <p className="text-white font-semibold">{pilot.towerChecklists} / {pilot.rooftopChecklists}</p>
                         </div>
                         <div>
                           <p className="text-slate-400">Pass / Rework</p>
@@ -777,16 +767,16 @@ export default function ChecklistAnalytics() {
                       <div className="bg-slate-900/50 rounded-lg p-4">
                         <p className="text-xs text-slate-400 mb-1">Completion Rate</p>
                         <p className="text-xl font-bold text-white">
-                          {Math.round((pilot.completedSessions / pilot.totalCaptures) * 100)}%
+                          {Math.round((pilot.completedSessions / pilot.totalChecklists) * 100)}%
                         </p>
                       </div>
                       <div className="bg-slate-900/50 rounded-lg p-4">
-                        <p className="text-xs text-slate-400 mb-1">Short Captures</p>
+                        <p className="text-xs text-slate-400 mb-1">Short Checklists</p>
                         <p className={cn(
                           "text-xl font-bold",
-                          pilot.shortCaptures > 0 ? "text-red-400" : "text-emerald-400"
+                          pilot.shortChecklists > 0 ? "text-red-400" : "text-emerald-400"
                         )}>
-                          {pilot.shortCaptures}
+                          {pilot.shortChecklists}
                         </p>
                       </div>
                       <div className="bg-slate-900/50 rounded-lg p-4">
@@ -795,24 +785,16 @@ export default function ChecklistAnalytics() {
                           {formatDuration(pilot.totalDuration)}
                         </p>
                       </div>
-                      <div className="bg-slate-900/50 rounded-lg p-4">
-                        <p className="text-xs text-slate-400 mb-1">Pass Rate</p>
-                        <p className={cn(
-                          "text-xl font-bold",
-                          pilot.passRate >= 80 ? "text-emerald-400" : pilot.passRate >= 60 ? "text-amber-400" : "text-red-400"
-                        )}>
-                          {pilot.passRate}%
-                        </p>
-                      </div>
+
                     </div>
 
-                    {/* Short Captures Alert */}
-                    {pilot.shortCaptures > 0 && (
+                    {/* Short Checklists Alert */}
+                    {pilot.shortChecklists > 0 && (
                       <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
                         <div className="flex items-start gap-3">
                           <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                           <div>
-                            <p className="font-semibold text-red-400 mb-2">⚠ {pilot.shortCaptures} Short Captures (Under 25 min)</p>
+                            <p className="font-semibold text-red-400 mb-2">⚠ {pilot.shortChecklists} Short Checklists (Under 25 min)</p>
                             <div className="space-y-1">
                               {filteredSessions
                                 .filter(s => s.pilot_email === pilot.email && s.durationSec < 1500)
@@ -831,7 +813,7 @@ export default function ChecklistAnalytics() {
                     <div>
                       <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
                         <Clock className="w-4 h-4 text-blue-400" />
-                        All Sessions ({pilot.totalCaptures})
+                        All Sessions ({pilot.totalChecklists})
                       </h4>
                       <div className="space-y-2">
                         {filteredSessions
@@ -892,7 +874,7 @@ export default function ChecklistAnalytics() {
                           const sessionsWithStep = filteredSessions.filter(s => 
                             s.pilot_email === pilot.email && s.steps.has(stepNum)
                           ).length;
-                          const completionRate = Math.round((sessionsWithStep / pilot.totalCaptures) * 100);
+                          const completionRate = Math.round((sessionsWithStep / pilot.totalChecklists) * 100);
                           
                           return (
                             <div key={stepNum} className="bg-slate-900/50 rounded-lg p-3 text-center">
@@ -917,13 +899,13 @@ export default function ChecklistAnalytics() {
                       </h4>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div className="bg-slate-900/50 rounded-lg p-4">
-                          <p className="text-xs text-slate-400 mb-1">Fastest Capture</p>
+                          <p className="text-xs text-slate-400 mb-1">Fastest Checklist</p>
                           <p className="text-lg font-bold text-emerald-400">
                             {formatDuration(Math.min(...filteredSessions.filter(s => s.pilot_email === pilot.email).map(s => s.durationSec)))}
                           </p>
                         </div>
                         <div className="bg-slate-900/50 rounded-lg p-4">
-                          <p className="text-xs text-slate-400 mb-1">Slowest Capture</p>
+                          <p className="text-xs text-slate-400 mb-1">Slowest Checklist</p>
                           <p className="text-lg font-bold text-amber-400">
                             {formatDuration(Math.max(...filteredSessions.filter(s => s.pilot_email === pilot.email).map(s => s.durationSec)))}
                           </p>
@@ -948,16 +930,10 @@ export default function ChecklistAnalytics() {
                           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
                             <p className="text-xs text-emerald-400 mb-1">Pass Decisions</p>
                             <p className="text-2xl font-bold text-emerald-400">{pilot.passDecisions}</p>
-                            <p className="text-xs text-slate-400 mt-1">
-                              {Math.round((pilot.passDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)}% of decisions
-                            </p>
                           </div>
                           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
                             <p className="text-xs text-amber-400 mb-1">Rework Decisions</p>
                             <p className="text-2xl font-bold text-amber-400">{pilot.reworkDecisions}</p>
-                            <p className="text-xs text-slate-400 mt-1">
-                              {Math.round((pilot.reworkDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)}% of decisions
-                            </p>
                           </div>
                         </div>
                       </div>
