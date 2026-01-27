@@ -216,7 +216,132 @@ export default function ChecklistAnalytics() {
   const downloadCSV = () => {
     const csvRows = [];
     
-    // Header
+    // Summary Statistics
+    csvRows.push(['SUMMARY STATISTICS']);
+    csvRows.push(['Metric', 'Value']);
+    csvRows.push(['Total Completed Sessions', stats.totalSessions]);
+    csvRows.push(['Unique Pilots', stats.uniquePilots]);
+    csvRows.push(['Average Duration', formatDuration(stats.avgDuration)]);
+    csvRows.push(['Short Captures (Under 25 min)', stats.shortCaptures]);
+    csvRows.push(['Pass Decisions', stats.passDecisions]);
+    csvRows.push(['Rework Decisions', stats.reworkDecisions]);
+    csvRows.push(['Pass Rate', `${Math.round((stats.passDecisions / (stats.passDecisions + stats.reworkDecisions || 1)) * 100)}%`]);
+    csvRows.push([]);
+
+    // Company Breakdown
+    csvRows.push(['COMPANY BREAKDOWN']);
+    csvRows.push(['Company', 'Total Captures']);
+    Object.entries(
+      filteredSessions.reduce((acc, s) => {
+        const company = s.company || 'Unknown';
+        acc[company] = (acc[company] || 0) + 1;
+        return acc;
+      }, {})
+    ).sort((a, b) => b[1] - a[1]).forEach(([company, count]) => {
+      csvRows.push([company, count]);
+    });
+    csvRows.push([]);
+
+    // Site Type Breakdown
+    csvRows.push(['SITE TYPE BREAKDOWN']);
+    csvRows.push(['Site Type', 'Total Captures']);
+    Object.entries(
+      filteredSessions.reduce((acc, s) => {
+        acc[s.site_type] = (acc[s.site_type] || 0) + 1;
+        return acc;
+      }, {})
+    ).forEach(([type, count]) => {
+      csvRows.push([type, count]);
+    });
+    csvRows.push([]);
+
+    // Pilot Performance Data
+    csvRows.push(['PILOT PERFORMANCE DATA']);
+    csvRows.push([
+      'Pilot Email',
+      'Pilot ID',
+      'Company',
+      'Total Captures',
+      'Tower Captures',
+      'Rooftop Captures',
+      'Total Duration (seconds)',
+      'Avg Duration',
+      'Short Captures (<25min)',
+      'Completed Sessions',
+      'Pass Decisions',
+      'Rework Decisions',
+      'Pass Rate %',
+      'Step 1 Completion %',
+      'Step 2 Completion %',
+      'Step 3 Completion %',
+      'Step 4 Completion %',
+      'Step 5 Completion %',
+      'Step 6 Completion %',
+      'Step 7 Completion %',
+      'Step 8 Completion %',
+      'Fastest Capture',
+      'Slowest Capture'
+    ]);
+
+    pilotStats.forEach(pilot => {
+      const pilotSessions = filteredSessions.filter(s => s.pilot_email === pilot.email);
+      const stepCompletion = [1, 2, 3, 4, 5, 6, 7, 8].map(stepNum => {
+        const count = pilotSessions.filter(s => s.steps.has(stepNum)).length;
+        return Math.round((count / pilot.totalCaptures) * 100);
+      });
+      const fastest = Math.min(...pilotSessions.map(s => s.durationSec));
+      const slowest = Math.max(...pilotSessions.map(s => s.durationSec));
+
+      csvRows.push([
+        pilot.email,
+        pilot.pilot_id || '',
+        pilot.company || '',
+        pilot.totalCaptures,
+        pilot.towerCaptures,
+        pilot.rooftopCaptures,
+        pilot.totalDuration,
+        formatDuration(pilot.avgDuration),
+        pilot.shortCaptures,
+        pilot.completedSessions,
+        pilot.passDecisions,
+        pilot.reworkDecisions,
+        pilot.passRate,
+        ...stepCompletion,
+        formatDuration(fastest),
+        formatDuration(slowest)
+      ]);
+    });
+    csvRows.push([]);
+
+    // Short Captures Detail
+    csvRows.push(['SHORT CAPTURES DETAIL (Under 25 minutes)']);
+    csvRows.push([
+      'Pilot Email',
+      'Company',
+      'Site Type',
+      'Start Time',
+      'Duration',
+      'Steps Completed',
+      'Final Decision'
+    ]);
+    filteredSessions
+      .filter(s => s.durationSec < 1500)
+      .forEach(session => {
+        const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+        csvRows.push([
+          session.pilot_email,
+          session.company || '',
+          session.site_type,
+          format(session.startTime, 'yyyy-MM-dd HH:mm:ss'),
+          formatDuration(session.durationSec),
+          session.stepsCompleted,
+          finalDecision?.new_state || 'N/A'
+        ]);
+      });
+    csvRows.push([]);
+
+    // All Sessions Detail
+    csvRows.push(['ALL SESSIONS DETAIL']);
     csvRows.push([
       'Session ID',
       'Pilot Email',
@@ -226,16 +351,17 @@ export default function ChecklistAnalytics() {
       'Start Time',
       'End Time',
       'Duration (seconds)',
+      'Duration (formatted)',
       'Steps Completed',
       'Steps Completed List',
       'Final Pass Decision',
+      'Is Short Capture',
       'Location (Lat, Lon)',
       'Job ID'
     ]);
 
-    // Data rows
     filteredSessions.forEach(session => {
-      const stepsCompletedList = [...session.steps].sort((a, b) => a - b).join(', ');
+      const stepsCompletedList = [...session.steps].sort((a, b) => a - b).join('; ');
       const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
       const location = session.activities[0]?.latitude && session.activities[0]?.longitude 
         ? `${session.activities[0].latitude}, ${session.activities[0].longitude}`
@@ -250,9 +376,11 @@ export default function ChecklistAnalytics() {
         format(session.startTime, 'yyyy-MM-dd HH:mm:ss'),
         format(session.endTime, 'yyyy-MM-dd HH:mm:ss'),
         session.durationSec,
+        formatDuration(session.durationSec),
         session.stepsCompleted,
         stepsCompletedList,
         finalDecision?.new_state || '',
+        session.durationSec < 1500 ? 'YES' : 'NO',
         location,
         session.missionLog?.job_id || ''
       ]);
@@ -267,7 +395,7 @@ export default function ChecklistAnalytics() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `checklist-analytics-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `checklist-analytics-complete-${format(new Date(), 'yyyy-MM-dd')}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
