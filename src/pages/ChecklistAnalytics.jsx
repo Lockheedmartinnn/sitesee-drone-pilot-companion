@@ -474,7 +474,7 @@ export default function ChecklistAnalytics() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
+            className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-4"
           >
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -680,7 +680,7 @@ export default function ChecklistAnalytics() {
             </div>
 
             {/* Top Performers */}
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+            <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <Award className="w-5 h-5 text-yellow-400" />
                 Top Performers
@@ -715,7 +715,7 @@ export default function ChecklistAnalytics() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.03 }}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden"
+                className="bg-slate-800/80 border-2 border-slate-600 rounded-xl overflow-hidden"
               >
                 <button
                   onClick={() => setExpandedPilot(expandedPilot === pilot.email ? null : pilot.email)}
