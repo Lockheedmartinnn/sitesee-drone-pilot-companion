@@ -23,10 +23,25 @@ export default function UserManagement() {
     enabled: permissions.canViewAllMissions,
   });
 
+  // Pilot Group 1 email list
+  const pilotGroup1Emails = [
+    'ichanvaleriano0@gmail.com',
+    'jccdefg@gmail.com',
+    'jaysondeasisdavid146@gmail.com',
+    'joel.mendoza.qroi10578@gmail.com',
+    'qnsi.darwinherminigildo24@gmail.com',
+    'qroi.ryandorilag@gmail.com',
+    'tiujohnedward@gmail.com',
+    'jhonnico1323@gmail.com'
+  ];
+
   // Group users by company, with Pilot Group 1 first
   const usersByCompany = useMemo(() => {
     const groups = allUsers.reduce((acc, user) => {
-      const company = user.company || 'Unknown';
+      // Check if user is in Pilot Group 1 based on email
+      const company = pilotGroup1Emails.includes(user.email) 
+        ? 'Pilot Group 1' 
+        : (user.company || 'Unknown');
       if (!acc[company]) acc[company] = [];
       acc[company].push(user);
       return acc;
