@@ -428,11 +428,10 @@ export default function ChecklistAnalytics() {
           </div>
           <Button
             onClick={downloadCSV}
-            variant="outline"
-            className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
             <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            Download Complete Analytics Report
           </Button>
         </div>
 
