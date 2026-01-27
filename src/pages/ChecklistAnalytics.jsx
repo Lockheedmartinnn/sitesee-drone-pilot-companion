@@ -637,7 +637,7 @@ export default function ChecklistAnalytics() {
           <div className="space-y-6">
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+              <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-blue-400" />
                   Company Breakdown
