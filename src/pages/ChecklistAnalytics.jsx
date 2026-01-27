@@ -152,7 +152,12 @@ export default function ChecklistAnalytics() {
     // Access control
     if (!permissions.canViewAllMissions) {
       if (permissions.canViewTeamMissions) {
-        filtered = filtered.filter(s => s.company === user?.company);
+        // Ops manager sees all for their pilot group
+        const userPilotGroup = user?.company === 'waveconn' ? 'waveconn' : 'Pilot Group 1';
+        filtered = filtered.filter(s => {
+          const sessionCompany = s.company || 'Pilot Group 1';
+          return sessionCompany === userPilotGroup;
+        });
       } else {
         filtered = filtered.filter(s => s.pilot_email === user?.email);
       }
