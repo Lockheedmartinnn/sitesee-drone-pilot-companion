@@ -11,7 +11,12 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
-  Building2
+  Building2,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Award,
+  Target
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -25,6 +30,8 @@ export default function ChecklistAnalytics() {
   const [siteFilter, setSiteFilter] = useState('all');
   const [companyFilter, setCompanyFilter] = useState('all');
   const [startDate] = useState(new Date('2026-01-12'));
+  const [expandedPilot, setExpandedPilot] = useState(null);
+  const [viewMode, setViewMode] = useState('overview');
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -138,8 +145,60 @@ export default function ChecklistAnalytics() {
       ? Math.floor(filteredSessions.reduce((sum, s) => sum + s.durationSec, 0) / filteredSessions.length)
       : 0;
     const completedSessions = filteredSessions.filter(s => s.stepsCompleted >= 8).length;
+    const shortCaptures = filteredSessions.filter(s => s.durationSec < 1500).length; // Under 25 min
+    const passDecisions = filteredSessions.filter(s => {
+      const finalDecision = s.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+      return finalDecision?.new_state === 'yes';
+    }).length;
+    const reworkDecisions = filteredSessions.filter(s => {
+      const finalDecision = s.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+      return finalDecision?.new_state === 'no';
+    }).length;
 
-    return { totalSessions, uniquePilots, avgDuration, completedSessions };
+    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortCaptures, passDecisions, reworkDecisions };
+  }, [filteredSessions]);
+
+  // Pilot performance data
+  const pilotStats = useMemo(() => {
+    const pilotMap = {};
+
+    filteredSessions.forEach(session => {
+      const email = session.pilot_email;
+      if (!pilotMap[email]) {
+        pilotMap[email] = {
+          email,
+          pilot_id: session.pilot_id,
+          company: session.company,
+          totalCaptures: 0,
+          towerCaptures: 0,
+          rooftopCaptures: 0,
+          totalDuration: 0,
+          shortCaptures: 0,
+          passDecisions: 0,
+          reworkDecisions: 0,
+          completedSessions: 0
+        };
+      }
+
+      pilotMap[email].totalCaptures++;
+      if (session.site_type === 'tower') pilotMap[email].towerCaptures++;
+      if (session.site_type === 'rooftop') pilotMap[email].rooftopCaptures++;
+      pilotMap[email].totalDuration += session.durationSec;
+      if (session.durationSec < 1500) pilotMap[email].shortCaptures++;
+      if (session.stepsCompleted >= 8) pilotMap[email].completedSessions++;
+
+      const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+      if (finalDecision?.new_state === 'yes') pilotMap[email].passDecisions++;
+      if (finalDecision?.new_state === 'no') pilotMap[email].reworkDecisions++;
+    });
+
+    return Object.values(pilotMap).map(pilot => ({
+      ...pilot,
+      avgDuration: Math.floor(pilot.totalDuration / pilot.totalCaptures),
+      passRate: pilot.passDecisions + pilot.reworkDecisions > 0 
+        ? Math.round((pilot.passDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)
+        : 0
+    })).sort((a, b) => b.totalCaptures - a.totalCaptures);
   }, [filteredSessions]);
 
   const formatDuration = (seconds) => {
@@ -246,57 +305,130 @@ export default function ChecklistAnalytics() {
           </Button>
         </div>
 
+        {/* View Mode Tabs */}
+        <div className="flex gap-2 mb-6">
+          <Button
+            variant={viewMode === 'overview' ? 'default' : 'outline'}
+            onClick={() => setViewMode('overview')}
+            className={cn(
+              viewMode === 'overview' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+            )}
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Overview
+          </Button>
+          <Button
+            variant={viewMode === 'pilots' ? 'default' : 'outline'}
+            onClick={() => setViewMode('pilots')}
+            className={cn(
+              viewMode === 'pilots' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+            )}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Pilot Performance
+          </Button>
+          <Button
+            variant={viewMode === 'sessions' ? 'default' : 'outline'}
+            onClick={() => setViewMode('sessions')}
+            className={cn(
+              viewMode === 'sessions' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+            )}
+          >
+            <Clock className="w-4 h-4 mr-2" />
+            All Sessions
+          </Button>
+        </div>
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-5"
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <p className="text-sm text-slate-400">Total Sessions</p>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <p className="text-xs text-slate-400">Total</p>
             </div>
-            <p className="text-3xl font-bold text-white">{stats.totalSessions}</p>
+            <p className="text-2xl font-bold text-white">{stats.totalSessions}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-4 h-4 text-blue-400" />
+              <p className="text-xs text-slate-400">Pilots</p>
+            </div>
+            <p className="text-2xl font-bold text-white">{stats.uniquePilots}</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-5"
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <Users className="w-5 h-5 text-blue-400" />
-              <p className="text-sm text-slate-400">Unique Pilots</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-4 h-4 text-amber-400" />
+              <p className="text-xs text-slate-400">Avg Time</p>
             </div>
-            <p className="text-3xl font-bold text-white">{stats.uniquePilots}</p>
+            <p className="text-2xl font-bold text-white">{formatDuration(stats.avgDuration)}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="w-4 h-4 text-purple-400" />
+              <p className="text-xs text-slate-400">Completed</p>
+            </div>
+            <p className="text-2xl font-bold text-white">{stats.completedSessions}</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-5"
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <Clock className="w-5 h-5 text-amber-400" />
-              <p className="text-sm text-slate-400">Avg Duration</p>
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4 text-red-400" />
+              <p className="text-xs text-slate-400">Short (&lt;25m)</p>
             </div>
-            <p className="text-3xl font-bold text-white">{formatDuration(stats.avgDuration)}</p>
+            <p className="text-2xl font-bold text-red-400">{stats.shortCaptures}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <p className="text-xs text-slate-400">Pass</p>
+            </div>
+            <p className="text-2xl font-bold text-emerald-400">{stats.passDecisions}</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-5"
+            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <BarChart3 className="w-5 h-5 text-purple-400" />
-              <p className="text-sm text-slate-400">Completed</p>
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingDown className="w-4 h-4 text-amber-400" />
+              <p className="text-xs text-slate-400">Rework</p>
             </div>
-            <p className="text-3xl font-bold text-white">{stats.completedSessions}</p>
+            <p className="text-2xl font-bold text-amber-400">{stats.reworkDecisions}</p>
           </motion.div>
         </div>
 
@@ -370,8 +502,196 @@ export default function ChecklistAnalytics() {
           </div>
         </div>
 
-        {/* Sessions List */}
-        <div className="space-y-4">
+        {/* OVERVIEW MODE */}
+        {viewMode === 'overview' && (
+          <div className="space-y-6">
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-blue-400" />
+                  Company Breakdown
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(
+                    filteredSessions.reduce((acc, s) => {
+                      const company = s.company || 'Unknown';
+                      acc[company] = (acc[company] || 0) + 1;
+                      return acc;
+                    }, {})
+                  ).sort((a, b) => b[1] - a[1]).map(([company, count]) => (
+                    <div key={company} className="flex items-center justify-between">
+                      <span className="text-slate-300">{company}</span>
+                      <span className="text-white font-semibold">{count} captures</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-purple-400" />
+                  Site Type Distribution
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(
+                    filteredSessions.reduce((acc, s) => {
+                      acc[s.site_type] = (acc[s.site_type] || 0) + 1;
+                      return acc;
+                    }, {})
+                  ).map(([type, count]) => (
+                    <div key={type} className="flex items-center justify-between">
+                      <span className="text-slate-300 capitalize">{type}</span>
+                      <span className="text-white font-semibold">{count} captures</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Top Performers */}
+            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-yellow-400" />
+                Top Performers
+              </h3>
+              <div className="space-y-2">
+                {pilotStats.slice(0, 5).map((pilot, idx) => (
+                  <div key={pilot.email} className="flex items-center justify-between bg-slate-900/50 rounded-lg p-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl font-bold text-slate-600">#{idx + 1}</span>
+                      <div>
+                        <p className="text-white font-medium">{pilot.email}</p>
+                        <p className="text-xs text-slate-400">{pilot.company || 'No company'}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-white">{pilot.totalCaptures} captures</p>
+                      <p className="text-xs text-slate-400">Avg: {formatDuration(pilot.avgDuration)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PILOT PERFORMANCE MODE */}
+        {viewMode === 'pilots' && (
+          <div className="space-y-4">
+            {pilotStats.map((pilot, idx) => (
+              <motion.div
+                key={pilot.email}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.03 }}
+                className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setExpandedPilot(expandedPilot === pilot.email ? null : pilot.email)}
+                  className="w-full p-5 text-left hover:bg-slate-700/30 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-lg font-semibold text-white">{pilot.email}</span>
+                        {pilot.company && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300">
+                            {pilot.company}
+                          </span>
+                        )}
+                        {pilot.shortCaptures > 0 && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-300">
+                            {pilot.shortCaptures} short
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                        <div>
+                          <p className="text-slate-400">Total Captures</p>
+                          <p className="text-white font-semibold text-lg">{pilot.totalCaptures}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Avg Duration</p>
+                          <p className="text-white font-semibold">{formatDuration(pilot.avgDuration)}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Tower / Rooftop</p>
+                          <p className="text-white font-semibold">{pilot.towerCaptures} / {pilot.rooftopCaptures}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Pass Rate</p>
+                          <p className={cn(
+                            "font-semibold",
+                            pilot.passRate >= 80 ? "text-emerald-400" : pilot.passRate >= 60 ? "text-amber-400" : "text-red-400"
+                          )}>{pilot.passRate}%</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Pass / Rework</p>
+                          <p className="text-white font-semibold">{pilot.passDecisions} / {pilot.reworkDecisions}</p>
+                        </div>
+                      </div>
+                    </div>
+                    {expandedPilot === pilot.email ? (
+                      <ChevronUp className="w-5 h-5 text-slate-400" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-slate-400" />
+                    )}
+                  </div>
+                </button>
+
+                {expandedPilot === pilot.email && (
+                  <div className="border-t border-slate-700 p-5">
+                    <h4 className="font-semibold text-white mb-3">Recent Sessions</h4>
+                    <div className="space-y-2">
+                      {filteredSessions
+                        .filter(s => s.pilot_email === pilot.email)
+                        .slice(0, 10)
+                        .map(session => {
+                          const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+                          return (
+                            <div key={session.session_id} className="bg-slate-900/50 rounded-lg p-3 text-sm">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <span className="text-slate-300">{format(session.startTime, 'MMM d, HH:mm')}</span>
+                                  <span className="mx-2 text-slate-600">•</span>
+                                  <span className={cn(
+                                    "px-2 py-0.5 rounded text-xs",
+                                    session.site_type === 'tower' ? "bg-blue-500/20 text-blue-300" : "bg-amber-500/20 text-amber-300"
+                                  )}>{session.site_type}</span>
+                                  {session.durationSec < 1500 && (
+                                    <>
+                                      <span className="mx-2 text-slate-600">•</span>
+                                      <span className="text-red-400 text-xs">⚠ Short</span>
+                                    </>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-slate-400">{formatDuration(session.durationSec)}</span>
+                                  {finalDecision && (
+                                    <span className={cn(
+                                      "text-xs font-medium",
+                                      finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
+                                    )}>
+                                      {finalDecision.new_state === 'yes' ? '✓ Pass' : '✗ Rework'}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* SESSIONS LIST MODE */}
+        {viewMode === 'sessions' && (
+          <div className="space-y-4">
           {filteredSessions.length === 0 ? (
             <div className="text-center text-slate-400 py-12">
               No checklist sessions found.
@@ -528,7 +848,8 @@ export default function ChecklistAnalytics() {
               </motion.div>
             ))
           )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
