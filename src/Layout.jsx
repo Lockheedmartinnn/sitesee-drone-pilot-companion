@@ -12,6 +12,7 @@ import {
   Rocket,
   GraduationCap,
   User,
+  Users,
   LogOut,
   ChevronRight,
   MessageSquare,
