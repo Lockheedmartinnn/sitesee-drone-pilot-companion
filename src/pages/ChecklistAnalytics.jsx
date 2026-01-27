@@ -16,7 +16,9 @@ import {
   TrendingUp,
   TrendingDown,
   Award,
-  Target
+  Target,
+  Calendar,
+  Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -24,6 +26,21 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAccessControl } from '@/components/useAccessControl';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Legend
+} from 'recharts';
 
 export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
@@ -645,29 +662,149 @@ export default function ChecklistAnalytics() {
               </div>
             </div>
 
-            {/* Top Performers */}
+            {/* Activity Timeline Chart */}
             <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Award className="w-5 h-5 text-yellow-400" />
-                Top Performers
+                <Calendar className="w-5 h-5 text-blue-400" />
+                Activity Over Time
               </h3>
-              <div className="space-y-2">
-                {pilotStats.slice(0, 5).map((pilot, idx) => (
-                  <div key={pilot.email} className="flex items-center justify-between bg-slate-900/50 rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl font-bold text-slate-600">#{idx + 1}</span>
-                      <div>
-                        <p className="text-white font-medium">{pilot.email}</p>
-                        <p className="text-xs text-slate-400">{getCompanyDisplayName(pilot.company) || 'No company'}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-white">{pilot.totalCaptures} captures</p>
-                      <p className="text-xs text-slate-400">Avg: {formatDuration(pilot.avgDuration)}</p>
-                    </div>
-                  </div>
-                ))}
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={(() => {
+                  const dailyData = {};
+                  filteredSessions.forEach(s => {
+                    const day = format(s.startTime, 'MMM d');
+                    if (!dailyData[day]) {
+                      dailyData[day] = { date: day, checklists: 0, tower: 0, rooftop: 0 };
+                    }
+                    dailyData[day].checklists++;
+                    if (s.site_type === 'tower') dailyData[day].tower++;
+                    if (s.site_type === 'rooftop') dailyData[day].rooftop++;
+                  });
+                  return Object.values(dailyData).slice(-14);
+                })()}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="date" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                  <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                    labelStyle={{ color: '#e2e8f0' }}
+                  />
+                  <Legend />
+                  <Line type="monotone" dataKey="checklists" stroke="#3b82f6" strokeWidth={3} name="Total" />
+                  <Line type="monotone" dataKey="tower" stroke="#06b6d4" strokeWidth={2} name="Tower" />
+                  <Line type="monotone" dataKey="rooftop" stroke="#f59e0b" strokeWidth={2} name="Rooftop" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Performance Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Average Duration by Site Type */}
+              <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-yellow-400" />
+                  Avg Duration by Site Type
+                </h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={[
+                    {
+                      type: 'Tower',
+                      duration: Math.floor(
+                        filteredSessions.filter(s => s.site_type === 'tower')
+                          .reduce((sum, s) => sum + s.durationSec, 0) / 
+                        (filteredSessions.filter(s => s.site_type === 'tower').length || 1)
+                      ) / 60
+                    },
+                    {
+                      type: 'Rooftop',
+                      duration: Math.floor(
+                        filteredSessions.filter(s => s.site_type === 'rooftop')
+                          .reduce((sum, s) => sum + s.durationSec, 0) / 
+                        (filteredSessions.filter(s => s.site_type === 'rooftop').length || 1)
+                      ) / 60
+                    }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis dataKey="type" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fill: '#94a3b8' } }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                      formatter={(value) => `${value} min`}
+                    />
+                    <Bar dataKey="duration" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
+
+              {/* Completion Rate Donut */}
+              <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-purple-400" />
+                  Quality Indicators
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-emerald-400 mb-1">
+                      {Math.round((stats.completedSessions / stats.totalSessions) * 100)}%
+                    </div>
+                    <div className="text-xs text-slate-400">Completion Rate</div>
+                  </div>
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-blue-400 mb-1">
+                      {formatDuration(stats.avgDuration)}
+                    </div>
+                    <div className="text-xs text-slate-400">Average Time</div>
+                  </div>
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-amber-400 mb-1">
+                      {stats.totalSessions}
+                    </div>
+                    <div className="text-xs text-slate-400">Total Sessions</div>
+                  </div>
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-red-400 mb-1">
+                      {stats.shortChecklists}
+                    </div>
+                    <div className="text-xs text-slate-400">Short (&lt;25m)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Company Performance Comparison */}
+            <div className="bg-slate-800/80 border-2 border-slate-600 rounded-xl p-5">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-blue-400" />
+                Company Performance Comparison
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={Object.entries(
+                  filteredSessions.reduce((acc, s) => {
+                    const company = getCompanyDisplayName(s.company || 'Unknown');
+                    if (!acc[company]) {
+                      acc[company] = { company, checklists: 0, avgTime: 0, totalTime: 0 };
+                    }
+                    acc[company].checklists++;
+                    acc[company].totalTime += s.durationSec;
+                    return acc;
+                  }, {})
+                ).map(([company, data]) => ({
+                  company,
+                  checklists: data.checklists,
+                  avgTime: Math.floor(data.totalTime / data.checklists / 60)
+                })).sort((a, b) => b.checklists - a.checklists)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="company" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                  <YAxis yAxisId="left" stroke="#3b82f6" style={{ fontSize: '12px' }} />
+                  <YAxis yAxisId="right" orientation="right" stroke="#f59e0b" style={{ fontSize: '12px' }} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                  />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="checklists" fill="#3b82f6" radius={[8, 8, 0, 0]} name="Total Checklists" />
+                  <Bar yAxisId="right" dataKey="avgTime" fill="#f59e0b" radius={[8, 8, 0, 0]} name="Avg Time (min)" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         )}
