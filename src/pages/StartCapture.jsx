@@ -373,7 +373,7 @@ export default function StartCapture() {
   // Set GPS timer duration based on company
   // Only Pilot Group 1 (QNSI) = 5 min, everyone else (including no company) = 2 min
   useEffect(() => {
-    console.log('User company:', user?.company); // Debug log
+    console.log('Setting GPS timer - User company:', user?.company, 'Timer will be:', user?.company === 'QNSI' ? 5 : 2, 'minutes');
     if (user?.company === 'QNSI') {
       setGpsTimerMinutes(5);
     } else {
@@ -775,7 +775,7 @@ export default function StartCapture() {
                     setGpsTimerComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
                   }}
-                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)`}
+                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company === 'QNSI' ? ' [Pilot Group 1]' : ''}`}
                   isAdmin={user?.role === 'admin'}
                 />
                 
