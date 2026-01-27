@@ -558,42 +558,44 @@ export default function ChecklistAnalytics() {
 
         {/* Filters */}
         <div className="space-y-3 mb-6">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-slate-400" />
-            <span className="text-sm text-slate-400">Company:</span>
-            <div className="flex gap-2">
-              <Button
-                variant={companyFilter === 'all' ? 'default' : 'outline'}
-                onClick={() => setCompanyFilter('all')}
-                size="sm"
-                className={cn(
-                  companyFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
-                )}
-              >
-                All Companies
-              </Button>
-              <Button
-                variant={companyFilter === 'Pilot Group 1' ? 'default' : 'outline'}
-                onClick={() => setCompanyFilter('Pilot Group 1')}
-                size="sm"
-                className={cn(
-                  companyFilter === 'Pilot Group 1' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
-                )}
-              >
-                Pilot Group 1
-              </Button>
-              <Button
-                variant={companyFilter === 'waveconn' ? 'default' : 'outline'}
-                onClick={() => setCompanyFilter('waveconn')}
-                size="sm"
-                className={cn(
-                  companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
-                )}
-              >
-                Pilot Group 2
-              </Button>
+          {permissions.canViewAllMissions && (
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-slate-400" />
+              <span className="text-sm text-slate-400">Company:</span>
+              <div className="flex gap-2">
+                <Button
+                  variant={companyFilter === 'all' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('all')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  All Companies
+                </Button>
+                <Button
+                  variant={companyFilter === 'Pilot Group 1' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('Pilot Group 1')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'Pilot Group 1' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  Pilot Group 1
+                </Button>
+                <Button
+                  variant={companyFilter === 'waveconn' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('waveconn')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  Pilot Group 2
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
           
           <div className="flex gap-3">
             <Button
