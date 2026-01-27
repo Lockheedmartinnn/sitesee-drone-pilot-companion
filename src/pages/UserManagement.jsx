@@ -34,8 +34,8 @@ export default function UserManagement() {
 
     // Sort: Pilot Group 1 first, then alphabetically
     const sortedEntries = Object.entries(groups).sort(([companyA], [companyB]) => {
-      if (companyA === 'QNSI') return -1;
-      if (companyB === 'QNSI') return 1;
+      if (companyA === 'Pilot Group 1') return -1;
+      if (companyB === 'Pilot Group 1') return 1;
       return companyA.localeCompare(companyB);
     });
 
@@ -43,7 +43,7 @@ export default function UserManagement() {
   }, [allUsers]);
 
   const getCompanyDisplayName = (company) => {
-    if (company === 'QNSI') return 'Pilot Group 1';
+    // No mapping needed - company values are already display names
     return company;
   };
 
