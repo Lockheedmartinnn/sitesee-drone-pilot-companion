@@ -98,7 +98,7 @@ export default function ChecklistAnalytics() {
         missionLog
       };
     }).filter(session => {
-      const cutoffDate = new Date('2026-01-12');
+      const cutoffDate = new Date('2026-01-12T00:00:00');
       return session.startTime >= cutoffDate && session.durationSec >= 240;
     }).sort((a, b) => b.startTime - a.startTime);
   }, [activities, localMissions]);
