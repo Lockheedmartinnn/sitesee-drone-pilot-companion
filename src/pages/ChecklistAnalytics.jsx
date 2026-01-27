@@ -158,16 +158,8 @@ export default function ChecklistAnalytics() {
       : 0;
     const completedSessions = filteredSessions.filter(s => s.stepsCompleted >= 8).length;
     const shortChecklists = filteredSessions.filter(s => s.durationSec < 1500).length; // Under 25 min
-    const passDecisions = filteredSessions.filter(s => {
-      const finalDecision = s.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
-      return finalDecision?.new_state === 'yes';
-    }).length;
-    const reworkDecisions = filteredSessions.filter(s => {
-      const finalDecision = s.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
-      return finalDecision?.new_state === 'no';
-    }).length;
 
-    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortChecklists, passDecisions, reworkDecisions };
+    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortChecklists };
   }, [filteredSessions]);
 
   // Pilot performance data
@@ -186,8 +178,6 @@ export default function ChecklistAnalytics() {
           rooftopChecklists: 0,
           totalDuration: 0,
           shortChecklists: 0,
-          passDecisions: 0,
-          reworkDecisions: 0,
           completedSessions: 0
         };
       }
@@ -198,10 +188,6 @@ export default function ChecklistAnalytics() {
       pilotMap[email].totalDuration += session.durationSec;
       if (session.durationSec < 1500) pilotMap[email].shortChecklists++;
       if (session.stepsCompleted >= 8) pilotMap[email].completedSessions++;
-
-      const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
-      if (finalDecision?.new_state === 'yes') pilotMap[email].passDecisions++;
-      if (finalDecision?.new_state === 'no') pilotMap[email].reworkDecisions++;
     });
 
     return Object.values(pilotMap).map(pilot => ({
@@ -476,7 +462,7 @@ export default function ChecklistAnalytics() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -539,33 +525,7 @@ export default function ChecklistAnalytics() {
               <p className="text-xs text-slate-400">Short (&lt;25m)</p>
             </div>
             <p className="text-2xl font-bold text-red-400">{stats.shortChecklists}</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-              <p className="text-xs text-slate-400">Pass</p>
-            </div>
-            <p className="text-2xl font-bold text-emerald-400">{stats.passDecisions}</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-xl p-4"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingDown className="w-4 h-4 text-amber-400" />
-              <p className="text-xs text-slate-400">Rework</p>
-            </div>
-            <p className="text-2xl font-bold text-amber-400">{stats.reworkDecisions}</p>
-          </motion.div>
+            </motion.div>
         </div>
 
         {/* Filters */}
@@ -742,7 +702,7 @@ export default function ChecklistAnalytics() {
                           </span>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                         <div>
                           <p className="text-slate-400">Total Checklists</p>
                           <p className="text-white font-semibold text-lg">{pilot.totalChecklists}</p>
@@ -754,10 +714,6 @@ export default function ChecklistAnalytics() {
                         <div>
                           <p className="text-slate-400">Tower / Rooftop</p>
                           <p className="text-white font-semibold">{pilot.towerChecklists} / {pilot.rooftopChecklists}</p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400">Pass / Rework</p>
-                          <p className="text-white font-semibold">{pilot.passDecisions} / {pilot.reworkDecisions}</p>
                         </div>
                       </div>
                     </div>
@@ -928,25 +884,7 @@ export default function ChecklistAnalytics() {
                       </div>
                     </div>
 
-                    {/* Pass/Rework Breakdown */}
-                    {(pilot.passDecisions > 0 || pilot.reworkDecisions > 0) && (
-                      <div>
-                        <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-emerald-400" />
-                          Quality Decisions
-                        </h4>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
-                            <p className="text-xs text-emerald-400 mb-1">Pass Decisions</p>
-                            <p className="text-2xl font-bold text-emerald-400">{pilot.passDecisions}</p>
-                          </div>
-                          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
-                            <p className="text-xs text-amber-400 mb-1">Rework Decisions</p>
-                            <p className="text-2xl font-bold text-amber-400">{pilot.reworkDecisions}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+
                   </div>
                 )}
               </motion.div>
@@ -1007,26 +945,7 @@ export default function ChecklistAnalytics() {
                           <>
                             <span>•</span>
                             <span>{getCompanyDisplayName(session.company)}</span>
-                          </>
-                        )}
-                        {(() => {
-                          const finalDecision = session.activities.find(
-                            a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision'
-                          );
-                          if (finalDecision) {
-                            return (
-                              <>
-                                <span>•</span>
-                                <span className={cn(
-                                  "font-medium",
-                                  finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
-                                )}>
-                                  {finalDecision.new_state === 'yes' ? 'Pass ✓' : 'Rework ✗'}
-                                </span>
-                              </>
-                            );
-                          }
-                        })()}
+                            </>
                       </div>
                     </div>
                     {expandedSession === session.session_id ? (
@@ -1039,34 +958,6 @@ export default function ChecklistAnalytics() {
 
                 {expandedSession === session.session_id && (
                   <div className="border-t border-slate-700 p-5 space-y-4">
-                    {/* Final Decision */}
-                    {(() => {
-                      const finalDecision = session.activities.find(
-                        a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision'
-                      );
-                      if (finalDecision) {
-                        return (
-                          <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-                            <div className="flex items-center gap-3">
-                              <CheckCircle2 className={cn(
-                                "w-5 h-5",
-                                finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
-                              )} />
-                              <div>
-                                <p className="font-semibold text-white">Final Decision</p>
-                                <p className="text-sm text-slate-400">
-                                  {finalDecision.item_label}: <span className={cn(
-                                    "font-medium",
-                                    finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
-                                  )}>{finalDecision.new_state === 'yes' ? 'Pass' : 'Rework'}</span>
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                    })()}
-
                     {/* Location */}
                     {session.activities[0]?.latitude && session.activities[0]?.longitude && (
                       <div className="text-sm text-slate-400">
