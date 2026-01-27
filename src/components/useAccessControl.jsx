@@ -17,7 +17,7 @@ export function useAccessControl(user) {
     
     return {
       canViewOwnMissions: true,
-      canViewTeamMissions: ['manager', 'admin'].includes(level),
+      canViewTeamMissions: ['ops_manager', 'admin'].includes(level),
       canViewAllMissions: level === 'admin',
       level: level,
       company: user?.company,
