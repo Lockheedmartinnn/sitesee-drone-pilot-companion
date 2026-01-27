@@ -1093,7 +1093,7 @@ export default function ChecklistAnalytics() {
                         </span>
                         <span>•</span>
                         <span>Steps: {[...session.steps].sort((a, b) => a - b).join(', ')}</span>
-                        {session.company && (
+                        {permissions.canViewAllMissions && session.company && (
                           <>
                             <span>•</span>
                             <span>{getCompanyDisplayName(session.company)}</span>
