@@ -441,7 +441,7 @@ export default function ChecklistAnalytics() {
             variant={viewMode === 'overview' ? 'default' : 'outline'}
             onClick={() => setViewMode('overview')}
             className={cn(
-              viewMode === 'overview' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              viewMode === 'overview' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
             )}
           >
             <BarChart3 className="w-4 h-4 mr-2" />
@@ -451,7 +451,7 @@ export default function ChecklistAnalytics() {
             variant={viewMode === 'pilots' ? 'default' : 'outline'}
             onClick={() => setViewMode('pilots')}
             className={cn(
-              viewMode === 'pilots' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              viewMode === 'pilots' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
             )}
           >
             <Users className="w-4 h-4 mr-2" />
@@ -461,7 +461,7 @@ export default function ChecklistAnalytics() {
             variant={viewMode === 'sessions' ? 'default' : 'outline'}
             onClick={() => setViewMode('sessions')}
             className={cn(
-              viewMode === 'sessions' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+              viewMode === 'sessions' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
             )}
           >
             <Clock className="w-4 h-4 mr-2" />
