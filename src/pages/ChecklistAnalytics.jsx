@@ -983,7 +983,7 @@ export default function ChecklistAnalytics() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden"
+                className="bg-slate-800/80 border-2 border-slate-600 rounded-xl overflow-hidden"
               >
                 <button
                   onClick={() => setExpandedSession(expandedSession === session.session_id ? null : session.session_id)}
