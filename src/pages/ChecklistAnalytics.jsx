@@ -945,7 +945,8 @@ export default function ChecklistAnalytics() {
                           <>
                             <span>•</span>
                             <span>{getCompanyDisplayName(session.company)}</span>
-                            </>
+                          </>
+                        )}
                       </div>
                     </div>
                     {expandedSession === session.session_id ? (
