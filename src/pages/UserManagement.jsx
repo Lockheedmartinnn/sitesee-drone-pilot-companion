@@ -43,7 +43,6 @@ export default function UserManagement() {
   }, [allUsers]);
 
   const getCompanyDisplayName = (company) => {
-    // No mapping needed - company values are already display names
     return company;
   };
 
