@@ -24,6 +24,7 @@ export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
   const [companyFilter, setCompanyFilter] = useState('all');
+  const [startDate] = useState(new Date('2026-01-12'));
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -104,6 +105,9 @@ export default function ChecklistAnalytics() {
   const filteredSessions = useMemo(() => {
     let filtered = sessions;
 
+    // Date filter (since Jan 12, 2026)
+    filtered = filtered.filter(s => s.startTime >= startDate);
+
     // Access control
     if (!permissions.canViewAllMissions) {
       if (permissions.canViewTeamMissions) {
@@ -124,7 +128,7 @@ export default function ChecklistAnalytics() {
     }
 
     return filtered;
-  }, [sessions, siteFilter, companyFilter, permissions, user]);
+  }, [sessions, siteFilter, companyFilter, permissions, user, startDate]);
 
   // Calculate stats
   const stats = useMemo(() => {
