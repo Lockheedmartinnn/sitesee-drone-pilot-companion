@@ -641,47 +641,197 @@ export default function ChecklistAnalytics() {
                 </button>
 
                 {expandedPilot === pilot.email && (
-                  <div className="border-t border-slate-700 p-5">
-                    <h4 className="font-semibold text-white mb-3">Recent Sessions</h4>
-                    <div className="space-y-2">
-                      {filteredSessions
-                        .filter(s => s.pilot_email === pilot.email)
-                        .slice(0, 10)
-                        .map(session => {
-                          const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
-                          return (
-                            <div key={session.session_id} className="bg-slate-900/50 rounded-lg p-3 text-sm">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className="text-slate-300">{format(session.startTime, 'MMM d, HH:mm')}</span>
-                                  <span className="mx-2 text-slate-600">•</span>
-                                  <span className={cn(
-                                    "px-2 py-0.5 rounded text-xs",
-                                    session.site_type === 'tower' ? "bg-blue-500/20 text-blue-300" : "bg-amber-500/20 text-amber-300"
-                                  )}>{session.site_type}</span>
-                                  {session.durationSec < 1500 && (
-                                    <>
-                                      <span className="mx-2 text-slate-600">•</span>
-                                      <span className="text-red-400 text-xs">⚠ Short</span>
-                                    </>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-slate-400">{formatDuration(session.durationSec)}</span>
-                                  {finalDecision && (
+                  <div className="border-t border-slate-700 p-5 space-y-6">
+                    {/* Performance Summary */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-slate-900/50 rounded-lg p-4">
+                        <p className="text-xs text-slate-400 mb-1">Completion Rate</p>
+                        <p className="text-xl font-bold text-white">
+                          {Math.round((pilot.completedSessions / pilot.totalCaptures) * 100)}%
+                        </p>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-4">
+                        <p className="text-xs text-slate-400 mb-1">Short Captures</p>
+                        <p className={cn(
+                          "text-xl font-bold",
+                          pilot.shortCaptures > 0 ? "text-red-400" : "text-emerald-400"
+                        )}>
+                          {pilot.shortCaptures}
+                        </p>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-4">
+                        <p className="text-xs text-slate-400 mb-1">Total Time</p>
+                        <p className="text-xl font-bold text-white">
+                          {formatDuration(pilot.totalDuration)}
+                        </p>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-4">
+                        <p className="text-xs text-slate-400 mb-1">Pass Rate</p>
+                        <p className={cn(
+                          "text-xl font-bold",
+                          pilot.passRate >= 80 ? "text-emerald-400" : pilot.passRate >= 60 ? "text-amber-400" : "text-red-400"
+                        )}>
+                          {pilot.passRate}%
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Short Captures Alert */}
+                    {pilot.shortCaptures > 0 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-semibold text-red-400 mb-2">⚠ {pilot.shortCaptures} Short Captures (Under 25 min)</p>
+                            <div className="space-y-1">
+                              {filteredSessions
+                                .filter(s => s.pilot_email === pilot.email && s.durationSec < 1500)
+                                .map(session => (
+                                  <div key={session.session_id} className="text-sm text-slate-300">
+                                    {format(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* All Sessions */}
+                    <div>
+                      <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-blue-400" />
+                        All Sessions ({pilot.totalCaptures})
+                      </h4>
+                      <div className="space-y-2">
+                        {filteredSessions
+                          .filter(s => s.pilot_email === pilot.email)
+                          .map(session => {
+                            const finalDecision = session.activities.find(a => a.action_type === 'yes_no_decision' && a.item_id === 'final_pass_decision');
+                            return (
+                              <div key={session.session_id} className={cn(
+                                "rounded-lg p-3 text-sm",
+                                session.durationSec < 1500 ? "bg-red-500/10 border border-red-500/30" : "bg-slate-900/50"
+                              )}>
+                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-slate-300">{format(session.startTime, 'MMM d, HH:mm')}</span>
+                                    <span className="text-slate-600">•</span>
                                     <span className={cn(
-                                      "text-xs font-medium",
-                                      finalDecision.new_state === 'yes' ? "text-emerald-400" : "text-red-400"
-                                    )}>
-                                      {finalDecision.new_state === 'yes' ? '✓ Pass' : '✗ Rework'}
-                                    </span>
-                                  )}
+                                      "px-2 py-0.5 rounded text-xs",
+                                      session.site_type === 'tower' ? "bg-blue-500/20 text-blue-300" : "bg-amber-500/20 text-amber-300"
+                                    )}>{session.site_type}</span>
+                                    <span className="text-slate-600">•</span>
+                                    <span className="text-slate-400">{formatDuration(session.durationSec)}</span>
+                                    {session.durationSec < 1500 && (
+                                      <>
+                                        <span className="text-slate-600">•</span>
+                                        <span className="text-red-400 text-xs font-medium">⚠ SHORT</span>
+                                      </>
+                                    )}
+                                    <span className="text-slate-600">•</span>
+                                    <span className="text-slate-400">Steps: {session.stepsCompleted}/8</span>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    {finalDecision && (
+                                      <span className={cn(
+                                        "text-xs font-medium px-2 py-1 rounded",
+                                        finalDecision.new_state === 'yes' 
+                                          ? "bg-emerald-500/20 text-emerald-400" 
+                                          : "bg-red-500/20 text-red-400"
+                                      )}>
+                                        {finalDecision.new_state === 'yes' ? '✓ Pass' : '✗ Rework'}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+
+                    {/* Step Completion Analysis */}
+                    <div>
+                      <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-purple-400" />
+                        Step Completion Analysis
+                      </h4>
+                      <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map(stepNum => {
+                          const sessionsWithStep = filteredSessions.filter(s => 
+                            s.pilot_email === pilot.email && s.steps.has(stepNum)
+                          ).length;
+                          const completionRate = Math.round((sessionsWithStep / pilot.totalCaptures) * 100);
+                          
+                          return (
+                            <div key={stepNum} className="bg-slate-900/50 rounded-lg p-3 text-center">
+                              <p className="text-xs text-slate-400 mb-1">Step {stepNum}</p>
+                              <p className={cn(
+                                "text-lg font-bold",
+                                completionRate >= 90 ? "text-emerald-400" : completionRate >= 70 ? "text-amber-400" : "text-red-400"
+                              )}>
+                                {completionRate}%
+                              </p>
                             </div>
                           );
                         })}
+                      </div>
                     </div>
+
+                    {/* Time Analysis */}
+                    <div>
+                      <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-amber-400" />
+                        Time Analysis
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="bg-slate-900/50 rounded-lg p-4">
+                          <p className="text-xs text-slate-400 mb-1">Fastest Capture</p>
+                          <p className="text-lg font-bold text-emerald-400">
+                            {formatDuration(Math.min(...filteredSessions.filter(s => s.pilot_email === pilot.email).map(s => s.durationSec)))}
+                          </p>
+                        </div>
+                        <div className="bg-slate-900/50 rounded-lg p-4">
+                          <p className="text-xs text-slate-400 mb-1">Slowest Capture</p>
+                          <p className="text-lg font-bold text-amber-400">
+                            {formatDuration(Math.max(...filteredSessions.filter(s => s.pilot_email === pilot.email).map(s => s.durationSec)))}
+                          </p>
+                        </div>
+                        <div className="bg-slate-900/50 rounded-lg p-4">
+                          <p className="text-xs text-slate-400 mb-1">Average Time</p>
+                          <p className="text-lg font-bold text-white">
+                            {formatDuration(pilot.avgDuration)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pass/Rework Breakdown */}
+                    {(pilot.passDecisions > 0 || pilot.reworkDecisions > 0) && (
+                      <div>
+                        <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-emerald-400" />
+                          Quality Decisions
+                        </h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
+                            <p className="text-xs text-emerald-400 mb-1">Pass Decisions</p>
+                            <p className="text-2xl font-bold text-emerald-400">{pilot.passDecisions}</p>
+                            <p className="text-xs text-slate-400 mt-1">
+                              {Math.round((pilot.passDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)}% of decisions
+                            </p>
+                          </div>
+                          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                            <p className="text-xs text-amber-400 mb-1">Rework Decisions</p>
+                            <p className="text-2xl font-bold text-amber-400">{pilot.reworkDecisions}</p>
+                            <p className="text-xs text-slate-400 mt-1">
+                              {Math.round((pilot.reworkDecisions / (pilot.passDecisions + pilot.reworkDecisions)) * 100)}% of decisions
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>
