@@ -586,7 +586,7 @@ export default function ChecklistAnalytics() {
                   companyFilter === 'QNSI' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
-                QNSI
+                Pilot Group 1
               </Button>
               <Button
                 variant={companyFilter === 'waveconn' ? 'default' : 'outline'}
@@ -596,7 +596,7 @@ export default function ChecklistAnalytics() {
                   companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
-                Waveconn
+                Pilot Group 2
               </Button>
             </div>
           </div>
