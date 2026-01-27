@@ -112,6 +112,9 @@ export default function ChecklistAnalytics() {
   const filteredSessions = useMemo(() => {
     let filtered = sessions;
 
+    // Only include completed sessions (8 steps completed)
+    filtered = filtered.filter(s => s.stepsCompleted >= 8);
+
     // Date filter (since Jan 12, 2026)
     filtered = filtered.filter(s => s.startTime >= startDate);
 
