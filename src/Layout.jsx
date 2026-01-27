@@ -62,6 +62,7 @@ export default function Layout({ children, currentPageName }) {
   const bottomNavigation = [
     { name: 'My Capture Logbook', href: createPageUrl('MissionHistory'), icon: ClipboardList },
     { name: 'Checklist Analytics', href: createPageUrl('ChecklistAnalytics'), icon: BarChart3 },
+    ...(user?.role === 'admin' ? [{ name: 'User Management', href: createPageUrl('UserManagement'), icon: Users }] : []),
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
   ];
   
