@@ -841,7 +841,7 @@ export default function ChecklistAnalytics() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-lg font-semibold text-white">{pilot.email}</span>
-                        {pilot.company && (
+                        {permissions.canViewAllMissions && pilot.company && (
                           <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300">
                             {getCompanyDisplayName(pilot.company)}
                           </span>
