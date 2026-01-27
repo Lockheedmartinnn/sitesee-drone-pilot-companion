@@ -23,34 +23,49 @@ export default function UserManagement() {
     enabled: permissions.canViewAllMissions,
   });
 
-  // Pilot Group 1 email list
-  const pilotGroup1Emails = [
-    'ichanvaleriano0@gmail.com',
-    'jccdefg@gmail.com',
-    'jaysondeasisdavid146@gmail.com',
-    'joel.mendoza.qroi10578@gmail.com',
-    'qnsi.darwinherminigildo24@gmail.com',
-    'qroi.ryandorilag@gmail.com',
-    'tiujohnedward@gmail.com',
-    'jhonnico1323@gmail.com'
-  ];
+  // Pilot Group email assignments
+  const pilotGroupEmails = {
+    'Pilot Group 1': [
+      'ichanvaleriano0@gmail.com',
+      'jccdefg@gmail.com',
+      'jaysondeasisdavid146@gmail.com',
+      'joel.mendoza.qroi10578@gmail.com',
+      'qnsi.darwinherminigildo24@gmail.com',
+      'qroi.ryandorilag@gmail.com',
+      'tiujohnedward@gmail.com',
+      'jhonnico1323@gmail.com'
+    ],
+    'Pilot Group 2': [],
+    'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
+    'Pilot Group 4': [],
+    'Pilot Group 5': []
+  };
 
-  // Group users by company, with Pilot Group 1 first
+  // Group users by company, with pilot groups in order
   const usersByCompany = useMemo(() => {
     const groups = allUsers.reduce((acc, user) => {
-      // Check if user is in Pilot Group 1 based on email
-      const company = pilotGroup1Emails.includes(user.email) 
-        ? 'Pilot Group 1' 
-        : (user.company || 'Unknown');
+      // Check which pilot group the user belongs to
+      let company = user.company || 'Unknown';
+      for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
+        if (emails.includes(user.email)) {
+          company = groupName;
+          break;
+        }
+      }
       if (!acc[company]) acc[company] = [];
       acc[company].push(user);
       return acc;
     }, {});
 
-    // Sort: Pilot Group 1 first, then alphabetically
+    // Sort: Pilot Groups 1-5 first (in order), then alphabetically
     const sortedEntries = Object.entries(groups).sort(([companyA], [companyB]) => {
-      if (companyA === 'Pilot Group 1') return -1;
-      if (companyB === 'Pilot Group 1') return 1;
+      const groupOrder = ['Pilot Group 1', 'Pilot Group 2', 'Pilot Group 3', 'Pilot Group 4', 'Pilot Group 5'];
+      const indexA = groupOrder.indexOf(companyA);
+      const indexB = groupOrder.indexOf(companyB);
+      
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
       return companyA.localeCompare(companyB);
     });
 
