@@ -56,7 +56,8 @@ export default function ChecklistAnalytics() {
       'QNSI': 'Pilot Group 1',
       'waveconn': 'Pilot Group 2'
     };
-    return mapping[company] || company;
+    // Treat unknown/null companies as Pilot Group 1
+    return mapping[company] || 'Pilot Group 1';
   };
 
   const { data: user } = useQuery({
@@ -136,7 +137,11 @@ export default function ChecklistAnalytics() {
 
   // Filter sessions
   const filteredSessions = useMemo(() => {
-    let filtered = sessions;
+    let filtered = sessions.map(s => ({
+      ...s,
+      // Normalize company - treat unknown/null as QNSI
+      company: s.company || 'QNSI'
+    }));
 
     // Only include completed sessions (8 steps completed)
     filtered = filtered.filter(s => s.stepsCompleted >= 8);
@@ -628,7 +633,7 @@ export default function ChecklistAnalytics() {
                 <div className="space-y-3">
                   {Object.entries(
                     filteredSessions.reduce((acc, s) => {
-                      const company = s.company || 'Unknown';
+                      const company = s.company;
                       acc[company] = (acc[company] || 0) + 1;
                       return acc;
                     }, {})
@@ -780,7 +785,7 @@ export default function ChecklistAnalytics() {
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={Object.entries(
                   filteredSessions.reduce((acc, s) => {
-                    const company = getCompanyDisplayName(s.company || 'Unknown');
+                    const company = getCompanyDisplayName(s.company);
                     if (!acc[company]) {
                       acc[company] = { company, checklists: 0, avgTime: 0, totalTime: 0 };
                     }
