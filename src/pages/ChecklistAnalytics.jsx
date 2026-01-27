@@ -50,6 +50,13 @@ export default function ChecklistAnalytics() {
   const [expandedPilot, setExpandedPilot] = useState(null);
   const [viewMode, setViewMode] = useState('overview');
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const permissions = useAccessControl(user);
+
   const { data: allUsers = [] } = useQuery({
     queryKey: ['allUsers'],
     queryFn: () => base44.entities.User.list(),
@@ -65,13 +72,6 @@ export default function ChecklistAnalytics() {
     // Treat unknown/null companies as Pilot Group 1
     return mapping[company] || 'Pilot Group 1';
   };
-
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
-  });
-
-  const permissions = useAccessControl(user);
 
   const { data: allActivities = [], isLoading } = useQuery({
     queryKey: ['checklistActivities'],
