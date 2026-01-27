@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
-  Building2
+  Building2,
+  Calendar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -24,6 +25,8 @@ export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
   const [companyFilter, setCompanyFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState(new Date('2026-01-12'));
+  const [dateTo, setDateTo] = useState(null);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -98,14 +101,25 @@ export default function ChecklistAnalytics() {
         missionLog
       };
     }).filter(session => {
-      const cutoffDate = new Date('2026-01-12T00:00:00');
-      return session.startTime >= cutoffDate && session.durationSec >= 240;
+      return session.durationSec >= 240;
     }).sort((a, b) => b.startTime - a.startTime);
   }, [activities, localMissions]);
 
   // Filter sessions
   const filteredSessions = useMemo(() => {
     let filtered = sessions;
+
+    // Date range filter
+    if (dateFrom) {
+      const fromDate = new Date(dateFrom);
+      fromDate.setHours(0, 0, 0, 0);
+      filtered = filtered.filter(s => s.startTime >= fromDate);
+    }
+    if (dateTo) {
+      const toDate = new Date(dateTo);
+      toDate.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(s => s.startTime <= toDate);
+    }
 
     // Access control
     if (!permissions.canViewAllMissions) {
@@ -127,7 +141,7 @@ export default function ChecklistAnalytics() {
     }
 
     return filtered;
-  }, [sessions, siteFilter, companyFilter, permissions, user]);
+  }, [sessions, siteFilter, companyFilter, dateFrom, dateTo, permissions, user]);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -301,6 +315,41 @@ export default function ChecklistAnalytics() {
 
         {/* Filters */}
         <div className="space-y-3 mb-6">
+          {/* Date Range Filter */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Calendar className="w-4 h-4 text-slate-400" />
+            <span className="text-sm text-slate-400">Date Range:</span>
+            <div className="flex gap-2 items-center">
+              <input
+                type="date"
+                value={dateFrom ? format(dateFrom, 'yyyy-MM-dd') : ''}
+                onChange={(e) => setDateFrom(e.target.value ? new Date(e.target.value) : null)}
+                className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white"
+              />
+              <span className="text-slate-500">to</span>
+              <input
+                type="date"
+                value={dateTo ? format(dateTo, 'yyyy-MM-dd') : ''}
+                onChange={(e) => setDateTo(e.target.value ? new Date(e.target.value) : null)}
+                className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white"
+                placeholder="No end date"
+              />
+              {(dateFrom || dateTo) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setDateFrom(new Date('2026-01-12'));
+                    setDateTo(null);
+                  }}
+                  className="text-xs text-slate-400 hover:text-white"
+                >
+                  Reset
+                </Button>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-slate-400" />
             <span className="text-sm text-slate-400">Company:</span>
@@ -337,7 +386,7 @@ export default function ChecklistAnalytics() {
               </Button>
             </div>
           </div>
-          
+
           <div className="flex gap-3">
             <Button
               variant={siteFilter === 'all' ? 'default' : 'outline'}
