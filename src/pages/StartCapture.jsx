@@ -373,6 +373,7 @@ export default function StartCapture() {
   // Set GPS timer duration based on company
   // Only Pilot Group 1 (QNSI) = 5 min, everyone else (including no company) = 2 min
   useEffect(() => {
+    console.log('User company:', user?.company); // Debug log
     if (user?.company === 'QNSI') {
       setGpsTimerMinutes(5);
     } else {
