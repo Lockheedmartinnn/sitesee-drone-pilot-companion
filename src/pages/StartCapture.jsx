@@ -371,8 +371,9 @@ export default function StartCapture() {
   });
   
   // Set GPS timer duration based on company
+  // Pilot Group 1 (QNSI or unknown) = 5 min, Pilot Group 2 (waveconn) = 2 min
   useEffect(() => {
-    if (user?.company === 'QNSI') {
+    if (user?.company === 'QNSI' || !user?.company) {
       setGpsTimerMinutes(5);
     } else {
       setGpsTimerMinutes(2);
@@ -711,9 +712,9 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={user?.company === 'QNSI' ? 5 : 2} 
+                  targetMinutes={(user?.company === 'QNSI' || !user?.company) ? 5 : 2} 
                   onComplete={() => setBatterySwapGpsComplete(true)}
-                  label={`GPS Stabilisation (${user?.company === 'QNSI' ? 5 : 2} min)`}
+                  label={`GPS Stabilisation (${(user?.company === 'QNSI' || !user?.company) ? 5 : 2} min)`}
                 />
 
                 <Link to={createPageUrl('GPSVerifier')} target="_blank">
@@ -800,7 +801,7 @@ export default function StartCapture() {
                           onClick={() => {
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
-                            setGpsTimerMinutes(user?.company === 'QNSI' ? 5 : 2);
+                            setGpsTimerMinutes((user?.company === 'QNSI' || !user?.company) ? 5 : 2);
                             setTimerKey(prev => prev + 1);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
