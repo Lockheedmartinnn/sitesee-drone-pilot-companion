@@ -1,7 +1,6 @@
 import AuditLog from './pages/AuditLog';
 import Billing from './pages/Billing';
 import ChecklistActivityLog from './pages/ChecklistActivityLog';
-import ChecklistAnalytics from './pages/ChecklistAnalytics';
 import EquipmentCorrelation from './pages/EquipmentCorrelation';
 import FieldOperationsHub from './pages/FieldOperationsHub';
 import GPSVerifier from './pages/GPSVerifier';
@@ -28,6 +27,7 @@ import ToolsLinks from './pages/ToolsLinks';
 import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import ChecklistAnalytics from './pages/ChecklistAnalytics';
 import __Layout from './Layout.jsx';
 
 
@@ -35,7 +35,6 @@ export const PAGES = {
     "AuditLog": AuditLog,
     "Billing": Billing,
     "ChecklistActivityLog": ChecklistActivityLog,
-    "ChecklistAnalytics": ChecklistAnalytics,
     "EquipmentCorrelation": EquipmentCorrelation,
     "FieldOperationsHub": FieldOperationsHub,
     "GPSVerifier": GPSVerifier,
@@ -62,6 +61,7 @@ export const PAGES = {
     "TrainingHub": TrainingHub,
     "TrainingVideos": TrainingVideos,
     "WeatherAnalysis": WeatherAnalysis,
+    "ChecklistAnalytics": ChecklistAnalytics,
 }
 
 export const pagesConfig = {

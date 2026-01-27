@@ -34,7 +34,7 @@ export default function ChecklistAnalytics() {
 
   const { data: allActivities = [], isLoading } = useQuery({
     queryKey: ['checklistActivities'],
-    queryFn: () => base44.entities.ChecklistActivity.list('-created_date', 2000),
+    queryFn: () => base44.entities.ChecklistActivity.list('-created_date'),
   });
 
   // Filter out current user's activities to avoid skewing data
