@@ -573,7 +573,7 @@ export default function ChecklistAnalytics() {
                 onClick={() => setCompanyFilter('all')}
                 size="sm"
                 className={cn(
-                  companyFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                  companyFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
                 All Companies
@@ -583,7 +583,7 @@ export default function ChecklistAnalytics() {
                 onClick={() => setCompanyFilter('QNSI')}
                 size="sm"
                 className={cn(
-                  companyFilter === 'QNSI' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                  companyFilter === 'QNSI' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
                 QNSI
@@ -593,7 +593,7 @@ export default function ChecklistAnalytics() {
                 onClick={() => setCompanyFilter('waveconn')}
                 size="sm"
                 className={cn(
-                  companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                  companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                 )}
               >
                 Waveconn
@@ -606,7 +606,7 @@ export default function ChecklistAnalytics() {
               variant={siteFilter === 'all' ? 'default' : 'outline'}
               onClick={() => setSiteFilter('all')}
               className={cn(
-                siteFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                siteFilter === 'all' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
               )}
             >
               All Sites
@@ -615,7 +615,7 @@ export default function ChecklistAnalytics() {
               variant={siteFilter === 'tower' ? 'default' : 'outline'}
               onClick={() => setSiteFilter('tower')}
               className={cn(
-                siteFilter === 'tower' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                siteFilter === 'tower' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
               )}
             >
               Tower
@@ -624,7 +624,7 @@ export default function ChecklistAnalytics() {
               variant={siteFilter === 'rooftop' ? 'default' : 'outline'}
               onClick={() => setSiteFilter('rooftop')}
               className={cn(
-                siteFilter === 'rooftop' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-600'
+                siteFilter === 'rooftop' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
               )}
             >
               Rooftop
