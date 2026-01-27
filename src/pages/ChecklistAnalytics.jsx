@@ -33,6 +33,15 @@ export default function ChecklistAnalytics() {
   const [expandedPilot, setExpandedPilot] = useState(null);
   const [viewMode, setViewMode] = useState('overview');
 
+  // Company display name mapping
+  const getCompanyDisplayName = (company) => {
+    const mapping = {
+      'QNSI': 'Pilot Group 1',
+      'waveconn': 'Pilot Group 2'
+    };
+    return mapping[company] || company;
+  };
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -648,7 +657,7 @@ export default function ChecklistAnalytics() {
                     }, {})
                   ).sort((a, b) => b[1] - a[1]).map(([company, count]) => (
                     <div key={company} className="flex items-center justify-between">
-                      <span className="text-slate-300">{company}</span>
+                      <span className="text-slate-300">{getCompanyDisplayName(company)}</span>
                       <span className="text-white font-semibold">{count} checklists</span>
                     </div>
                   ))}
@@ -689,7 +698,7 @@ export default function ChecklistAnalytics() {
                       <span className="text-2xl font-bold text-slate-600">#{idx + 1}</span>
                       <div>
                         <p className="text-white font-medium">{pilot.email}</p>
-                        <p className="text-xs text-slate-400">{pilot.company || 'No company'}</p>
+                        <p className="text-xs text-slate-400">{getCompanyDisplayName(pilot.company) || 'No company'}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -724,7 +733,7 @@ export default function ChecklistAnalytics() {
                         <span className="text-lg font-semibold text-white">{pilot.email}</span>
                         {pilot.company && (
                           <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300">
-                            {pilot.company}
+                            {getCompanyDisplayName(pilot.company)}
                           </span>
                         )}
                         {pilot.shortChecklists > 0 && (
@@ -997,7 +1006,7 @@ export default function ChecklistAnalytics() {
                         {session.company && (
                           <>
                             <span>•</span>
-                            <span>{session.company}</span>
+                            <span>{getCompanyDisplayName(session.company)}</span>
                           </>
                         )}
                         {(() => {
