@@ -50,6 +50,12 @@ export default function ChecklistAnalytics() {
   const [expandedPilot, setExpandedPilot] = useState(null);
   const [viewMode, setViewMode] = useState('overview');
 
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['allUsers'],
+    queryFn: () => base44.entities.User.list(),
+    enabled: permissions.canViewAllMissions,
+  });
+
   // Company display name mapping
   const getCompanyDisplayName = (company) => {
     const mapping = {
@@ -450,7 +456,7 @@ export default function ChecklistAnalytics() {
         </div>
 
         {/* View Mode Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <Button
             variant={viewMode === 'overview' ? 'default' : 'outline'}
             onClick={() => setViewMode('overview')}
@@ -481,6 +487,18 @@ export default function ChecklistAnalytics() {
             <Clock className="w-4 h-4 mr-2" />
             All Sessions
           </Button>
+          {permissions.canViewAllMissions && (
+            <Button
+              variant={viewMode === 'admin' ? 'default' : 'outline'}
+              onClick={() => setViewMode('admin')}
+              className={cn(
+                viewMode === 'admin' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-amber-500/20 border-amber-500/50 text-amber-300 hover:bg-amber-500/30'
+              )}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              User Management
+            </Button>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -1031,6 +1049,73 @@ export default function ChecklistAnalytics() {
                 )}
               </motion.div>
             ))}
+          </div>
+        )}
+
+        {/* ADMIN MODE - USER MANAGEMENT */}
+        {viewMode === 'admin' && permissions.canViewAllMissions && (
+          <div className="space-y-6">
+            {/* Group users by company */}
+            {(() => {
+              const usersByCompany = allUsers.reduce((acc, user) => {
+                const company = user.company || 'Unknown';
+                if (!acc[company]) acc[company] = [];
+                acc[company].push(user);
+                return acc;
+              }, {});
+
+              return Object.entries(usersByCompany).map(([company, users]) => (
+                <div key={company} className="bg-slate-800/80 border-2 border-slate-600 rounded-xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-6 py-4 border-b border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Building2 className="w-5 h-5 text-blue-400" />
+                        {getCompanyDisplayName(company)}
+                      </h3>
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                        {users.length} {users.length === 1 ? 'user' : 'users'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="space-y-3">
+                      {users.map((user) => (
+                        <div key={user.id} className="bg-slate-900/50 rounded-lg p-4 flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-1">
+                              <span className="font-semibold text-white">{user.email}</span>
+                              {user.role === 'admin' && (
+                                <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-500/20 text-amber-300">
+                                  Admin
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-slate-400">
+                              {user.full_name && (
+                                <>
+                                  <span>{user.full_name}</span>
+                                  <span>•</span>
+                                </>
+                              )}
+                              {user.pilot_id && (
+                                <>
+                                  <span>Pilot ID: {user.pilot_id}</span>
+                                  <span>•</span>
+                                </>
+                              )}
+                              <span className="capitalize">{user.access_level || 'pilot'}</span>
+                              <span>•</span>
+                              <span>Joined {format(new Date(user.created_date), 'MMM d, yyyy')}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
         )}
 
