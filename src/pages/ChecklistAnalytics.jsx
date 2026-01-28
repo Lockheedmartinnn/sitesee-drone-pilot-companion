@@ -95,7 +95,7 @@ export default function ChecklistAnalytics() {
           session_id: sessionId,
           pilot_email: activity.pilot_email,
           pilot_id: activity.pilot_id,
-          company: activity.company,
+          company: (activity.company || 'Pilot Group 1').trim(),
           site_type: activity.site_type,
           activities: [],
           steps: new Set()
@@ -139,8 +139,8 @@ export default function ChecklistAnalytics() {
   const filteredSessions = useMemo(() => {
     let filtered = sessions.map(s => ({
       ...s,
-      // Normalize company - treat unknown/null as Pilot Group 1
-      company: s.company || 'Pilot Group 1'
+      // Normalize company - treat unknown/null as Pilot Group 1, and trim whitespace
+      company: (s.company || 'Pilot Group 1').trim()
     }));
 
     // Only include completed sessions (8 steps completed)
@@ -153,9 +153,9 @@ export default function ChecklistAnalytics() {
     if (!permissions.canViewAllMissions) {
       if (permissions.canViewTeamMissions) {
         // Ops manager sees all for their pilot group
-        const userPilotGroup = user?.company === 'waveconn' ? 'waveconn' : 'Pilot Group 1';
+        const userPilotGroup = user?.company?.trim() === 'waveconn' ? 'waveconn' : 'Pilot Group 1';
         filtered = filtered.filter(s => {
-          const sessionCompany = s.company || 'Pilot Group 1';
+          const sessionCompany = (s.company || 'Pilot Group 1').trim();
           return sessionCompany === userPilotGroup;
         });
       } else {
@@ -199,7 +199,7 @@ export default function ChecklistAnalytics() {
         pilotMap[email] = {
           email,
           pilot_id: session.pilot_id,
-          company: session.company,
+          company: (session.company || 'Pilot Group 1').trim(),
           totalChecklists: 0,
           towerChecklists: 0,
           rooftopChecklists: 0,

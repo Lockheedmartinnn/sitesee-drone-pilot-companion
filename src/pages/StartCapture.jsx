@@ -375,8 +375,9 @@ export default function StartCapture() {
   // Set GPS timer duration based on company
   // Pilot Group 1 = 5 min, everyone else (including no company) = 2 min
   useEffect(() => {
-    console.log('Setting GPS timer - User company:', user?.company, 'Timer will be:', user?.company === 'Pilot Group 1' ? 5 : 2, 'minutes');
-    if (user?.company === 'Pilot Group 1') {
+    const companyName = user?.company?.trim();
+    console.log('Setting GPS timer - User company:', user?.company, 'Normalized:', companyName, 'Timer will be:', companyName === 'Pilot Group 1' ? 5 : 2, 'minutes');
+    if (companyName === 'Pilot Group 1') {
       setGpsTimerMinutes(5);
     } else {
       setGpsTimerMinutes(2);
@@ -715,9 +716,9 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={user?.company === 'Pilot Group 1' ? 5 : 2} 
+                  targetMinutes={user?.company?.trim() === 'Pilot Group 1' ? 5 : 2} 
                   onComplete={() => setBatterySwapGpsComplete(true)}
-                  label={`GPS Stabilisation (${user?.company === 'Pilot Group 1' ? 5 : 2} min)`}
+                  label={`GPS Stabilisation (${user?.company?.trim() === 'Pilot Group 1' ? 5 : 2} min)`}
                 />
 
                 <Link to={createPageUrl('GPSVerifier')} target="_blank">
@@ -777,7 +778,7 @@ export default function StartCapture() {
                     setGpsTimerComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
                   }}
-                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company === 'Pilot Group 1' ? ' [Pilot Group 1]' : ''}`}
+                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company?.trim() === 'Pilot Group 1' ? ' [Pilot Group 1]' : ''}`}
                   isAdmin={user?.role === 'admin'}
                 />
                 
@@ -804,7 +805,7 @@ export default function StartCapture() {
                           onClick={() => {
                             setGpsTimerComplete(false);
                             setSatelliteCheckPassed(null);
-                            setGpsTimerMinutes(user?.company === 'Pilot Group 1' ? 5 : 2);
+                            setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
                             setTimerKey(prev => prev + 1);
                             logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
                           }}
@@ -1235,7 +1236,7 @@ export default function StartCapture() {
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
                           setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company === 'Pilot Group 1' ? 5 : 2);
+                          setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
                           setTimerKey(prev => prev + 1);
                           setNeedsBatteryChange(null);
                         } else {
@@ -1243,7 +1244,7 @@ export default function StartCapture() {
                           setCurrentStep(5);
                           setGpsTimerComplete(false);
                           setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company === 'Pilot Group 1' ? 5 : 2);
+                          setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
                           setTimerKey(prev => prev + 1);
                           setCheckedItems({}); // Reset checked items for step 5
                           setNeedsBatteryChange(null);
