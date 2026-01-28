@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { MessageCircle, X, Send, Loader2, Paperclip, Image as ImageIcon } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -16,11 +16,8 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
   const [input, setInput] = useState('');
   const [conversation, setConversation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const messagesEndRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -98,44 +95,14 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
     }
   };
 
-  const handleFileSelect = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    setIsUploading(true);
-    try {
-      const uploadPromises = files.map(file => 
-        base44.integrations.Core.UploadFile({ file })
-      );
-      const results = await Promise.all(uploadPromises);
-      const urls = results.map(r => r.file_url);
-      setUploadedImages(prev => [...prev, ...urls]);
-    } catch (error) {
-      console.error('Failed to upload images:', error);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  };
-
-  const removeImage = (url) => {
-    setUploadedImages(prev => prev.filter(img => img !== url));
-  };
-
   const handleSend = async () => {
-    if ((!input.trim() && uploadedImages.length === 0) || !conversation || isLoading) return;
+    if (!input.trim() || !conversation || isLoading) return;
 
     const userMessage = input.trim();
-    const images = [...uploadedImages];
     setInput('');
-    setUploadedImages([]);
     setIsLoading(true);
 
     try {
-      const messageContent = images.length > 0 
-        ? `${userMessage}\n\n[Images attached for analysis]`
-        : userMessage;
-
       // Log user message
       if (sessionId && user) {
         await base44.entities.ChatbotMessage.create({
@@ -144,14 +111,13 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
           message_type: 'user',
           message_content: userMessage,
           message_timestamp: new Date().toISOString(),
-          had_image_attachment: images.length > 0
+          had_image_attachment: false
         });
       }
 
       await base44.agents.addMessage(conversation, {
         role: 'user',
-        content: messageContent,
-        attachments: images.length > 0 ? images.map(url => ({ type: 'image', url })) : undefined
+        content: userMessage
       });
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -238,13 +204,9 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
                     <MessageCircle className="w-8 h-8 text-blue-400" />
                   </div>
                   <p className="text-slate-300 font-semibold mb-1">Training Copilot</p>
-                  <p className="text-xs text-slate-500 mb-3">
+                  <p className="text-xs text-slate-500">
                     Ask about capture best practices, GPS stabilization, camera settings, or troubleshooting tips.
                   </p>
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                    <ImageIcon className="w-3 h-3 text-blue-400" />
-                    <span className="text-xs text-blue-300">You can upload images for analysis</span>
-                  </div>
                 </div>
               )}
               
@@ -316,50 +278,7 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
 
             {/* Input */}
             <div className="p-4 border-t border-slate-700 bg-slate-800/50">
-              {/* Image Previews */}
-              {uploadedImages.length > 0 && (
-                <div className="flex gap-2 mb-2 flex-wrap">
-                  {uploadedImages.map((url, idx) => (
-                    <div key={idx} className="relative group">
-                      <img 
-                        src={url} 
-                        alt={`Upload ${idx + 1}`}
-                        className="w-16 h-16 object-cover rounded border border-slate-600"
-                      />
-                      <button
-                        onClick={() => removeImage(url)}
-                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-3 h-3 text-white" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
               <div className="flex gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isLoading || !conversation || isUploading}
-                  className="text-slate-400 hover:text-white"
-                >
-                  {isUploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Paperclip className="w-4 h-4" />
-                  )}
-                </Button>
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -370,7 +289,7 @@ export default function ChatWidget({ isOpen: externalIsOpen, onClose }) {
                 />
                 <Button
                   onClick={handleSend}
-                  disabled={(!input.trim() && uploadedImages.length === 0) || isLoading || !conversation}
+                  disabled={!input.trim() || isLoading || !conversation}
                   className="bg-blue-500 hover:bg-blue-600"
                   size="icon"
                 >
