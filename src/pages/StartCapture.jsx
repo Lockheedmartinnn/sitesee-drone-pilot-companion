@@ -207,7 +207,8 @@ const ROOFTOP_CONFIGS = {
       { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
-      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
+      { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true },
+      { id: 'gimbal_assist', label: 'Gimbal assist settings enabled', sublabel: 'Turn on Heading/Gimbal Altitude, Grid, Reticle' }
     ]
   },
   2: {
@@ -279,27 +280,25 @@ const ROOFTOP_CONFIGS = {
   },
   6: {
     title: "Rooftop Mission Setup & Camera",
-    subtitle: "Configure mission parameters and camera settings",
+    subtitle: "Configure mission parameters (V9.7.0 mission)",
+    info: {
+      title: "V9.7.0 Mission Changes",
+      message: "✓ Planar height is AUTO-CALCULATED (highest equipment/obstacle + 7m)\n✓ No need to manually set MSA\n✓ Mark boundary clockwise OR anti-clockwise\n✓ Mission planner automatically adds radius offset"
+    },
     items: [
       { id: 'shutter_adjusted', label: 'Shutter speed adjusted for roof', sublabel: 'e.g., 1/2000 → 1/1500 for reflection', critical: true },
       { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID + date' },
-      { id: 'msa_roof', label: 'MSA set to roof height', sublabel: 'NOT equipment height - roof level', critical: true },
-      { id: 'facade_boundary', label: 'Facade boundary marked CLOCKWISE', sublabel: 'External points only, no concave points', critical: true },
-      { id: 'equipment_marked', label: 'Equipment/tower locations marked', sublabel: 'Center and radius for each cluster' },
-      { id: 'equipment_height', label: 'Equipment heights set', sublabel: 'Above MSA for orbits' },
-      { id: 'obstacles_marked', label: 'Obstacles marked', sublabel: 'Buildings, trees with buffer' },
-      { id: 'pano_ortho_selected', label: 'Panorama/Orthomosaic selected (if needed)', sublabel: 'Optional components' },
+      { id: 'boundary_marked', label: 'Planar boundary marked in order', sublabel: 'Clockwise OR anti-clockwise, corners in sequence (not zig-zag)', critical: true },
+      { id: 'antenna_components_monitored', label: 'Monitor antenna components in frame', sublabel: 'Planar is lower - ensure equipment visible' },
+      { id: 'equipment_marked', label: 'Equipment/antenna locations marked', sublabel: 'Mark radius of antenna (no offset needed)', critical: true },
+      { id: 'obstacles_marked', label: 'Obstacles marked if present', sublabel: 'Buildings, obstructions with buffer' },
+      { id: 'ortho_height_check', label: 'Orthomosaic height verified (~30m above roof)', sublabel: 'If ortho component selected', critical: true },
+      { id: 'antenna_interval', label: 'Antenna component interval: 1 second', sublabel: 'Keep interval mode at 1s', critical: true },
       { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
     ],
-    facadeOrbits: [
-      { name: "First Facade (Overview)", altitude: "30m above MSA", distance: "11m away", gimbal: "-65°" },
-      { name: "Second Facade (Top)", altitude: "25m above MSA", distance: "11m away", gimbal: "-55°" },
-      { name: "Third Facade (Mid)", altitude: "22m above MSA", distance: "11m away", gimbal: "-45°" },
-      { name: "Fourth Facade (Lowest)", altitude: "19m above MSA", distance: "10m away", gimbal: "-45°" }
-    ],
     warning: {
-      title: "Critical",
-      message: "MSA = roof height. Mark boundary CLOCKWISE. Adjust shutter for reflections. Same takeoff spot for battery swaps."
+      title: "IMPORTANT: V9.7.0 Updates",
+      message: "⚠ Planar height AUTO-CALCULATED\n⚠ Mark boundary in order (clockwise OR anti-clockwise)\n⚠ Antenna radius: NO manual offset needed\n⚠ Ortho component: Set ~30m above rooftop height\n⚠ Monitor camera settings during pano/ortho (may switch to auto)"
     }
   },
   7: { // This is the new Panorama Setup for Rooftop
