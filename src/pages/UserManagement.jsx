@@ -37,7 +37,10 @@ export default function UserManagement() {
     ],
     'Pilot Group 2': [],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
-    'Pilot Group 4': [],
+    'Pilot Group 4': [
+      'natarajan.vinodh@gmail.com',
+      'kavishnathang@gmail.com'
+    ],
     'Pilot Group 5': []
   };
 

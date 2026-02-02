@@ -61,7 +61,9 @@ export default function ChecklistAnalytics() {
   const getCompanyDisplayName = (company) => {
     const mapping = {
       'Pilot Group 1': 'Pilot Group 1',
-      'waveconn': 'Pilot Group 2'
+      'waveconn': 'Pilot Group 2',
+      'fortysouth': 'Pilot Group 3',
+      'Pilot Group 4': 'Pilot Group 4'
     };
     // Treat unknown/null companies as Pilot Group 1
     return mapping[company] || 'Pilot Group 1';
@@ -592,6 +594,26 @@ export default function ChecklistAnalytics() {
                   )}
                 >
                   Pilot Group 2
+                </Button>
+                <Button
+                  variant={companyFilter === 'fortysouth' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('fortysouth')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'fortysouth' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  Pilot Group 3
+                </Button>
+                <Button
+                  variant={companyFilter === 'Pilot Group 4' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('Pilot Group 4')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'Pilot Group 4' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  Pilot Group 4
                 </Button>
               </div>
             </div>
