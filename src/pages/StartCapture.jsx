@@ -893,8 +893,7 @@ export default function StartCapture() {
                   <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
                     <p className="text-xs text-blue-300">
                       ✓ Date/time captured automatically<br />
-                      ✓ Pilot ID from your profile<br />
-                      ✓ Stored locally on this device
+                      ✓ Pilot ID from your profile
                     </p>
                   </div>
                   <div className="flex gap-3 pt-2">
