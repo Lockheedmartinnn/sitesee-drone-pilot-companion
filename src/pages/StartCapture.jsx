@@ -292,7 +292,6 @@ const ROOFTOP_CONFIGS = {
       { id: 'antenna_components_monitored', label: 'Monitor antenna components in frame', sublabel: 'Planar is lower - ensure equipment visible' },
       { id: 'equipment_marked', label: 'Equipment/antenna locations marked', sublabel: 'Mark radius of antenna (no offset needed)', critical: true },
       { id: 'obstacles_marked', label: 'Obstacles marked if present', sublabel: 'Buildings, obstructions with buffer' },
-      { id: 'ortho_height_check', label: 'Orthomosaic height verified (~30m above roof)', sublabel: 'If ortho component selected', critical: true },
       { id: 'antenna_interval', label: 'Antenna component interval: 1 second', sublabel: 'Keep interval mode at 1s', critical: true },
       { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
     ],
@@ -364,6 +363,7 @@ export default function StartCapture() {
   const [needsBatteryChange, setNeedsBatteryChange] = useState(null);
   const [initialSetupComplete, setInitialSetupComplete] = useState(false);
   const [needsPanorama, setNeedsPanorama] = useState(null);
+  const [needsOrtho, setNeedsOrtho] = useState(null);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   
   const { data: user } = useQuery({
@@ -456,13 +456,15 @@ export default function StartCapture() {
   const step3CanProceed = isAdmin || usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = isAdmin || usingGCP === false || (usingGCP === true && allItemsChecked);
+  // Step 6 can proceed if: ortho answered (and checked if yes) AND panorama answered
+  const step6CanProceed = isAdmin || (allItemsChecked && needsOrtho !== null && (needsOrtho === false || checkedItems['ortho_height_check']) && needsPanorama !== null);
   // Step 7 (panorama) can proceed if: no panorama OR all items checked
   const step7CanProceed = isAdmin || needsPanorama === false || (needsPanorama === true && allItemsChecked);
   // Step 8 can proceed if: battery change answered NO and all items checked
   const step8CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
   // Step 5 can proceed if: timer complete AND satellite check passed
   const step5CanProceed = isAdmin || (gpsTimerComplete && satelliteCheckPassed === true);
-  const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked)))));
+  const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 && siteType === 'rooftop' ? step6CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked))))));
   
   const nextStep = () => {
     // Log step navigation
@@ -1128,8 +1130,61 @@ export default function StartCapture() {
                   ))}
                 </div>
 
-                {/* Panorama Yes/No (after main items are checked) */}
-                {(allItemsChecked || isAdmin) && needsPanorama === null && (
+                {/* Ortho Yes/No (after main items are checked) */}
+                {(allItemsChecked || isAdmin) && needsOrtho === null && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <InfoCard variant="info" title="Orthomosaic Component">
+                      <p className="mb-4">Is an orthomosaic required for this capture?</p>
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => {
+                            setNeedsOrtho(true);
+                            logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'yes');
+                          }}
+                          className="flex-1 bg-blue-500 hover:bg-blue-600"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Yes
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setNeedsOrtho(false);
+                            logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'no');
+                          }}
+                          variant="outline"
+                          className="flex-1 border-slate-600"
+                        >
+                          <XCircle className="w-4 h-4 mr-2" />
+                          No
+                        </Button>
+                      </div>
+                    </InfoCard>
+                  </motion.div>
+                )}
+
+                {/* Ortho Height Check (if ortho selected) */}
+                {needsOrtho === true && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3"
+                  >
+                    <ChecklistItem
+                      id="ortho_height_check"
+                      label="Orthomosaic height verified (~30m above roof)"
+                      sublabel="Set ortho component approximately 30m above rooftop height"
+                      checked={checkedItems['ortho_height_check']}
+                      critical={true}
+                      onToggle={() => toggleItem('ortho_height_check')}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Panorama Yes/No (after ortho is answered) */}
+                {(allItemsChecked || isAdmin) && needsOrtho !== null && needsPanorama === null && (needsOrtho === false || checkedItems['ortho_height_check']) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1163,7 +1218,7 @@ export default function StartCapture() {
                   </motion.div>
                 )}
 
-                {/* Confirmation message */}
+                {/* Confirmation messages */}
                 {needsPanorama === true && (
                   <InfoCard variant="success" title="Panorama Confirmed">
                     <p>Next step will be panorama setup. Click Next to continue.</p>
