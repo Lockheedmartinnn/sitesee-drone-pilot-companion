@@ -456,8 +456,8 @@ export default function StartCapture() {
   const step3CanProceed = isAdmin || usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
   // Step 4 can proceed if: no GCP selected OR all items checked
   const step4CanProceed = isAdmin || usingGCP === false || (usingGCP === true && allItemsChecked);
-  // Step 6 can proceed if: ortho answered (and checked if yes) AND panorama answered
-  const step6CanProceed = isAdmin || (allItemsChecked && needsOrtho !== null && (needsOrtho === false || checkedItems['ortho_height_check']) && needsPanorama !== null);
+  // Step 6 can proceed if: both ortho and panorama answered, and ortho height checked if ortho=yes
+  const step6CanProceed = isAdmin || (allItemsChecked && needsOrtho !== null && needsPanorama !== null && (needsOrtho === false || checkedItems['ortho_height_check']));
   // Step 7 (panorama) can proceed if: no panorama OR all items checked
   const step7CanProceed = isAdmin || needsPanorama === false || (needsPanorama === true && allItemsChecked);
   // Step 8 can proceed if: battery change answered NO and all items checked
@@ -1130,36 +1130,74 @@ export default function StartCapture() {
                   ))}
                 </div>
 
-                {/* Ortho Yes/No (after main items are checked) */}
-                {(allItemsChecked || isAdmin) && needsOrtho === null && (
+                {/* Optional Components (after main items are checked) */}
+                {(allItemsChecked || isAdmin) && (needsOrtho === null || needsPanorama === null) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    className="space-y-4"
                   >
-                    <InfoCard variant="info" title="Orthomosaic Component">
-                      <p className="mb-4">Is an orthomosaic required for this capture?</p>
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={() => {
-                            setNeedsOrtho(true);
-                            logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'yes');
-                          }}
-                          className="flex-1 bg-blue-500 hover:bg-blue-600"
-                        >
-                          <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Yes
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setNeedsOrtho(false);
-                            logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'no');
-                          }}
-                          variant="outline"
-                          className="flex-1 border-slate-600"
-                        >
-                          <XCircle className="w-4 h-4 mr-2" />
-                          No
-                        </Button>
+                    <InfoCard variant="info" title="Optional Components">
+                      <div className="space-y-4">
+                        {/* Ortho Question */}
+                        <div>
+                          <p className="mb-3 font-medium">Is an orthomosaic required for this capture?</p>
+                          <div className="flex gap-3">
+                            <Button
+                              onClick={() => {
+                                setNeedsOrtho(true);
+                                logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'yes');
+                              }}
+                              className={needsOrtho === true ? "flex-1 bg-blue-600" : "flex-1 bg-blue-500 hover:bg-blue-600"}
+                              disabled={needsOrtho !== null}
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              {needsOrtho === true ? '✓ Yes' : 'Yes'}
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                setNeedsOrtho(false);
+                                logActivity('yes_no_decision', 'ortho_required', 'Is orthomosaic required?', 'no');
+                              }}
+                              variant="outline"
+                              className={needsOrtho === false ? "flex-1 bg-slate-700" : "flex-1 border-slate-600"}
+                              disabled={needsOrtho !== null}
+                            >
+                              <XCircle className="w-4 h-4 mr-2" />
+                              {needsOrtho === false ? '✓ No' : 'No'}
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Panorama Question */}
+                        <div>
+                          <p className="mb-3 font-medium">Is a panorama required for this capture?</p>
+                          <div className="flex gap-3">
+                            <Button
+                              onClick={() => {
+                                setNeedsPanorama(true);
+                                logActivity('yes_no_decision', 'panorama_required', 'Is panorama required?', 'yes');
+                              }}
+                              className={needsPanorama === true ? "flex-1 bg-blue-600" : "flex-1 bg-blue-500 hover:bg-blue-600"}
+                              disabled={needsPanorama !== null}
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              {needsPanorama === true ? '✓ Yes' : 'Yes'}
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                setNeedsPanorama(false);
+                                logActivity('yes_no_decision', 'panorama_required', 'Is panorama required?', 'no');
+                              }}
+                              variant="outline"
+                              className={needsPanorama === false ? "flex-1 bg-slate-700" : "flex-1 border-slate-600"}
+                              disabled={needsPanorama !== null}
+                            >
+                              <XCircle className="w-4 h-4 mr-2" />
+                              {needsPanorama === false ? '✓ No' : 'No'}
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </InfoCard>
                   </motion.div>
@@ -1181,54 +1219,6 @@ export default function StartCapture() {
                       onToggle={() => toggleItem('ortho_height_check')}
                     />
                   </motion.div>
-                )}
-
-                {/* Panorama Yes/No (after ortho is answered) */}
-                {(allItemsChecked || isAdmin) && needsOrtho !== null && needsPanorama === null && (needsOrtho === false || checkedItems['ortho_height_check']) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <InfoCard variant="info" title="Panorama Capture">
-                      <p className="mb-4">Is a panorama required for this capture?</p>
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={() => {
-                            setNeedsPanorama(true);
-                            logActivity('yes_no_decision', 'panorama_required', 'Is panorama required?', 'yes');
-                          }}
-                          className="flex-1 bg-blue-500 hover:bg-blue-600"
-                        >
-                          <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Yes
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setNeedsPanorama(false);
-                            logActivity('yes_no_decision', 'panorama_required', 'Is panorama required?', 'no');
-                          }}
-                          variant="outline"
-                          className="flex-1 border-slate-600"
-                        >
-                          <XCircle className="w-4 h-4 mr-2" />
-                          No
-                        </Button>
-                      </div>
-                    </InfoCard>
-                  </motion.div>
-                )}
-
-                {/* Confirmation messages */}
-                {needsPanorama === true && (
-                  <InfoCard variant="success" title="Panorama Confirmed">
-                    <p>Next step will be panorama setup. Click Next to continue.</p>
-                  </InfoCard>
-                )}
-
-                {needsPanorama === false && (
-                  <InfoCard variant="info" title="Skipping Panorama">
-                    <p>No panorama will be captured. Click Next to proceed to flight execution.</p>
-                  </InfoCard>
                 )}
               </div>
             )}
