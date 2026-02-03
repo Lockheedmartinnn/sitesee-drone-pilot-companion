@@ -64,7 +64,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'My Capture Logbook', href: createPageUrl('MissionHistory'), icon: ClipboardList },
     { name: 'My Profile', href: createPageUrl('Profile'), icon: User },
     { name: 'Checklist Analytics', href: createPageUrl('ChecklistAnalytics'), icon: BarChart3 },
-    ...(user?.role === 'admin' ? [{ name: 'User Management', href: createPageUrl('UserManagement'), icon: Users }] : []),
+    ...(user?.role === 'admin' || user?.access_level === 'admin' ? [{ name: 'User Management', href: createPageUrl('UserManagement'), icon: Users }] : []),
   ];
   
   const isActive = (href) => {
