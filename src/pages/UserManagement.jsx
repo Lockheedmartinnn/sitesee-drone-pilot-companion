@@ -23,6 +23,16 @@ export default function UserManagement() {
     enabled: permissions.canViewAllMissions,
   });
 
+  const getCompanyDisplayName = (company) => {
+    const mapping = {
+      'Pilot Group 1': 'Pilot Group 1',
+      'waveconn': 'Pilot Group 2',
+      'fortysouth': 'Pilot Group 3',
+      'Pilot Group 4': 'Pilot Group 4'
+    };
+    return mapping[company] || company || 'Unknown';
+  };
+
   // Group users by company, with pilot groups in order
   const usersByCompany = useMemo(() => {
     const groups = allUsers.reduce((acc, user) => {
@@ -46,16 +56,6 @@ export default function UserManagement() {
 
     return sortedEntries;
   }, [allUsers]);
-
-  const getCompanyDisplayName = (company) => {
-    const mapping = {
-      'Pilot Group 1': 'Pilot Group 1',
-      'waveconn': 'Pilot Group 2',
-      'fortysouth': 'Pilot Group 3',
-      'Pilot Group 4': 'Pilot Group 4'
-    };
-    return mapping[company] || company || 'Unknown';
-  };
 
   if (!permissions.canViewAllMissions) {
     return (
