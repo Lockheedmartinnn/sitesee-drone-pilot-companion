@@ -76,9 +76,11 @@ export default function ChecklistAnalytics() {
     ],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
     'Pilot Group 4': [
-      'natarajan.vinodh@gmail.com',
-      'kavishnathang@gmail.com'
-    ]
+      'kavishnathang@gmail.com',
+      '4cain.technology@gmail.com',
+      'brian.d.cowan@gmail.com'
+    ],
+    'Pilot Group 5': ['natarajan.vinodh@gmail.com']
   };
 
   // Company display name mapping
@@ -87,7 +89,8 @@ export default function ChecklistAnalytics() {
       'Pilot Group 1': 'Pilot Group 1',
       'waveconn': 'Pilot Group 2',
       'fortysouth': 'Pilot Group 3',
-      'Pilot Group 4': 'Pilot Group 4'
+      'Pilot Group 4': 'Pilot Group 4',
+      'Pilot Group 5': 'Pilot Group 5'
     };
     // Treat unknown/null companies as Pilot Group 1
     return mapping[company] || 'Pilot Group 1';
@@ -648,6 +651,16 @@ export default function ChecklistAnalytics() {
                   )}
                 >
                   Pilot Group 4
+                </Button>
+                <Button
+                  variant={companyFilter === 'Pilot Group 5' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('Pilot Group 5')}
+                  size="sm"
+                  className={cn(
+                    companyFilter === 'Pilot Group 5' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                  )}
+                >
+                  Pilot Group 5
                 </Button>
               </div>
             </div>

@@ -42,10 +42,11 @@ export default function UserManagement() {
     ],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
     'Pilot Group 4': [
-      'natarajan.vinodh@gmail.com',
-      'kavishnathang@gmail.com'
+      'kavishnathang@gmail.com',
+      '4cain.technology@gmail.com',
+      'brian.d.cowan@gmail.com'
     ],
-    'Pilot Group 5': []
+    'Pilot Group 5': ['natarajan.vinodh@gmail.com']
   };
 
   // Group users by company, with pilot groups in order
