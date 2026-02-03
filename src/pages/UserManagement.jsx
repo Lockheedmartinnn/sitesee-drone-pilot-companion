@@ -23,42 +23,10 @@ export default function UserManagement() {
     enabled: permissions.canViewAllMissions,
   });
 
-  // Pilot Group email assignments
-  const pilotGroupEmails = {
-    'Pilot Group 1': [
-      'ichanvaleriano0@gmail.com',
-      'jccdefg@gmail.com',
-      'jaysondeasisdavid146@gmail.com',
-      'joel.mendoza.qroi10578@gmail.com',
-      'qnsi.darwinherminigildo24@gmail.com',
-      'qroi.ryandorilag@gmail.com',
-      'tiujohnedward@gmail.com',
-      'jhonnico1323@gmail.com'
-    ],
-    'Pilot Group 2': [
-      'foong.cheah@metrowest.com.au',
-      'marcin@comstarsystems.com.au',
-      'Rhysaschubert@gmail.com'
-    ],
-    'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
-    'Pilot Group 4': [
-      'natarajan.vinodh@gmail.com',
-      'kavishnathang@gmail.com'
-    ],
-    'Pilot Group 5': []
-  };
-
   // Group users by company, with pilot groups in order
   const usersByCompany = useMemo(() => {
     const groups = allUsers.reduce((acc, user) => {
-      // Check which pilot group the user belongs to
-      let company = user.company || 'Unknown';
-      for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
-        if (emails.includes(user.email)) {
-          company = groupName;
-          break;
-        }
-      }
+      const company = getCompanyDisplayName(user.company) || 'Unknown';
       if (!acc[company]) acc[company] = [];
       acc[company].push(user);
       return acc;
@@ -80,7 +48,13 @@ export default function UserManagement() {
   }, [allUsers]);
 
   const getCompanyDisplayName = (company) => {
-    return company;
+    const mapping = {
+      'Pilot Group 1': 'Pilot Group 1',
+      'waveconn': 'Pilot Group 2',
+      'fortysouth': 'Pilot Group 3',
+      'Pilot Group 4': 'Pilot Group 4'
+    };
+    return mapping[company] || company || 'Unknown';
   };
 
   if (!permissions.canViewAllMissions) {
