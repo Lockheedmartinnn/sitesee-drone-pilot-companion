@@ -57,6 +57,30 @@ export default function ChecklistAnalytics() {
 
   const permissions = useAccessControl(user);
 
+  // Email to pilot group mapping
+  const pilotGroupEmails = {
+    'Pilot Group 1': [
+      'ichanvaleriano0@gmail.com',
+      'jccdefg@gmail.com',
+      'jaysondeasisdavid146@gmail.com',
+      'joel.mendoza.qroi10578@gmail.com',
+      'qnsi.darwinherminigildo24@gmail.com',
+      'qroi.ryandorilag@gmail.com',
+      'tiujohnedward@gmail.com',
+      'jhonnico1323@gmail.com'
+    ],
+    'Pilot Group 2': [
+      'foong.cheah@metrowest.com.au',
+      'marcin@comstarsystems.com.au',
+      'Rhysaschubert@gmail.com'
+    ],
+    'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
+    'Pilot Group 4': [
+      'natarajan.vinodh@gmail.com',
+      'kavishnathang@gmail.com'
+    ]
+  };
+
   // Company display name mapping
   const getCompanyDisplayName = (company) => {
     const mapping = {
@@ -67,6 +91,16 @@ export default function ChecklistAnalytics() {
     };
     // Treat unknown/null companies as Pilot Group 1
     return mapping[company] || 'Pilot Group 1';
+  };
+
+  // Get user's pilot group from email
+  const getUserPilotGroup = (email) => {
+    for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
+      if (emails.includes(email)) {
+        return groupName === 'Pilot Group 2' ? 'waveconn' : groupName;
+      }
+    }
+    return 'Pilot Group 1';
   };
 
   const { data: allActivities = [], isLoading } = useQuery({
@@ -155,7 +189,7 @@ export default function ChecklistAnalytics() {
     if (!permissions.canViewAllMissions) {
       if (permissions.canViewTeamMissions) {
         // Ops manager sees all for their pilot group
-        const userPilotGroup = user?.company?.trim() === 'waveconn' ? 'waveconn' : 'Pilot Group 1';
+        const userPilotGroup = getUserPilotGroup(user?.email);
         filtered = filtered.filter(s => {
           const sessionCompany = (s.company || 'Pilot Group 1').trim();
           return sessionCompany === userPilotGroup;

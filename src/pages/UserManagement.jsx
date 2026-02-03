@@ -37,7 +37,8 @@ export default function UserManagement() {
     ],
     'Pilot Group 2': [
       'foong.cheah@metrowest.com.au',
-      'marcin@comstarsystems.com.au'
+      'marcin@comstarsystems.com.au',
+      'Rhysaschubert@gmail.com'
     ],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
     'Pilot Group 4': [
