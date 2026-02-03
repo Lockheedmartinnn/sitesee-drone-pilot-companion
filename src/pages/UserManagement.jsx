@@ -35,7 +35,10 @@ export default function UserManagement() {
       'tiujohnedward@gmail.com',
       'jhonnico1323@gmail.com'
     ],
-    'Pilot Group 2': [],
+    'Pilot Group 2': [
+      'foong.cheah@metrowest.com.au',
+      'marcin@comstarsystems.com.au'
+    ],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
     'Pilot Group 4': [
       'natarajan.vinodh@gmail.com',
