@@ -57,29 +57,11 @@ export default function ChecklistAnalytics() {
 
   const permissions = useAccessControl(user);
 
-  // Email to pilot group mapping
-  const pilotGroupEmails = {
-    'Pilot Group 1': [
-      'ichanvaleriano0@gmail.com',
-      'jccdefg@gmail.com',
-      'jaysondeasisdavid146@gmail.com',
-      'joel.mendoza.qroi10578@gmail.com',
-      'qnsi.darwinherminigildo24@gmail.com',
-      'qroi.ryandorilag@gmail.com',
-      'tiujohnedward@gmail.com',
-      'jhonnico1323@gmail.com'
-    ],
-    'Pilot Group 2': [
-      'foong.cheah@metrowest.com.au',
-      'marcin@comstarsystems.com.au',
-      'Rhysaschubert@gmail.com'
-    ],
-    'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
-    'Pilot Group 4': [
-      'natarajan.vinodh@gmail.com',
-      'kavishnathang@gmail.com'
-    ]
-  };
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['allUsers'],
+    queryFn: () => base44.entities.User.list(),
+    enabled: permissions.canViewTeamMissions || permissions.canViewAllMissions,
+  });
 
   // Company display name mapping
   const getCompanyDisplayName = (company) => {
@@ -89,18 +71,13 @@ export default function ChecklistAnalytics() {
       'fortysouth': 'Pilot Group 3',
       'Pilot Group 4': 'Pilot Group 4'
     };
-    // Treat unknown/null companies as Pilot Group 1
-    return mapping[company] || 'Pilot Group 1';
+    return mapping[company] || company || 'Pilot Group 1';
   };
 
-  // Get user's pilot group from email
+  // Get user's pilot group from database
   const getUserPilotGroup = (email) => {
-    for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
-      if (emails.includes(email)) {
-        return groupName === 'Pilot Group 2' ? 'waveconn' : groupName;
-      }
-    }
-    return 'Pilot Group 1';
+    const foundUser = allUsers.find(u => u.email === email);
+    return foundUser?.company || 'Pilot Group 1';
   };
 
   const { data: allActivities = [], isLoading } = useQuery({
