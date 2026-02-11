@@ -83,24 +83,37 @@ export default function ChecklistAnalytics() {
     'Pilot Group 5': ['natarajan.vinodh@gmail.com']
   };
 
-  // Company display name mapping
+  // Company display name mapping - handles both old and new formats
   const getCompanyDisplayName = (company) => {
     const mapping = {
       'Pilot Group 1': 'Pilot Group 1',
+      'Pilot Group 2': 'Pilot Group 2',
       'waveconn': 'Pilot Group 2',
       'fortysouth': 'Pilot Group 3',
+      'Pilot Group 3': 'Pilot Group 3',
       'Pilot Group 4': 'Pilot Group 4',
       'Pilot Group 5': 'Pilot Group 5'
     };
-    // Treat unknown/null companies as Pilot Group 1
     return mapping[company] || 'Pilot Group 1';
+  };
+
+  // Get normalized company value from email
+  const getNormalizedCompany = (email, companyValue) => {
+    // First check email-based mapping
+    for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
+      if (emails.includes(email)) {
+        return groupName;
+      }
+    }
+    // Fallback to company value if provided
+    return companyValue || 'Pilot Group 1';
   };
 
   // Get user's pilot group from email
   const getUserPilotGroup = (email) => {
     for (const [groupName, emails] of Object.entries(pilotGroupEmails)) {
       if (emails.includes(email)) {
-        return groupName === 'Pilot Group 2' ? 'waveconn' : groupName;
+        return groupName;
       }
     }
     return 'Pilot Group 1';
@@ -134,7 +147,7 @@ export default function ChecklistAnalytics() {
           session_id: sessionId,
           pilot_email: activity.pilot_email,
           pilot_id: activity.pilot_id,
-          company: (activity.company || 'Pilot Group 1').trim(),
+          company: getNormalizedCompany(activity.pilot_email, activity.company),
           site_type: activity.site_type,
           activities: [],
           steps: new Set()
@@ -178,8 +191,8 @@ export default function ChecklistAnalytics() {
   const filteredSessions = useMemo(() => {
     let filtered = sessions.map(s => ({
       ...s,
-      // Normalize company - treat unknown/null as Pilot Group 1, and trim whitespace
-      company: (s.company || 'Pilot Group 1').trim()
+      // Company is already normalized in sessions creation
+      company: s.company
     }));
 
     // Only include completed sessions (8 steps completed)
@@ -193,10 +206,7 @@ export default function ChecklistAnalytics() {
       if (permissions.canViewTeamMissions) {
         // Ops manager sees all for their pilot group
         const userPilotGroup = getUserPilotGroup(user?.email);
-        filtered = filtered.filter(s => {
-          const sessionCompany = (s.company || 'Pilot Group 1').trim();
-          return sessionCompany === userPilotGroup;
-        });
+        filtered = filtered.filter(s => s.company === userPilotGroup);
       } else {
         filtered = filtered.filter(s => s.pilot_email === user?.email);
       }
@@ -238,7 +248,7 @@ export default function ChecklistAnalytics() {
         pilotMap[email] = {
           email,
           pilot_id: session.pilot_id,
-          company: (session.company || 'Pilot Group 1').trim(),
+          company: session.company,
           totalChecklists: 0,
           towerChecklists: 0,
           rooftopChecklists: 0,
@@ -623,21 +633,21 @@ export default function ChecklistAnalytics() {
                   Pilot Group 1
                 </Button>
                 <Button
-                  variant={companyFilter === 'waveconn' ? 'default' : 'outline'}
-                  onClick={() => setCompanyFilter('waveconn')}
+                  variant={companyFilter === 'Pilot Group 2' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('Pilot Group 2')}
                   size="sm"
                   className={cn(
-                    companyFilter === 'waveconn' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                    companyFilter === 'Pilot Group 2' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                   )}
                 >
                   Pilot Group 2
                 </Button>
                 <Button
-                  variant={companyFilter === 'fortysouth' ? 'default' : 'outline'}
-                  onClick={() => setCompanyFilter('fortysouth')}
+                  variant={companyFilter === 'Pilot Group 3' ? 'default' : 'outline'}
+                  onClick={() => setCompanyFilter('Pilot Group 3')}
                   size="sm"
                   className={cn(
-                    companyFilter === 'fortysouth' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
+                    companyFilter === 'Pilot Group 3' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30'
                   )}
                 >
                   Pilot Group 3
