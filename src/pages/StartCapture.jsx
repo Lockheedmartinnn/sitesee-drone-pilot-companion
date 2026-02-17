@@ -283,7 +283,7 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Configure mission parameters (V9.7.0 mission)",
     info: {
       title: "V9.7.0 Mission Changes",
-      message: "✓ Planar height is AUTO-CALCULATED (highest equipment/obstacle + 7m)\n✓ No need to manually set MSA\n✓ Mark boundary clockwise OR anti-clockwise\n✓ Mission planner automatically adds radius offset"
+      message: "✓ Planar height is AUTO-CALCULATED (highest equipment/obstacle + 11m)\n✓ No need to manually set MSA\n✓ Mark boundary clockwise OR anti-clockwise\n✓ Mission planner automatically adds radius offset"
     },
     items: [
       { id: 'shutter_adjusted', label: 'Shutter speed adjusted for roof', sublabel: 'e.g., 1/2000 → 1/1500 for reflection', critical: true },
