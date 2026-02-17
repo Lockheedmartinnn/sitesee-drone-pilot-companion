@@ -450,7 +450,7 @@ export default function StartCapture() {
   
   const allItemsChecked = config?.items?.every(item => checkedItems[item.id]) ?? true;
   const totalSteps = 9;
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.email === 'Steve.ryan@sitesee.com.au';
   
   // Step 3 can proceed if: no scale point selected OR all items checked
   const step3CanProceed = isAdmin || usingScalePoint === false || (usingScalePoint === true && allItemsChecked);
