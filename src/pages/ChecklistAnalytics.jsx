@@ -1284,7 +1284,7 @@ export default function ChecklistAnalytics() {
                                   isTimerEvent && "bg-blue-500/10 border-l-2 border-blue-500"
                                 )}>
                                   <span className="text-xs text-slate-500 min-w-[60px]">
-                                    {new Date(activity.created_date).toLocaleTimeString('en-US', { hour12: false })}
+                                    {formatBrisbaneDate(activity.created_date, 'HH:mm:ss')}
                                   </span>
                                   <span className={cn(
                                     "text-slate-400",
