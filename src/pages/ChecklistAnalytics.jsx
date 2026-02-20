@@ -1220,6 +1220,11 @@ export default function ChecklistAnalytics() {
                       // Check for GPS timer events in this step
                       const timerStart = stepActivities.find(a => a.action_type === 'timer_start' && a.item_id?.includes('gps_stabilisation'));
                       const timerComplete = stepActivities.find(a => a.action_type === 'timer_complete' && a.item_id?.includes('gps_stabilisation'));
+                      
+                      // Get location for this step (first activity's location)
+                      const stepLocation = stepActivities[0]?.latitude && stepActivities[0]?.longitude 
+                        ? { lat: stepActivities[0].latitude, lon: stepActivities[0].longitude }
+                        : null;
 
                       return (
                         <div key={stepNum} className="border-l-2 border-blue-500/30 pl-4">
@@ -1231,6 +1236,13 @@ export default function ChecklistAnalytics() {
                               {formatDuration(stepDuration)}
                             </span>
                           </div>
+                          
+                          {/* Step Location */}
+                          {stepLocation && (
+                            <div className="text-xs text-slate-500 mb-2">
+                              📍 {stepLocation.lat.toFixed(6)}, {stepLocation.lon.toFixed(6)}
+                            </div>
+                          )}
                           
                           {/* GPS Timer Info */}
                           {timerStart && (
