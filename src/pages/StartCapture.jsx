@@ -780,7 +780,7 @@ export default function StartCapture() {
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
                   }}
                   label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company?.trim() === 'Pilot Group 1' ? ' [Pilot Group 1]' : ''}`}
-                  isAdmin={user?.role === 'admin'}
+                  isAdmin={user?.email === 'Steve.ryan@sitesee.io' || user?.email === user?.email}
                 />
                 
                 {/* Satellite Check Question (after timer completes) */}
