@@ -1243,6 +1243,32 @@ export default function ChecklistAnalytics() {
                               {formatDuration(stepDuration)}
                             </span>
                           </div>
+                          
+                          {/* GPS Timer Info */}
+                          {timerStart && (
+                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Zap className="w-4 h-4 text-blue-400" />
+                                <span className="text-sm font-medium text-blue-300">GPS Timer</span>
+                              </div>
+                              <div className="space-y-1 text-xs text-slate-400">
+                                <div>Started: {format(new Date(timerStart.created_date), 'HH:mm:ss')}</div>
+                                {timerComplete && (
+                                  <>
+                                    <div>Completed: {format(new Date(timerComplete.created_date), 'HH:mm:ss')}</div>
+                                    <div>Duration: {formatDuration(Math.floor((new Date(timerComplete.created_date) - new Date(timerStart.created_date)) / 1000))}</div>
+                                    <div className={cn(
+                                      "font-medium",
+                                      timerComplete.new_state === 'skipped_by_admin' ? "text-amber-400" : "text-emerald-400"
+                                    )}>
+                                      Status: {timerComplete.new_state === 'skipped_by_admin' ? '⚠️ Skipped by Admin' : '✓ Completed Naturally'}
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
                           <div className="space-y-1">
                             {stepActivities.map((activity, idx) => (
                               <div key={idx} className="text-sm text-slate-300 flex items-start gap-2">
