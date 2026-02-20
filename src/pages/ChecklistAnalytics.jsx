@@ -48,6 +48,7 @@ export default function ChecklistAnalytics() {
   const [companyFilter, setCompanyFilter] = useState('all');
   const [startDate] = useState(new Date('2026-01-12'));
   const [expandedPilot, setExpandedPilot] = useState(null);
+  const [viewMode, setViewMode] = useState('overview'); // 'overview', 'pilots', 'sessions', 'gps_compliance'
   const [viewMode, setViewMode] = useState('overview');
 
   const { data: user } = useQuery({
