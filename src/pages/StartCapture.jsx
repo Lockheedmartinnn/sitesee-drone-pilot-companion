@@ -774,7 +774,10 @@ export default function StartCapture() {
 
                 <Timer 
                   key={timerKey}
-                  targetMinutes={gpsTimerMinutes} 
+                  targetMinutes={gpsTimerMinutes}
+                  onStart={() => {
+                    logActivity('timer_start', 'gps_stabilisation', 'GPS Stabilisation Timer', 'started');
+                  }}
                   onComplete={() => {
                     setGpsTimerComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
