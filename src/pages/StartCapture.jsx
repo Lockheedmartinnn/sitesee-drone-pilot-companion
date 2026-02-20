@@ -779,6 +779,9 @@ export default function StartCapture() {
                     setGpsTimerComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'completed');
                   }}
+                  onSkip={() => {
+                    logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'skipped_by_admin');
+                  }}
                   label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company?.trim() === 'Pilot Group 1' ? ' [Pilot Group 1]' : ''}`}
                   isAdmin={user?.email === 'Steve.ryan@sitesee.io' || user?.email === 'Yatesh.pawar@sitesee.com.au'}
                 />
