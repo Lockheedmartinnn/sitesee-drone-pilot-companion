@@ -135,18 +135,6 @@ export default function ChecklistAnalytics() {
     queryFn: () => base44.entities.LocalMissionLog.list('-created_date'),
   });
 
-  const { data: gpsTimerData = [] } = useQuery({
-    queryKey: ['gpsTimerCompliance'],
-    queryFn: async () => {
-      const data = await base44.entities.ChecklistActivity.filter(
-        { action_type: 'timer_complete', item_id: 'gps_stabilisation' },
-        '-created_date',
-        500
-      );
-      return data;
-    },
-  });
-
   // Group activities by session
   const sessions = useMemo(() => {
     const sessionMap = {};
