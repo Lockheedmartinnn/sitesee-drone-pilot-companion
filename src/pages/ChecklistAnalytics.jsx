@@ -23,7 +23,8 @@ import {
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
+import { format, formatInTimeZone } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { cn } from '@/lib/utils';
 import { useAccessControl } from '@/components/useAccessControl';
 import { 
