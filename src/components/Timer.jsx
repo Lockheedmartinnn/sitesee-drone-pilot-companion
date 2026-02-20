@@ -77,7 +77,10 @@ export default function Timer({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => quickSet(targetMinutes)}
+            onClick={() => {
+              quickSet(targetMinutes);
+              onSkip?.();
+            }}
             className="text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
           >
             Skip ({targetMinutes}m)
