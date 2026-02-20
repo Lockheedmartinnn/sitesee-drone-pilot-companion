@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 export default function Timer({ 
   targetMinutes = 5, 
   onComplete,
+  onSkip,
   label = "GPS Stabilisation Timer",
   isAdmin = false
 }) {
