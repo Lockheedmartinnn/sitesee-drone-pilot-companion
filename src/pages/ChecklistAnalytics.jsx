@@ -1228,6 +1228,10 @@ export default function ChecklistAnalytics() {
                       const stepStart = new Date(stepActivities[0].created_date);
                       const stepEnd = new Date(stepActivities[stepActivities.length - 1].created_date);
                       const stepDuration = Math.floor((stepEnd - stepStart) / 1000);
+                      
+                      // Check for GPS timer events in this step
+                      const timerStart = stepActivities.find(a => a.action_type === 'timer_start' && a.item_id?.includes('gps_stabilisation'));
+                      const timerComplete = stepActivities.find(a => a.action_type === 'timer_complete' && a.item_id?.includes('gps_stabilisation'));
 
                       return (
                         <div key={stepNum} className="border-l-2 border-blue-500/30 pl-4">

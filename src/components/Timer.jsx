@@ -8,12 +8,14 @@ export default function Timer({
   targetMinutes = 5, 
   onComplete,
   onSkip,
+  onStart,
   label = "GPS Stabilisation Timer",
   isAdmin = false
 }) {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   
   const targetSeconds = targetMinutes * 60;
   
@@ -59,10 +61,16 @@ export default function Timer({
   const toggleTimer = useCallback(() => {
     if (isComplete) {
       reset();
+      setHasStarted(false);
     } else {
+      const willStart = !isRunning;
       setIsRunning(prev => !prev);
+      if (willStart && !hasStarted) {
+        setHasStarted(true);
+        onStart?.();
+      }
     }
-  }, [isComplete, reset]);
+  }, [isComplete, reset, isRunning, hasStarted, onStart]);
 
   return (
     <div className={cn(
