@@ -1258,18 +1258,30 @@ export default function ChecklistAnalytics() {
                           )}
                           
                           <div className="space-y-1">
-                            {stepActivities.map((activity, idx) => (
-                              <div key={idx} className="text-sm text-slate-300 flex items-start gap-2">
-                                <span className="text-xs text-slate-500 min-w-[60px]">
-                                  {format(new Date(activity.created_date), 'HH:mm:ss')}
-                                </span>
-                                <span className="text-slate-400">{activity.action_type}:</span>
-                                <span>{activity.item_label || 'N/A'}</span>
-                                {activity.new_state && (
-                                  <span className="text-emerald-400">→ {activity.new_state}</span>
-                                )}
-                              </div>
-                            ))}
+                            {stepActivities.map((activity, idx) => {
+                              const isTimerEvent = activity.action_type === 'timer_start' || activity.action_type === 'timer_complete';
+                              return (
+                                <div key={idx} className={cn(
+                                  "text-sm flex items-start gap-2 rounded px-2 py-1",
+                                  isTimerEvent && "bg-blue-500/10 border-l-2 border-blue-500"
+                                )}>
+                                  <span className="text-xs text-slate-500 min-w-[60px]">
+                                    {format(new Date(activity.created_date), 'HH:mm:ss')}
+                                  </span>
+                                  <span className={cn(
+                                    "text-slate-400",
+                                    isTimerEvent && "text-blue-400 font-medium"
+                                  )}>{activity.action_type}:</span>
+                                  <span className={cn(
+                                    "text-slate-300",
+                                    isTimerEvent && "text-blue-300 font-medium"
+                                  )}>{activity.item_label || 'N/A'}</span>
+                                  {activity.new_state && (
+                                    <span className="text-emerald-400">→ {activity.new_state}</span>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       );
