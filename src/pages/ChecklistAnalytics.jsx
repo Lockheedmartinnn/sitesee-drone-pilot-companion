@@ -1258,10 +1258,10 @@ export default function ChecklistAnalytics() {
                                 <span className="text-sm font-medium text-blue-300">GPS Timer</span>
                               </div>
                               <div className="space-y-1 text-xs text-slate-400">
-                                <div>Started: {new Date(timerStart.created_date).toLocaleTimeString('en-US', { hour12: false })}</div>
+                                <div>Started: {formatBrisbaneDate(timerStart.created_date, 'HH:mm:ss')}</div>
                                 {timerComplete && (
                                   <>
-                                    <div>Completed: {new Date(timerComplete.created_date).toLocaleTimeString('en-US', { hour12: false })}</div>
+                                    <div>Completed: {formatBrisbaneDate(timerComplete.created_date, 'HH:mm:ss')}</div>
                                     <div>Duration: {formatDuration(Math.floor((new Date(timerComplete.created_date) - new Date(timerStart.created_date)) / 1000))}</div>
                                     <div className={cn(
                                       "font-medium",
