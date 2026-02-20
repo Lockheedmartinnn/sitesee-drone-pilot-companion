@@ -64,11 +64,11 @@ export default function Timer({
       setHasStarted(false);
     } else {
       const willStart = !isRunning;
-      setIsRunning(prev => !prev);
       if (willStart && !hasStarted) {
         setHasStarted(true);
         onStart?.();
       }
+      setIsRunning(prev => !prev);
     }
   }, [isComplete, reset, isRunning, hasStarted, onStart]);
 
