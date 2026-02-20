@@ -500,8 +500,8 @@ export default function StartCapture() {
   
   const previousStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
       logActivity('step_navigation', `step_${currentStep}_to_${currentStep - 1}`, `Navigated back from ${STEPS[currentStep - 1]} to ${STEPS[currentStep - 2]}`, 'back');
+      setCurrentStep(prev => prev - 1);
     }
   };
   
