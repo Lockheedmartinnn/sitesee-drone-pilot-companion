@@ -42,31 +42,6 @@ import {
   Legend
 } from 'recharts';
 
-// Helper to format date in user's local timezone
-const formatLocalDate = (date, formatStr = 'MMM d, yyyy HH:mm') => {
-  const d = new Date(date);
-  const options = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  };
-  
-  if (formatStr === 'MMM d, HH:mm') {
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  }
-  
-  return d.toLocaleString('en-US', options);
-};
-
 export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
@@ -1032,7 +1007,7 @@ export default function ChecklistAnalytics() {
                                 .filter(s => s.pilot_email === pilot.email && s.durationSec < 1500)
                                 .map(session => (
                                   <div key={session.session_id} className="text-sm text-slate-300">
-                                    {formatLocalDate(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
+                                    {format(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
                                   </div>
                                 ))}
                             </div>
@@ -1059,7 +1034,7 @@ export default function ChecklistAnalytics() {
                               )}>
                                 <div className="flex items-center justify-between flex-wrap gap-2">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-slate-300">{formatLocalDate(session.startTime, 'MMM d, HH:mm')}</span>
+                                    <span className="text-slate-300">{format(session.startTime, 'MMM d, HH:mm')}</span>
                                     <span className="text-slate-600">•</span>
                                     <span className={cn(
                                       "px-2 py-0.5 rounded text-xs",
@@ -1202,7 +1177,7 @@ export default function ChecklistAnalytics() {
                         )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-slate-400 flex-wrap">
-                        <span>{formatLocalDate(session.startTime, 'MMM d, yyyy HH:mm')}</span>
+                        <span>{format(session.startTime, 'MMM d, yyyy h:mm a')}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -1277,10 +1252,10 @@ export default function ChecklistAnalytics() {
                                 <span className="text-sm font-medium text-blue-300">GPS Timer</span>
                               </div>
                               <div className="space-y-1 text-xs text-slate-400">
-                                <div>Started: {format(new Date(timerStart.created_date), 'HH:mm:ss')}</div>
+                                <div>Started: {format(new Date(timerStart.created_date), 'h:mm:ss a')}</div>
                                 {timerComplete && (
                                   <>
-                                    <div>Completed: {format(new Date(timerComplete.created_date), 'HH:mm:ss')}</div>
+                                    <div>Completed: {format(new Date(timerComplete.created_date), 'h:mm:ss a')}</div>
                                     <div>Duration: {formatDuration(Math.floor((new Date(timerComplete.created_date) - new Date(timerStart.created_date)) / 1000))}</div>
                                     <div className={cn(
                                       "font-medium",
