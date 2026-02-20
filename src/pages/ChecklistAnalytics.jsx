@@ -1183,7 +1183,7 @@ export default function ChecklistAnalytics() {
                         )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-slate-400 flex-wrap">
-                        <span>{formatLocalDate(session.startTime, 'MMM d, yyyy HH:mm')}</span>
+                        <span>{formatBrisbaneDate(session.startTime, 'MMM d, yyyy HH:mm')}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
