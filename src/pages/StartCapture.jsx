@@ -467,8 +467,9 @@ export default function StartCapture() {
   const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 && siteType === 'rooftop' ? step6CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked))))));
   
   const nextStep = () => {
-    // Log step navigation
-    logActivity('step_navigation', `step_${currentStep}_to_${currentStep + 1}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[currentStep]}`, 'next');
+    // Log step navigation and step completion time
+    const nextStepNum = currentStep === 6 && needsPanorama === false ? 8 : (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true ? 8 : currentStep + 1);
+    logActivity('step_navigation', `step_${currentStep}_to_${nextStepNum}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[nextStepNum - 1]}`, 'next');
     
     // Mark initial setup complete after step 7 (before flight execution)
     if (currentStep === 7) {
