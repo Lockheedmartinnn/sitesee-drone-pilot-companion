@@ -72,7 +72,8 @@ export default function ChecklistAnalytics() {
     'Pilot Group 2': [
       'foong.cheah@metrowest.com.au',
       'marcin@comstarsystems.com.au',
-      'Rhysaschubert@gmail.com'
+      'Rhysaschubert@gmail.com',
+      'amiramanullah92@gmail.com'
     ],
     'Pilot Group 3': ['simon.mapstone@fortysouth.co.nz'],
     'Pilot Group 4': [
