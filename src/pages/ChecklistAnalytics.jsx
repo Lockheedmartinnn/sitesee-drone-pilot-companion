@@ -519,6 +519,18 @@ export default function ChecklistAnalytics() {
         {/* View Mode Tabs */}
         <div className="flex gap-2 mb-6 flex-wrap">
           <Button
+            variant={viewMode === 'gps_compliance' ? 'default' : 'outline'}
+            onClick={() => setViewMode('gps_compliance')}
+            className={cn(
+              viewMode === 'gps_compliance' 
+                ? 'bg-blue-600 hover:bg-blue-700' 
+                : 'border-slate-700 bg-slate-800 hover:bg-slate-700'
+            )}
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            GPS Timer Compliance
+          </Button>
+          <Button
             variant={viewMode === 'overview' ? 'default' : 'outline'}
             onClick={() => setViewMode('overview')}
             className={cn(
