@@ -42,6 +42,31 @@ import {
   Legend
 } from 'recharts';
 
+// Helper to format date in user's local timezone
+const formatLocalDate = (date, formatStr = 'MMM d, yyyy HH:mm') => {
+  const d = new Date(date);
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+  
+  if (formatStr === 'MMM d, HH:mm') {
+    return d.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+  
+  return d.toLocaleString('en-US', options);
+};
+
 export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
@@ -1007,7 +1032,7 @@ export default function ChecklistAnalytics() {
                                 .filter(s => s.pilot_email === pilot.email && s.durationSec < 1500)
                                 .map(session => (
                                   <div key={session.session_id} className="text-sm text-slate-300">
-                                    {format(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
+                                    {formatLocalDate(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
                                   </div>
                                 ))}
                             </div>
