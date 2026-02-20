@@ -717,8 +717,14 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={user?.company?.trim() === 'Pilot Group 1' ? 5 : 2} 
-                  onComplete={() => setBatterySwapGpsComplete(true)}
+                  targetMinutes={user?.company?.trim() === 'Pilot Group 1' ? 5 : 2}
+                  onStart={() => {
+                    logActivity('timer_start', 'gps_stabilisation_battery_swap', 'GPS Stabilisation Timer (Battery Swap)', 'started');
+                  }}
+                  onComplete={() => {
+                    setBatterySwapGpsComplete(true);
+                    logActivity('timer_complete', 'gps_stabilisation_battery_swap', 'GPS Stabilisation Timer (Battery Swap)', 'completed');
+                  }}
                   label={`GPS Stabilisation (${user?.company?.trim() === 'Pilot Group 1' ? 5 : 2} min)`}
                 />
 
