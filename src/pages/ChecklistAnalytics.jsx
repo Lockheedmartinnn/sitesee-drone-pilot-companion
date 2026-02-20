@@ -1263,6 +1263,73 @@ export default function ChecklistAnalytics() {
           )}
           </div>
         )}
+
+        {/* GPS Timer Compliance View */}
+        {viewMode === 'gps_compliance' && (
+          <div className="space-y-6">
+            <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Zap className="w-6 h-6 text-blue-400" />
+                <div>
+                  <h2 className="text-xl font-bold">GPS Timer Compliance</h2>
+                  <p className="text-sm text-slate-400">Track whether pilots waited or skipped GPS stabilization</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 mt-6">
+                {gpsTimerData.map(event => {
+                  const isSkipped = event.new_state === 'skipped_by_admin';
+                  return (
+                    <div 
+                      key={event.id}
+                      className={cn(
+                        "border rounded-xl p-4",
+                        isSkipped 
+                          ? "bg-amber-500/10 border-amber-500/30"
+                          : "bg-slate-800 border-slate-700"
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="font-semibold text-white">
+                              {event.pilot_email}
+                            </span>
+                            <span className={cn(
+                              "px-2 py-1 rounded text-xs font-medium",
+                              isSkipped 
+                                ? "bg-amber-500/20 text-amber-300"
+                                : "bg-emerald-500/20 text-emerald-300"
+                            )}>
+                              {isSkipped ? '⚠️ SKIPPED' : '✓ Completed'}
+                            </span>
+                          </div>
+                          <div className="text-sm text-slate-400 space-y-1">
+                            <div>Company: {getCompanyDisplayName(event.company)}</div>
+                            <div>Site Type: {event.site_type}</div>
+                            <div>Date: {format(new Date(event.created_date), 'MMM d, yyyy HH:mm:ss')}</div>
+                            {event.session_id && (
+                              <div className="text-xs text-slate-500">Session: {event.session_id}</div>
+                            )}
+                          </div>
+                        </div>
+                        {isSkipped && (
+                          <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                {gpsTimerData.length === 0 && (
+                  <div className="text-center py-12 text-slate-500">
+                    No GPS timer data available yet
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
