@@ -280,10 +280,10 @@ const ROOFTOP_CONFIGS = {
   },
   6: {
     title: "Rooftop Mission Setup & Camera",
-    subtitle: "Configure mission parameters (V9.7.0 mission)",
+    subtitle: "Configure mission parameters (V9.8.0 mission)",
     info: {
-      title: "V9.7.0 Mission Changes",
-      message: "✓ Planar height is AUTO-CALCULATED (highest equipment/obstacle + 11m)\n✓ No need to manually set MSA\n✓ Mark boundary clockwise OR anti-clockwise\n✓ Mission planner automatically adds radius offset"
+      title: "V9.8.0 Mission Changes",
+      message: "✓ Planar height is AUTO-CALCULATED (highest equipment/obstacle + 11m)\n✓ No need to manually set MSA\n✓ Mark boundary clockwise OR anti-clockwise\n✓ Planar boundary now extends uniformly across all shapes\n✓ Orthomosaic marking has built-in validation — an error will be thrown if marked too low"
     },
     items: [
       { id: 'shutter_adjusted', label: 'Shutter speed adjusted for roof', sublabel: 'e.g., 1/2000 → 1/1500 for reflection', critical: true },
@@ -296,8 +296,8 @@ const ROOFTOP_CONFIGS = {
       { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
     ],
     warning: {
-      title: "IMPORTANT: V9.7.0 Updates",
-      message: "⚠ Planar height AUTO-CALCULATED\n⚠ Mark boundary in order (clockwise OR anti-clockwise)\n⚠ Antenna radius: NO manual offset needed\n⚠ Ortho component: Set ~30m above rooftop height\n⚠ Monitor camera settings during pano/ortho (may switch to auto)"
+      title: "IMPORTANT: V9.8.0 Updates",
+      message: "⚠ Planar height AUTO-CALCULATED\n⚠ Planar boundary extends uniformly (all shapes)\n⚠ Mark boundary in order (clockwise OR anti-clockwise)\n⚠ Antenna radius: NO manual offset needed\n⚠ Ortho component: Set ~30m above rooftop height — mark too low and the app will throw an error\n⚠ Monitor camera settings during pano/ortho (may switch to auto)"
     }
   },
   7: { // This is the new Panorama Setup for Rooftop
@@ -1225,7 +1225,7 @@ export default function StartCapture() {
                     <ChecklistItem
                       id="ortho_height_check"
                       label="Orthomosaic height verified (~30m above roof)"
-                      sublabel="Set ortho component approximately 30m above rooftop height"
+                      sublabel="Set ortho component ~30m above rooftop height — v9.8.0 will throw an error if marked too low"
                       checked={checkedItems['ortho_height_check']}
                       critical={true}
                       onToggle={() => toggleItem('ortho_height_check')}
