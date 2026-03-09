@@ -186,13 +186,23 @@ const TOWER_CONFIGS = {
   9: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
+    uploadGuideUrl: "https://learn.sitesee.io/hc/en-us/articles/360052096411-Uploading-Images",
+    info: {
+      title: "Image Quality Check (Before Uploading)",
+      message: "✓ All images are JPEG with correct aspect ratio (largest pixels)\n✓ Consistent exposure across entire set (ISO, aperture, shutter speed must not vary)\n✓ Randomly check sharpness at 100% zoom for each mission component\n✓ Tower centred in frame — not cut off at edges\n✓ Shadow side not too dark; bright side not overexposed\n✓ If GCPs used: verify they are clearly visible in multiple images\n\n⚠ Do NOT skip this step — complete it BEFORE uploading files"
+    },
+    warning: {
+      title: "Upload Rules",
+      message: "• Use the SiteSee Uploader (web app on PC) — capture apps cannot upload\n• Add ALL images from panorama/ortho together — mixing order causes incorrect categorisation\n• Do NOT close browser, sleep PC, or disconnect internet during upload"
+    },
     items: [
       { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Preferably same as takeoff point' },
       { id: 'gps_variance_check', label: 'GPS variance verified', sublabel: 'Use GPS Altitude Verifier to check stability', critical: true },
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All planned captures done' },
-      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
-      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
+      { id: 'image_quality_check', label: 'Image quality check completed', sublabel: 'Sharpness, exposure consistency & aspect ratio verified', critical: true },
+      { id: 'photo_quality', label: 'Spot-check exposure & alignment', sublabel: 'No overexposed highlights, tower centred in frame' },
+      { id: 'data_transfer', label: 'Data transferred via SiteSee Uploader', sublabel: 'All photos uploaded — do not interrupt upload', critical: true }
     ]
   }
 };
@@ -329,13 +339,23 @@ const ROOFTOP_CONFIGS = {
   9: { // This is the re-indexed Post-Flight QC for Rooftop
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
+    uploadGuideUrl: "https://learn.sitesee.io/hc/en-us/articles/360052096411-Uploading-Images",
+    info: {
+      title: "Image Quality Check (Before Uploading)",
+      message: "✓ All images are JPEG with correct aspect ratio (largest pixels)\n✓ Consistent exposure across entire set (ISO, aperture, shutter speed must not vary)\n✓ Randomly check sharpness at 100% zoom for each mission component\n✓ Equipment/antennas adequately in frame\n✓ Shadow side not too dark; bright side not overexposed\n✓ If GCPs used: verify they are clearly visible in multiple images\n\n⚠ Do NOT skip this step — complete it BEFORE uploading files"
+    },
+    warning: {
+      title: "Upload Rules",
+      message: "• Use the SiteSee Uploader (web app on PC) — capture apps cannot upload\n• Add ALL images from panorama/ortho together — mixing order causes incorrect categorisation\n• Do NOT close browser, sleep PC, or disconnect internet during upload"
+    },
     items: [
       { id: 'land_safe', label: 'Landed at safe location', sublabel: 'Same as takeoff point' },
       { id: 'gps_variance_check', label: 'GPS variance verified', sublabel: 'Use GPS Altitude Verifier to check stability', critical: true },
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
-      { id: 'photo_quality', label: 'Photo quality pre-checked', sublabel: 'Spot check exposure and alignment' },
-      { id: 'data_transfer', label: 'Data transfer to back office', sublabel: 'All photos uploaded/transferred' }
+      { id: 'image_quality_check', label: 'Image quality check completed', sublabel: 'Sharpness, exposure consistency & aspect ratio verified', critical: true },
+      { id: 'photo_quality', label: 'Spot-check exposure & alignment', sublabel: 'No overexposed highlights, equipment adequately in frame' },
+      { id: 'data_transfer', label: 'Data transferred via SiteSee Uploader', sublabel: 'All photos uploaded — do not interrupt upload', critical: true }
     ]
   }
 };
