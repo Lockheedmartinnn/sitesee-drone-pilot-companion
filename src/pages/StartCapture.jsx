@@ -1385,17 +1385,34 @@ export default function StartCapture() {
             
             {/* Final Step Checklist */}
             {currentStep === totalSteps && !finalDecision && (
-              <div className="space-y-3">
-                {config.items.map(item => (
-                  <ChecklistItem
-                    key={item.id}
-                    label={item.label}
-                    sublabel={item.sublabel}
-                    checked={checkedItems[item.id]}
-                    critical={item.critical}
-                    onToggle={() => toggleItem(item.id)}
-                  />
-                ))}
+              <div className="space-y-4">
+                {config.info && (
+                  <InfoCard variant="info" title={config.info.title}>
+                    <p className="whitespace-pre-line text-sm">{config.info.message}</p>
+                    {config.uploadGuideUrl && (
+                      <a href={config.uploadGuideUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-xs text-blue-400 underline hover:text-blue-300">
+                        View full upload guide →
+                      </a>
+                    )}
+                  </InfoCard>
+                )}
+                {config.warning && (
+                  <InfoCard variant="warning" title={config.warning.title}>
+                    <p className="whitespace-pre-line text-sm">{config.warning.message}</p>
+                  </InfoCard>
+                )}
+                <div className="space-y-3">
+                  {config.items.map(item => (
+                    <ChecklistItem
+                      key={item.id}
+                      label={item.label}
+                      sublabel={item.sublabel}
+                      checked={checkedItems[item.id]}
+                      critical={item.critical}
+                      onToggle={() => toggleItem(item.id)}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>
