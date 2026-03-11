@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Clock, Check } from 'lucide-react';
+import { X, Clock, Check, CloudRain, Wind, AlertTriangle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
