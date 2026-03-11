@@ -24,29 +24,44 @@ export default function MissionChip({ mission, compact, onDelete, onUpdate, isDr
     setOpen(false);
   };
 
+  const warn = weatherWarning?.hasWarning;
+
   return (
     <>
       <div
         onClick={() => setOpen(true)}
-        className={`rounded border cursor-pointer select-none group flex items-center gap-1 transition-all
-          ${DIFF_STYLES[mission.diff] || DIFF_STYLES.green}
+        className={`rounded border cursor-pointer select-none group flex flex-col gap-0.5 transition-all
+          ${warn
+            ? 'bg-red-900/70 border-red-500/60 text-red-100 ring-1 ring-red-500/50'
+            : DIFF_STYLES[mission.diff] || DIFF_STYLES.green}
           ${compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1.5 text-xs'}
           ${isDragging ? 'shadow-xl ring-2 ring-blue-400 opacity-90 rotate-1' : 'hover:brightness-110'}
-          ${mission.ai_generated ? 'ring-1 ring-purple-400/40' : ''}`}
+          ${!warn && mission.ai_generated ? 'ring-1 ring-purple-400/40' : ''}`}
       >
-        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${STATUS_DOT[mission.status] || 'bg-slate-400'}`} />
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate leading-tight">{mission.site_name}</div>
-          {!compact && (
-            <div className="flex items-center gap-1 opacity-70 mt-0.5">
-              <Clock className="w-2.5 h-2.5" /><span>{mission.scheduled_time || '07:00'}</span>
-              {mission.suburb && <span className="truncate">· {mission.suburb}</span>}
-            </div>
-          )}
+        <div className="flex items-center gap-1">
+          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${warn ? 'bg-red-400' : STATUS_DOT[mission.status] || 'bg-slate-400'}`} />
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold truncate leading-tight">{mission.site_name}</div>
+            {!compact && (
+              <div className="flex items-center gap-1 opacity-70 mt-0.5">
+                <Clock className="w-2.5 h-2.5" /><span>{mission.scheduled_time || '07:00'}</span>
+                {mission.suburb && <span className="truncate">· {mission.suburb}</span>}
+              </div>
+            )}
+          </div>
+          {warn && <AlertTriangle className={`flex-shrink-0 text-red-300 ${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'}`} />}
+          <button onClick={e => { e.stopPropagation(); onDelete(mission.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <X className="w-3 h-3" />
+          </button>
         </div>
-        <button onClick={e => { e.stopPropagation(); onDelete(mission.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-          <X className="w-3 h-3" />
-        </button>
+        {warn && !compact && (
+          <div className="flex items-center gap-1 bg-red-950/50 rounded px-1.5 py-0.5 mt-0.5">
+            <AlertTriangle className="w-2.5 h-2.5 text-red-400 flex-shrink-0" />
+            <span className="text-[10px] font-bold text-red-300 truncate">
+              Weather Warning · {weatherWarning.reasons.join(', ')}
+            </span>
+          </div>
+        )}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
