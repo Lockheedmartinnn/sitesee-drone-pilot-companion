@@ -16,7 +16,8 @@ import {
   LogOut,
   ChevronRight,
   MessageSquare,
-  BarChart3
+  BarChart3,
+  Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
