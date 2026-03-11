@@ -41,6 +41,14 @@ export default function AIScheduleModal({ open, onClose, onSchedule }) {
   const [search, setSearch] = useState('');
   const [diffFilter, setDiffFilter] = useState('all');
 
+  // AI Pick mode
+  const [pickMode, setPickMode] = useState(false);
+  const [pickCount, setPickCount] = useState(10);
+  const [pickArea, setPickArea] = useState('');
+  const [pickAreaCustom, setPickAreaCustom] = useState('');
+  const [pickRisk, setPickRisk] = useState('all');
+  const [pickLoading, setPickLoading] = useState(false);
+
   const filteredSites = useMemo(() => SITES.filter(s => {
     const matchDiff = diffFilter === 'all' || s.diff === diffFilter;
     const q = search.toLowerCase();
