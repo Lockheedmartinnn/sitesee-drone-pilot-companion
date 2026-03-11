@@ -4,7 +4,21 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { SITES } from '@/components/siteintel/siteData';
 import { format, parseISO } from 'date-fns';
-import { Sparkles, Check, Search, X } from 'lucide-react';
+import { Sparkles, Check, Search, X, Wand2, ChevronDown } from 'lucide-react';
+
+// Build unique city/area options from site data
+const AREA_OPTIONS = [
+  'All Areas',
+  ...Array.from(new Set(SITES.map(s => s.state))).sort().map(state => ({
+    label: `All ${state}`, value: `state:${state}`
+  })),
+  ...Array.from(new Set(SITES.map(s => {
+    if (s.suburb.includes('CBD') || s.name.includes('CBD')) return `${s.state} CBD`;
+    if (['Sydney CBD','Melbourne CBD','Brisbane CBD','Perth CBD'].includes(s.suburb)) return s.suburb;
+    return null;
+  }).filter(Boolean))).sort().map(area => ({ label: area, value: `area:${area}` })),
+  ...Array.from(new Set(SITES.map(s => s.suburb))).sort().map(suburb => ({ label: suburb, value: `suburb:${suburb}` })),
+].filter(Boolean);
 
 const DIFF_BG = {
   green: 'bg-emerald-700/20 border-emerald-500/30 text-emerald-200',
