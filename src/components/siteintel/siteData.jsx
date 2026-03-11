@@ -7,7 +7,7 @@ export const C = {
 
 export const SITES = [
   // === SYDNEY CBD / INNER ===
-  { id:"AN2000-033", name:"Chinatown", suburb:"Sydney CBD", state:"NSW", lat:-33.8775, lng:151.2062, diff:"orange", jobs:["CREATED"], factors:{gps:"HIGH URBAN CANYON",airspace:"CLASS C",obstacles:"VERY HIGH-RISE",wind:"CHANNELING",restricted:"YES - DRONE ZONE"} },
+  { id:"XX0001-001", name:"Alpha Tower Site", suburb:"Sydney CBD", state:"NSW", lat:-33.8775, lng:151.2062, diff:"orange", jobs:["CREATED"], factors:{gps:"HIGH URBAN CANYON",airspace:"CLASS C",obstacles:"VERY HIGH-RISE",wind:"CHANNELING",restricted:"YES - DRONE ZONE"} },
   { id:"AN2000-034", name:"Chinatown 2", suburb:"Sydney CBD", state:"NSW", lat:-33.8780, lng:151.2058, diff:"orange", jobs:["COMPLETE"], factors:{gps:"HIGH URBAN CANYON",airspace:"CLASS C",obstacles:"VERY HIGH-RISE",wind:"CHANNELING",restricted:"YES - DRONE ZONE"} },
   { id:"AN2000-036", name:"East Sydney", suburb:"East Sydney", state:"NSW", lat:-33.8756, lng:151.2189, diff:"orange", jobs:["COMPLETE"], factors:{gps:"URBAN CANYON",airspace:"CLASS C",obstacles:"HIGH-RISE",wind:"MODERATE",restricted:"YES"} },
   { id:"AN2000-037", name:"Haymarket", suburb:"Haymarket", state:"NSW", lat:-33.8814, lng:151.2040, diff:"orange", jobs:["CREATED"], factors:{gps:"HIGH INTERFERENCE",airspace:"CLASS C",obstacles:"HIGH-RISE",wind:"CHANNELING",restricted:"YES"} },
