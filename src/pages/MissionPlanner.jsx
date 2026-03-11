@@ -162,13 +162,13 @@ export default function MissionPlanner() {
           {/* Calendar View */}
           <div className="flex-1 overflow-hidden">
             {view === 'month' && (
-              <MonthView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} />
+              <MonthView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} weatherWarnings={weatherWarnings} />
             )}
             {view === 'week' && (
-              <WeekView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} />
+              <WeekView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} weatherWarnings={weatherWarnings} />
             )}
             {view === 'day' && (
-              <DayView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} />
+              <DayView currentDate={currentDate} missions={missions} onDeleteMission={handleDeleteMission} onUpdateMission={handleUpdateMission} weatherWarnings={weatherWarnings} />
             )}
           </div>
         </DragDropContext>
