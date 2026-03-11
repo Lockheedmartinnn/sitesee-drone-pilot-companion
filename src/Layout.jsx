@@ -17,7 +17,8 @@ import {
   ChevronRight,
   MessageSquare,
   BarChart3,
-  Map
+  Map,
+  CalendarDays
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
