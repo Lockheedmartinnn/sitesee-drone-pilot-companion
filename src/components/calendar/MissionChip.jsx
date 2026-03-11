@@ -13,7 +13,7 @@ const STATUS_DOT = {
   completed: 'bg-green-400', cancelled: 'bg-red-400',
 };
 
-export default function MissionChip({ mission, compact, onDelete, onUpdate, isDragging }) {
+export default function MissionChip({ mission, compact, onDelete, onUpdate, isDragging, weatherWarning }) {
   const [open, setOpen] = useState(false);
   const [time, setTime] = useState(mission.scheduled_time || '07:00');
   const [notes, setNotes] = useState(mission.notes || '');
