@@ -11,6 +11,7 @@ import MonthView from '@/components/calendar/MonthView';
 import WeekView from '@/components/calendar/WeekView';
 import DayView from '@/components/calendar/DayView';
 import AIScheduleModal from '@/components/calendar/AIScheduleModal';
+import { useWeatherWarnings } from '@/components/calendar/useWeatherWarnings';
 
 const VIEW_LABELS = { month: 'Month', week: 'Week', day: 'Day' };
 
