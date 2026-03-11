@@ -64,6 +64,52 @@ export default function AIScheduleModal({ open, onClose, onSchedule }) {
     setSelectedIds(p => allOn ? p.filter(id => !ids.includes(id)) : [...new Set([...p, ...ids])]);
   };
 
+  const aiPickSites = async () => {
+    setPickLoading(true);
+    const areaDesc = pickAreaCustom.trim() || pickArea || 'any area';
+    const riskDesc = pickRisk === 'all' ? 'any risk level' : `${pickRisk.toUpperCase()} risk only`;
+    const allSitesList = SITES
+      .filter(s => pickRisk === 'all' || s.diff === pickRisk)
+      .map(s => `${s.id}|${s.name}|${s.suburb}|${s.state}|${s.diff}|GPS:${s.factors.gps}`)
+      .join('\n');
+
+    const prompt = `You are an expert drone mission planner. From the list below, pick the BEST ${pickCount} sites to fly.
+
+CRITERIA:
+- Focus area: "${areaDesc}" — prioritise sites in or near this city/area/suburb/state
+- Risk preference: ${riskDesc}
+- Prefer sites that are geographically close together to minimise travel
+- If area is "any area", pick a logical geographically tight cluster
+- Prefer sites with variety (mix of different suburbs if possible)
+
+ALL AVAILABLE SITES:
+${allSitesList}
+
+Return ONLY valid JSON with exactly ${pickCount} site IDs (or fewer if not enough match):
+{ "selected_ids": ["AN2000-033", "AQ4000-001", ...], "reasoning": "1 sentence why you picked these" }`;
+
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            selected_ids: { type: 'array', items: { type: 'string' } },
+            reasoning: { type: 'string' }
+          }
+        }
+      });
+      if (result?.selected_ids?.length) {
+        setSelectedIds(result.selected_ids);
+        setPickMode(false);
+      }
+    } catch(e) {
+      console.error(e);
+    } finally {
+      setPickLoading(false);
+    }
+  };
+
   const generate = async () => {
     setLoading(true);
     setStep(3);
