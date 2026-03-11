@@ -98,6 +98,8 @@ export default function MissionPlanner() {
   const handleUpdateMission = useCallback((id, data) => updateMutation.mutate({ id, data }), [updateMutation]);
   const handleAISchedule = useCallback(items => bulkCreateMutation.mutate(items), [bulkCreateMutation]);
 
+  const weatherWarnings = useWeatherWarnings(missions);
+
   const statsPlanned = missions.filter(m => m.status === 'planned').length;
   const statsConfirmed = missions.filter(m => m.status === 'confirmed').length;
   const statsAI = missions.filter(m => m.ai_generated).length;
