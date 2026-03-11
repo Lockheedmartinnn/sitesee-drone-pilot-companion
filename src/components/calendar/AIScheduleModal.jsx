@@ -290,22 +290,52 @@ Return ONLY valid JSON:
                           className="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white"
                         >
                           <option value="">Select area...</option>
-                          <optgroup label="By State">
-                            {['NSW','QLD','VIC','WA','ACT','TAS','NT'].map(s => (
-                              <option key={s} value={`${s} state`}>All {s}</option>
-                            ))}
+                          <optgroup label="All NSW">
+                            <option value="All NSW">All NSW</option>
                           </optgroup>
-                          <optgroup label="By City">
-                            {['Sydney CBD','Brisbane CBD','Melbourne CBD','Perth CBD','Canberra','Hobart','Darwin','Gold Coast','Newcastle','Wollongong','Sunshine Coast'].map(c => (
-                              <option key={c} value={c}>{c}</option>
-                            ))}
+                          <optgroup label="Sydney — by Region">
+                            <option value="Sydney CBD and immediate surrounds">Sydney CBD &amp; Surrounds</option>
+                            <option value="Sydney Inner West (Newtown, Glebe, Annandale, Pyrmont, Ultimo, Chippendale)">Sydney Inner West</option>
+                            <option value="Sydney Eastern Suburbs (Bondi, Coogee, Randwick, Maroubra, Bronte, Double Bay, Clovelly)">Sydney Eastern Suburbs</option>
+                            <option value="Sydney North Shore (Chatswood, Mosman, Cremorne, Manly, Dee Why, Balgowlah, Lindfield)">Sydney North Shore</option>
+                            <option value="Sydney Inner South (Mascot, Zetland, Arncliffe, Marrickville, Newtown)">Sydney Inner South</option>
+                            <option value="Sydney South (Cronulla, Sans Souci, Sylvania, Caringbah, Brighton-Le-Sands)">Sydney South / Sutherland</option>
+                            <option value="Sydney West (Parramatta, Blacktown, Westmead, Norwest, Homebush)">Sydney West</option>
+                            <option value="Sydney South West (Fairfield, Cabramatta, Oran Park, East Hills)">Sydney South West</option>
+                            <option value="Northern Beaches Sydney (Manly, Dee Why, Newport, Mona Vale, Avalon, Cromer)">Northern Beaches</option>
+                          </optgroup>
+                          <optgroup label="Regional NSW">
+                            <option value="Newcastle NSW">Newcastle</option>
+                            <option value="Wollongong NSW">Wollongong</option>
+                            <option value="Central Coast NSW">Central Coast</option>
+                          </optgroup>
+                          <optgroup label="Queensland">
+                            <option value="All QLD">All QLD</option>
+                            <option value="Brisbane CBD and inner Brisbane">Brisbane CBD &amp; Inner</option>
+                            <option value="Brisbane North (Chermside, Bowen Hills, Wavell Heights, Brighton)">Brisbane North</option>
+                            <option value="Brisbane South (Greenslopes, Woolloongabba, Fairfield, Coorparoo)">Brisbane South</option>
+                            <option value="Gold Coast QLD (Surfers Paradise, Southport, Coolangatta, Robina)">Gold Coast</option>
+                            <option value="Sunshine Coast QLD">Sunshine Coast</option>
+                          </optgroup>
+                          <optgroup label="Victoria">
+                            <option value="All VIC">All VIC</option>
+                            <option value="Melbourne CBD and Docklands">Melbourne CBD</option>
+                            <option value="Melbourne Inner (Richmond, South Yarra, St Kilda, Fitzroy, Brunswick)">Melbourne Inner</option>
+                            <option value="Melbourne South (Brighton, Sandringham, Elwood, McKinnon)">Melbourne South</option>
+                            <option value="Melbourne North West (Essendon, Glenroy, Tullamarine)">Melbourne North West</option>
+                          </optgroup>
+                          <optgroup label="Other Cities">
+                            <option value="Perth WA">Perth WA</option>
+                            <option value="Canberra ACT">Canberra ACT</option>
+                            <option value="Hobart TAS">Hobart TAS</option>
+                            <option value="Darwin NT">Darwin NT</option>
                           </optgroup>
                         </select>
                         <span className="text-slate-600 flex items-center text-xs">or</span>
                         <input
                           value={pickAreaCustom}
                           onChange={e => { setPickAreaCustom(e.target.value); setPickArea(''); }}
-                          placeholder="Type suburb or city..."
+                          placeholder="Type suburb..."
                           className="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white placeholder-slate-600 outline-none focus:border-purple-500"
                         />
                       </div>
