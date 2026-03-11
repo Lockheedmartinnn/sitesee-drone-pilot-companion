@@ -78,6 +78,7 @@ import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import UserManagement from './pages/UserManagement';
 import WeatherAnalysis from './pages/WeatherAnalysis';
+import SiteIntelMap from './pages/SiteIntelMap';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "TrainingVideos": TrainingVideos,
     "UserManagement": UserManagement,
     "WeatherAnalysis": WeatherAnalysis,
+    "SiteIntelMap": SiteIntelMap,
 }
 
 export const pagesConfig = {
