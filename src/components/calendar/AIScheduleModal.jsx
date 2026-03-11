@@ -117,16 +117,27 @@ Return ONLY valid JSON with exactly ${pickCount} site IDs (or fewer if not enoug
       `- ${s.id} | "${s.name}" | ${s.suburb}, ${s.state} | Risk: ${s.diff.toUpperCase()}`
     ).join('\n');
 
-    const prompt = `You are an expert drone mission planner. Generate an optimal flight schedule.
+    const prompt = `You are an expert drone mission planner. Generate a REALISTIC and SAFE flight schedule.
 
-RULES:
-- HIGH RISK (orange) → 07:00 start (avoid 10am–3pm)
-- MEDIUM RISK (yellow) → 07:30 start
-- LOW RISK (green) → 08:00 start
-- Group nearby suburbs on same day to minimise travel
-- Max ${maxPerDay} missions/day over ${numDays} days starting ${startDate}
-- Prioritise HIGH RISK sites earlier in the week
-${skipWeekends ? '- Skip Saturday and Sunday' : ''}
+STRICT DAILY RULES:
+- MAXIMUM 1 HIGH RISK (orange) site per day — orange sites are complex (urban canyons, restricted airspace, GPS multipath) and require full pilot focus, lengthy prep, and extended capture time. Do NOT schedule 2 orange sites on the same day, no exceptions.
+- HIGH RISK (orange) → 07:00 start. Allow minimum 3 hours before scheduling anything else that day (travel + capture + debrief).
+- MEDIUM RISK (yellow) → 07:30 start. Allow minimum 2 hours per site.
+- LOW RISK (green) → 08:00 start. Allow minimum 1.5 hours per site.
+- Account for 30–45 min travel time between consecutive sites on the same day.
+- Cap at ${maxPerDay} missions/day but REDUCE this if orange is in the mix (orange = max 1 for that entire day).
+- Schedule over ${numDays} days starting ${startDate}.
+- Group only geographically CLOSE suburbs on the same day (within ~5–10km). Never mix suburbs from different cities or distant areas on the same day.
+- Prioritise HIGH RISK sites earlier in the week when pilots are fresh.
+- Stagger start times realistically: if site 1 starts 07:00 and takes ~2.5hrs, site 2 cannot start until 09:30+.
+${skipWeekends ? '- Skip Saturday and Sunday.' : ''}
+
+EXAMPLE GOOD DAY (orange day):
+  07:00 — Chinatown (orange, ~2.5hr capture + debrief) → pilot done by 10:30, no more missions
+
+EXAMPLE GOOD DAY (green/yellow day):
+  07:30 — Pyrmont (yellow, ~2hr) → 09:30 done
+  10:15 — Glebe (yellow, nearby, ~2hr) → depart 09:30, 45min travel = 10:15 start ✓
 
 SITES (${selectedSites.length}):
 ${siteList}
@@ -135,8 +146,8 @@ ${instructions ? `SPECIAL INSTRUCTIONS: ${instructions}` : ''}
 
 Return ONLY valid JSON:
 {
-  "schedule": [{"site_id":"X","site_name":"X","suburb":"X","state":"X","diff":"orange","scheduled_date":"YYYY-MM-DD","scheduled_time":"07:00","reasoning":"short note"}],
-  "summary": "2-3 sentence overview"
+  "schedule": [{"site_id":"X","site_name":"X","suburb":"X","state":"X","diff":"orange","scheduled_date":"YYYY-MM-DD","scheduled_time":"07:00","reasoning":"short note on timing logic"}],
+  "summary": "2-3 sentence overview explaining the schedule logic"
 }`;
 
     try {
