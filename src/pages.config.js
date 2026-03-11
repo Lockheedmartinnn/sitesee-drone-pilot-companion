@@ -71,6 +71,7 @@ import RooftopModule4 from './pages/RooftopModule4';
 import RooftopModule5 from './pages/RooftopModule5';
 import RooftopTrainingModules from './pages/RooftopTrainingModules';
 import Scenarios from './pages/Scenarios';
+import SiteIntelMap from './pages/SiteIntelMap';
 import StandardCaptureChecklist from './pages/StandardCaptureChecklist';
 import StartCapture from './pages/StartCapture';
 import ToolsLinks from './pages/ToolsLinks';
@@ -78,7 +79,7 @@ import TrainingHub from './pages/TrainingHub';
 import TrainingVideos from './pages/TrainingVideos';
 import UserManagement from './pages/UserManagement';
 import WeatherAnalysis from './pages/WeatherAnalysis';
-import SiteIntelMap from './pages/SiteIntelMap';
+import MissionPlanner from './pages/MissionPlanner';
 import __Layout from './Layout.jsx';
 
 
@@ -107,6 +108,7 @@ export const PAGES = {
     "RooftopModule5": RooftopModule5,
     "RooftopTrainingModules": RooftopTrainingModules,
     "Scenarios": Scenarios,
+    "SiteIntelMap": SiteIntelMap,
     "StandardCaptureChecklist": StandardCaptureChecklist,
     "StartCapture": StartCapture,
     "ToolsLinks": ToolsLinks,
@@ -114,7 +116,7 @@ export const PAGES = {
     "TrainingVideos": TrainingVideos,
     "UserManagement": UserManagement,
     "WeatherAnalysis": WeatherAnalysis,
-    "SiteIntelMap": SiteIntelMap,
+    "MissionPlanner": MissionPlanner,
 }
 
 export const pagesConfig = {
