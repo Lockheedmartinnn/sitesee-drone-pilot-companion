@@ -233,6 +233,93 @@ Return ONLY valid JSON:
           {/* STEP 1 */}
           {step === 1 && (
             <div>
+              {/* AI Pick Panel */}
+              <div className="mb-4 rounded-xl border border-purple-500/30 bg-purple-500/5 overflow-hidden">
+                <button
+                  onClick={() => setPickMode(!pickMode)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-purple-500/10 transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center flex-shrink-0">
+                    <Wand2 className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-purple-200">AI Pick for Me</div>
+                    <div className="text-xs text-purple-400/80">Tell AI how many sites and where — it picks the best ones</div>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-purple-400 transition-transform ${pickMode ? 'rotate-180' : ''}`} />
+                </button>
+
+                {pickMode && (
+                  <div className="px-4 pb-4 pt-1 border-t border-purple-500/20 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-slate-400 mb-1.5 block font-medium">How many sites?</label>
+                        <select value={pickCount} onChange={e => setPickCount(Number(e.target.value))} className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white">
+                          {[3,5,7,10,12,15,20].map(n => <option key={n} value={n}>{n} sites</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs text-slate-400 mb-1.5 block font-medium">Risk preference</label>
+                        <select value={pickRisk} onChange={e => setPickRisk(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white">
+                          <option value="all">Any risk</option>
+                          <option value="green">🟢 Low only</option>
+                          <option value="yellow">🟡 Medium only</option>
+                          <option value="orange">🟠 High only</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-400 mb-1.5 block font-medium">City / Area of focus</label>
+                      <div className="flex gap-2">
+                        <select
+                          value={pickArea}
+                          onChange={e => { setPickArea(e.target.value); setPickAreaCustom(''); }}
+                          className="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white"
+                        >
+                          <option value="">Select area...</option>
+                          <optgroup label="By State">
+                            {['NSW','QLD','VIC','WA','ACT','TAS','NT'].map(s => (
+                              <option key={s} value={`${s} state`}>All {s}</option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="By City">
+                            {['Sydney CBD','Brisbane CBD','Melbourne CBD','Perth CBD','Canberra','Hobart','Darwin','Gold Coast','Newcastle','Wollongong','Sunshine Coast'].map(c => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
+                          </optgroup>
+                        </select>
+                        <span className="text-slate-600 flex items-center text-xs">or</span>
+                        <input
+                          value={pickAreaCustom}
+                          onChange={e => { setPickAreaCustom(e.target.value); setPickArea(''); }}
+                          placeholder="Type suburb or city..."
+                          className="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-white placeholder-slate-600 outline-none focus:border-purple-500"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      onClick={aiPickSites}
+                      disabled={pickLoading || (!pickArea && !pickAreaCustom.trim())}
+                      className="w-full gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
+                    >
+                      {pickLoading ? (
+                        <><div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />Picking best sites...</>
+                      ) : (
+                        <><Wand2 className="w-3.5 h-3.5" />Pick {pickCount} best sites for me</>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {selectedIds.length > 0 && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-3 text-xs text-blue-300">
+                  <Check className="w-3.5 h-3.5" />
+                  <span className="font-semibold">{selectedIds.length} sites selected</span>
+                  <button onClick={() => setSelectedIds([])} className="ml-auto text-slate-500 hover:text-red-400 transition-colors">Clear</button>
+                </div>
+              )}
+
               <div className="flex gap-2 mb-3">
                 <div className="relative flex-1">
                   <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
@@ -245,12 +332,12 @@ Return ONLY valid JSON:
                 </div>
               </div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-slate-400">{selectedIds.length} selected</span>
+                <span className="text-xs text-slate-500">Or select manually below</span>
                 <button onClick={toggleVisible} className="text-xs text-blue-400 hover:text-blue-300">
                   {filteredSites.every(s => selectedIds.includes(s.id)) ? 'Deselect visible' : 'Select all visible'}
                 </button>
               </div>
-              <div className="space-y-1 max-h-96 overflow-y-auto pr-1">
+              <div className="space-y-1 max-h-72 overflow-y-auto pr-1">
                 {filteredSites.map(site => {
                   const on = selectedIds.includes(site.id);
                   return (
