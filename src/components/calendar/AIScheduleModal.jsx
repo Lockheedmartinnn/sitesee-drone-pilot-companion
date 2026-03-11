@@ -197,6 +197,8 @@ Return ONLY valid JSON:
     setStep(1); setSelectedIds([]); setSchedule(null);
     setRemoved(new Set()); setLoading(false); setSearch('');
     setDiffFilter('all'); setInstructions('');
+    setPickMode(false); setPickArea(''); setPickAreaCustom('');
+    setPickRisk('all'); setPickCount(10);
     onClose();
   };
 
