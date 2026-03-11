@@ -5,7 +5,7 @@ import MissionChip from './MissionChip';
 
 const DAY_HEADERS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-export default function MonthView({ currentDate, missions, onDeleteMission, onUpdateMission }) {
+export default function MonthView({ currentDate, missions, onDeleteMission, onUpdateMission, weatherWarnings = {} }) {
   const days = eachDayOfInterval({
     start: startOfWeek(startOfMonth(currentDate)),
     end: endOfWeek(endOfMonth(currentDate)),
@@ -44,7 +44,7 @@ export default function MonthView({ currentDate, missions, onDeleteMission, onUp
                       <Draggable key={mission.id} draggableId={`mission-${mission.id}`} index={index}>
                         {(prov, snap) => (
                           <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                            <MissionChip mission={mission} compact onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} />
+                            <MissionChip mission={mission} compact onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} weatherWarning={weatherWarnings[mission.id]} />
                           </div>
                         )}
                       </Draggable>

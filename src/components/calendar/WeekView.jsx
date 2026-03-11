@@ -3,7 +3,7 @@ import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isToday } from 'date-fns';
 import MissionChip from './MissionChip';
 
-export default function WeekView({ currentDate, missions, onDeleteMission, onUpdateMission }) {
+export default function WeekView({ currentDate, missions, onDeleteMission, onUpdateMission, weatherWarnings = {} }) {
   const days = eachDayOfInterval({ start: startOfWeek(currentDate), end: endOfWeek(currentDate) });
 
   return (
@@ -34,7 +34,7 @@ export default function WeekView({ currentDate, missions, onDeleteMission, onUpd
                       <Draggable key={mission.id} draggableId={`mission-${mission.id}`} index={index}>
                         {(prov, snap) => (
                           <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                            <MissionChip mission={mission} onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} />
+                            <MissionChip mission={mission} onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} weatherWarning={weatherWarnings[mission.id]} />
                           </div>
                         )}
                       </Draggable>

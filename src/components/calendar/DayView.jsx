@@ -3,7 +3,7 @@ import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { format, isToday } from 'date-fns';
 import MissionChip from './MissionChip';
 
-export default function DayView({ currentDate, missions, onDeleteMission, onUpdateMission }) {
+export default function DayView({ currentDate, missions, onDeleteMission, onUpdateMission, weatherWarnings = {} }) {
   const dateStr = format(currentDate, 'yyyy-MM-dd');
   const dayMissions = missions
     .filter(m => m.scheduled_date === dateStr)
@@ -34,7 +34,7 @@ export default function DayView({ currentDate, missions, onDeleteMission, onUpda
               <Draggable key={mission.id} draggableId={`mission-${mission.id}`} index={index}>
                 {(prov, snap) => (
                   <div ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                    <MissionChip mission={mission} onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} />
+                    <MissionChip mission={mission} onDelete={onDeleteMission} onUpdate={onUpdateMission} isDragging={snap.isDragging} weatherWarning={weatherWarnings[mission.id]} />
                   </div>
                 )}
               </Draggable>
