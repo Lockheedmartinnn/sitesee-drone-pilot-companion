@@ -62,6 +62,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Resources', href: createPageUrl('ToolsLinks'), icon: BookOpen },
     { name: 'Site Intel Map', href: createPageUrl('SiteIntelMap'), icon: Map },
     { name: 'Mission Planner', href: createPageUrl('MissionPlanner'), icon: CalendarDays },
+    { name: 'Site Dashboard', href: createPageUrl('SiteDashboard'), icon: BarChart3 },
   ];
 
   const bottomNavigation = [
