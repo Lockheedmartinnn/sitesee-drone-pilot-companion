@@ -60,7 +60,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Field Operations', href: createPageUrl('FieldOperationsHub'), icon: Rocket },
     { name: 'Academy', href: createPageUrl('TrainingHub'), icon: GraduationCap },
     { name: 'Resources', href: createPageUrl('ToolsLinks'), icon: BookOpen },
-    { name: 'Site Intel Map', href: createPageUrl('SiteIntelMap'), icon: Map },
     { name: 'Mission Planner', href: createPageUrl('MissionPlanner'), icon: CalendarDays },
     { name: 'Site Dashboard', href: createPageUrl('SiteDashboard'), icon: BarChart3 },
   ];
