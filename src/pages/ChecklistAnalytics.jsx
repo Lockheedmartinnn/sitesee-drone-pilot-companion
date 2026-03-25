@@ -1013,7 +1013,7 @@ export default function ChecklistAnalytics() {
                                 .filter(s => s.pilot_email === pilot.email && s.durationSec < 1500)
                                 .map(session => (
                                   <div key={session.session_id} className="text-sm text-slate-300">
-                                    {formatLocalDate(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
+                                    {formatBrisbaneDate(session.startTime, 'MMM d, HH:mm')} - {session.site_type} - {formatDuration(session.durationSec)}
                                   </div>
                                 ))}
                             </div>
@@ -1040,7 +1040,7 @@ export default function ChecklistAnalytics() {
                               )}>
                                 <div className="flex items-center justify-between flex-wrap gap-2">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-slate-300">{formatLocalDate(session.startTime, 'MMM d, HH:mm')}</span>
+                                    <span className="text-slate-300">{formatBrisbaneDate(session.startTime, 'MMM d, HH:mm')}</span>
                                     <span className="text-slate-600">•</span>
                                     <span className={cn(
                                       "px-2 py-0.5 rounded text-xs",
