@@ -321,10 +321,11 @@ export default function TrainingVideos() {
               {selectedVideo.videoUrl ? (
                 <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden">
                   <iframe
-                    src={selectedVideo.videoUrl}
+                    src={selectedVideo.videoUrl.replace('youtube.com/embed/', 'youtube-nocookie.com/embed/') + '?rel=0&modestbranding=1'}
                     className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
                   />
                 </div>
               ) : (
