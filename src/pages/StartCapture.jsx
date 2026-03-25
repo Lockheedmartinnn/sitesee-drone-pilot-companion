@@ -976,7 +976,7 @@ export default function StartCapture() {
             )}
             
             {/* Info Card for Steps with or without items */}
-            {config.info && currentStep !== 5 && currentStep !== 3 && currentStep !== 4 && currentStep !== 7 && !batterySwapMode && (
+            {config.info && currentStep !== 5 && currentStep !== 3 && currentStep !== 4 && currentStep !== 7 && currentStep !== totalSteps && !batterySwapMode && (
               <InfoCard variant="info" title={config.info.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.info.message}</p>
               </InfoCard>
