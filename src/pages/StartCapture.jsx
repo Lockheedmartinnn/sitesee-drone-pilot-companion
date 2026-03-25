@@ -201,7 +201,6 @@ const TOWER_CONFIGS = {
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All planned captures done' },
       { id: 'image_quality_check', label: 'Image quality check completed', sublabel: 'Sharpness, exposure consistency & aspect ratio verified', critical: true },
-      { id: 'photo_quality', label: 'Spot-check exposure & alignment', sublabel: 'No overexposed highlights, tower centred in frame' },
       { id: 'data_transfer', label: 'Data transferred via SiteSee Uploader', sublabel: 'All photos uploaded — do not interrupt upload', critical: true }
     ]
   }
@@ -354,7 +353,6 @@ const ROOFTOP_CONFIGS = {
       { id: 'drone_condition', label: 'Drone & battery condition checked', sublabel: 'No damage or issues' },
       { id: 'mission_complete', label: 'Mission completeness verified', sublabel: 'All components: Roof, Equipment, Pano, Ortho' },
       { id: 'image_quality_check', label: 'Image quality check completed', sublabel: 'Sharpness, exposure consistency & aspect ratio verified', critical: true },
-      { id: 'photo_quality', label: 'Spot-check exposure & alignment', sublabel: 'No overexposed highlights, equipment adequately in frame' },
       { id: 'data_transfer', label: 'Data transferred via SiteSee Uploader', sublabel: 'All photos uploaded — do not interrupt upload', critical: true }
     ]
   }
