@@ -48,6 +48,9 @@ const formatBrisbaneDate = (date, formatStr = 'MMM d, yyyy HH:mm') => {
   return formatInTimeZone(new Date(date), 'Australia/Brisbane', formatStr);
 };
 
+// Alias to avoid any stale reference errors
+const formatLocalDate = formatBrisbaneDate;
+
 export default function ChecklistAnalytics() {
   const [expandedSession, setExpandedSession] = useState(null);
   const [siteFilter, setSiteFilter] = useState('all');
