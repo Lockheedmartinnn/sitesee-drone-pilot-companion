@@ -621,6 +621,30 @@ Respond with a JSON object:
                 </div>
               )}
 
+              {/* Urban Battery Strategy — shown for high-interference urban environments */}
+              {(briefing.env.id === 'URBAN_CANYON' || briefing.env.id === 'HIGH_INTERFERENCE') && (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Urban Battery Strategy</span>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <span className="text-amber-400 font-bold flex-shrink-0">1.</span>
+                      <span><span className="text-white font-semibold">One battery = best chance of success.</span> Complete the full capture in a single battery wherever possible — GPS lock and position hold tend to degrade with each power cycle in urban environments.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <span className="text-amber-400 font-bold flex-shrink-0">2.</span>
+                      <span><span className="text-white font-semibold">Markup on battery 1, flight on battery 2.</span> If you must use two batteries, do all ground markup and planning on the first battery, land, swap, then fly immediately. This keeps your flight battery at full charge for the mission.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-slate-300">
+                      <span className="text-amber-400 font-bold flex-shrink-0">3.</span>
+                      <span><span className="text-white font-semibold">Large site? Split into two missions.</span> If the site is too large for a single battery, split it into two separate missions rather than mid-mission battery swaps. Run each half as a complete, independent mission — this preserves GPS consistency and data integrity within each capture.</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+
               {/* Key Rule */}
               <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
