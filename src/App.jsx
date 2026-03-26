@@ -10,6 +10,12 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import LocationBriefing from './pages/LocationBriefing';
+import EnvGuideModules from './pages/EnvGuideModules';
+import EnvGuide1 from './pages/EnvGuide1';
+import EnvGuide2 from './pages/EnvGuide2';
+import EnvGuide3 from './pages/EnvGuide3';
+import EnvGuide4 from './pages/EnvGuide4';
+import EnvGuide5 from './pages/EnvGuide5';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -62,6 +68,12 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/LocationBriefing" element={<LayoutWrapper currentPageName="LocationBriefing"><LocationBriefing /></LayoutWrapper>} />
+      <Route path="/EnvGuideModules" element={<LayoutWrapper currentPageName="EnvGuideModules"><EnvGuideModules /></LayoutWrapper>} />
+      <Route path="/EnvGuide1" element={<LayoutWrapper currentPageName="EnvGuide1"><EnvGuide1 /></LayoutWrapper>} />
+      <Route path="/EnvGuide2" element={<LayoutWrapper currentPageName="EnvGuide2"><EnvGuide2 /></LayoutWrapper>} />
+      <Route path="/EnvGuide3" element={<LayoutWrapper currentPageName="EnvGuide3"><EnvGuide3 /></LayoutWrapper>} />
+      <Route path="/EnvGuide4" element={<LayoutWrapper currentPageName="EnvGuide4"><EnvGuide4 /></LayoutWrapper>} />
+      <Route path="/EnvGuide5" element={<LayoutWrapper currentPageName="EnvGuide5"><EnvGuide5 /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

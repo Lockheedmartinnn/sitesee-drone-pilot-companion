@@ -93,6 +93,14 @@ export default function TrainingHub() {
       variant: 'primary'
     },
     {
+      icon: Map,
+      title: 'Site Environment Guide',
+      description: '5-part interactive guide to GPS environments — Low, Moderate, High Interference, Urban Canyon, Harbour & Airport',
+      onClick: () => navigate(createPageUrl('EnvGuideModules')),
+      variant: 'default',
+      badge: 'NEW'
+    },
+    {
       icon: PlayCircle,
       title: 'Other Academy Videos',
       description: 'Additional tutorials and guides',
