@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Rocket, Satellite, MessageSquare, BookOpen, Map } from 'lucide-react';
+import { Rocket, Satellite, MessageSquare, BookOpen, Map, Navigation } from 'lucide-react';
 import ActionCard from '@/components/ActionCard';
 import WeatherWidget from '@/components/WeatherWidget';
 
@@ -9,6 +9,14 @@ export default function FieldOperationsHub() {
   const navigate = useNavigate();
 
   const tiles = [
+    {
+      icon: Navigation,
+      title: 'Location Briefing',
+      description: 'GPS-based pre-flight environment assessment — time windows, GPS risk, wind',
+      onClick: () => navigate(createPageUrl('LocationBriefing')),
+      variant: 'primary',
+      badge: 'NEW'
+    },
     {
       icon: Rocket,
       title: 'Start a Capture',
