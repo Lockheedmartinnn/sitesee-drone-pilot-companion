@@ -430,8 +430,8 @@ const ROOFTOP_CONFIGS = {
 };
 
 export default function StartCapture() {
-  // Phase: 'briefing' → 'siteType' → checklist steps
-  const [phase, setPhase] = useState('briefing');
+  // Phase: 'siteType' → 'briefing' → checklist steps
+  const [phase, setPhase] = useState('siteType');
 
   // --- Briefing state ---
   const [briefingLocation, setBriefingLocation] = useState(null);
@@ -739,6 +739,9 @@ export default function StartCapture() {
           {/* Header */}
           <div className="text-center">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png" alt="SiteSee" className="h-8 mx-auto mb-4" />
+            <div className="inline-flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-full text-xs text-slate-400 mb-3">
+              {siteType === 'rooftop' ? '🏠 Rooftop Capture' : '📡 Tower Capture'}
+            </div>
             <h1 className="text-2xl font-bold mb-1">Location Briefing</h1>
             <p className="text-slate-400 text-sm">Pre-flight environment assessment</p>
           </div>
@@ -755,7 +758,7 @@ export default function StartCapture() {
               <AlertTriangle className="w-6 h-6 text-amber-400 mx-auto mb-2" />
               <p className="text-sm text-amber-300 font-medium">Location unavailable</p>
               <p className="text-xs text-amber-300/70 mb-3">Enable location in browser settings for a full briefing</p>
-              <Button onClick={() => setPhase('siteType')} className="bg-slate-700 hover:bg-slate-600 text-sm">
+              <Button onClick={() => setPhase('checklist')} className="bg-slate-700 hover:bg-slate-600 text-sm">
                 Skip Briefing & Continue
               </Button>
             </div>
@@ -781,7 +784,7 @@ export default function StartCapture() {
                 <Navigation className="w-4 h-4 mr-2" />
                 Generate Location Briefing
               </Button>
-              <button onClick={() => setPhase('siteType')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
+              <button onClick={() => setPhase('checklist')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
                 Skip and proceed to capture →
               </button>
             </div>
@@ -844,7 +847,7 @@ export default function StartCapture() {
               </div>
 
               {/* CTA */}
-              <Button onClick={() => setPhase('siteType')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
+              <Button onClick={() => setPhase('checklist')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
                 Briefing Acknowledged — Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -856,7 +859,7 @@ export default function StartCapture() {
   }
 
   // Site Type Selection
-  if (!siteType) {
+  if (phase === 'siteType') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white flex items-center justify-center p-5">
         <div className="max-w-lg w-full">
@@ -903,8 +906,8 @@ export default function StartCapture() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setSiteType('tower')}
-              className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
+              onClick={() => { setSiteType('tower'); setPhase('briefing'); }}
+               className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
             >
               <div className="flex items-start gap-4">
                 <Mountain className="w-8 h-8 text-blue-400 flex-shrink-0 mt-1" />
@@ -918,8 +921,8 @@ export default function StartCapture() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => setSiteType('rooftop')}
-              className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
+              onClick={() => { setSiteType('rooftop'); setPhase('briefing'); }}
+               className="w-full bg-slate-800 hover:bg-slate-700 border-2 border-slate-700 rounded-2xl p-6 text-left transition-colors"
             >
               <div className="flex items-start gap-4">
                 <Home className="w-8 h-8 text-amber-400 flex-shrink-0 mt-1" />
