@@ -27,7 +27,16 @@ import {
   CheckCircle2,
   XCircle,
   Home,
-  MapPin
+  MapPin,
+  Navigation,
+  Wind,
+  Clock,
+  Info,
+  Zap,
+  Waves,
+  Plane,
+  Building2,
+  TreePine
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProgressBar from '@/components/ProgressBar';
@@ -36,6 +45,68 @@ import Timer from '@/components/Timer';
 import InfoCard from '@/components/InfoCard';
 
 import { cn } from '@/lib/utils';
+
+// ─── Location Briefing helpers ───────────────────────────────────────────────
+
+const AIRPORT_ZONES = [
+  { name: 'Sydney Airport (Mascot)', lat: -33.9461, lon: 151.1772, radiusKm: 5.5 },
+  { name: 'Bankstown Airport', lat: -33.9244, lon: 150.9883, radiusKm: 5.5 },
+  { name: 'Camden Airport', lat: -34.0403, lon: 150.6872, radiusKm: 5.5 },
+  { name: 'Richmond RAAF', lat: -33.6006, lon: 150.7811, radiusKm: 5.5 },
+];
+const WATER_ZONES = [
+  { name: 'Sydney Harbour', lat: -33.8568, lon: 151.2153, radiusKm: 2.5 },
+  { name: 'Parramatta River', lat: -33.8150, lon: 151.0200, radiusKm: 1.5 },
+  { name: 'Botany Bay', lat: -33.9800, lon: 151.1900, radiusKm: 3.0 },
+  { name: 'Pittwater', lat: -33.6300, lon: 151.3100, radiusKm: 2.0 },
+  { name: 'Port Hacking', lat: -34.0700, lon: 151.1000, radiusKm: 2.0 },
+];
+const URBAN_CANYON_ZONES = [
+  { name: 'Sydney CBD', lat: -33.8688, lon: 151.2093, radiusKm: 1.2 },
+  { name: 'Parramatta CBD', lat: -33.8150, lon: 151.0050, radiusKm: 0.7 },
+  { name: 'North Sydney CBD', lat: -33.8401, lon: 151.2092, radiusKm: 0.6 },
+];
+const HIGH_INTERFERENCE_ZONES = [
+  { name: 'Westmead Hospital', lat: -33.8028, lon: 150.9872, radiusKm: 1.0 },
+  { name: 'Royal Prince Alfred Hospital', lat: -33.8889, lon: 151.1869, radiusKm: 0.8 },
+  { name: 'Central Station', lat: -33.8833, lon: 151.2063, radiusKm: 0.7 },
+  { name: 'Macquarie Park', lat: -33.7757, lon: 151.1211, radiusKm: 1.2 },
+  { name: 'UNSW Campus', lat: -33.9173, lon: 151.2313, radiusKm: 0.8 },
+  { name: 'University of Sydney', lat: -33.8882, lon: 151.1873, radiusKm: 0.8 },
+];
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function classifyEnvironment(lat, lon) {
+  for (const z of AIRPORT_ZONES) if (haversineKm(lat, lon, z.lat, z.lon) <= z.radiusKm) return { type: 'AIRPORT', zone: z.name };
+  for (const z of URBAN_CANYON_ZONES) if (haversineKm(lat, lon, z.lat, z.lon) <= z.radiusKm) return { type: 'URBAN_CANYON', zone: z.name };
+  for (const z of HIGH_INTERFERENCE_ZONES) if (haversineKm(lat, lon, z.lat, z.lon) <= z.radiusKm) return { type: 'HIGH_INTERFERENCE', zone: z.name };
+  for (const z of WATER_ZONES) if (haversineKm(lat, lon, z.lat, z.lon) <= z.radiusKm) return { type: 'HARBOUR', zone: z.name };
+  return null;
+}
+
+const ENV_CONFIG = {
+  AIRPORT:          { emoji: '✈️', label: 'Airport Proximity',           color: 'text-red-400',    bg: 'bg-red-500/10',     border: 'border-red-500/30',    keyRule: 'Confirm CASA authorisation FIRST. Do not assess weather or set up equipment until authorisation is confirmed.' },
+  URBAN_CANYON:     { emoji: '🔴', label: 'Urban Canyon — CBD High-Rise',color: 'text-red-400',    bg: 'bg-red-500/10',     border: 'border-red-500/30',    keyRule: 'Higher launch point = better GPS. Rooftop or elevated carpark strongly preferred over street level.' },
+  HIGH_INTERFERENCE:{ emoji: '🟠', label: 'High Interference Zone',      color: 'text-orange-400', bg: 'bg-orange-500/10',  border: 'border-orange-500/30', keyRule: 'If aircraft position drifts while stationary, wait 10 min. Return next morning before 08:00 if it does not settle.' },
+  HARBOUR:          { emoji: '🔵', label: 'Harbour / Water Multipath',   color: 'text-blue-400',   bg: 'bg-blue-500/10',    border: 'border-blue-500/30',   keyRule: 'Position launch so open water is BEHIND the antenna. Direction at launch matters more here than anywhere else.' },
+  MODERATE:         { emoji: '🟡', label: 'Moderate — Suburban/Light Commercial', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', keyRule: 'GPS works but can drift in the afternoon as satellite geometry degrades.' },
+  LOW:              { emoji: '🟢', label: 'Low — Open Environment',      color: 'text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30',keyRule: 'Most straightforward site type. Focus on wind and light conditions rather than GPS.' },
+};
+
+const STATUS_STYLE = {
+  optimal: 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300',
+  good:    'bg-blue-500/20 border-blue-500/30 text-blue-300',
+  marginal:'bg-yellow-500/20 border-yellow-500/30 text-yellow-300',
+  avoid:   'bg-red-500/20 border-red-500/30 text-red-300',
+  dark:    'bg-slate-600/20 border-slate-500/30 text-slate-300',
+};
 
 const TOWER_STEPS = [
   "Equipment & Pre-Flight",
@@ -359,6 +430,84 @@ const ROOFTOP_CONFIGS = {
 };
 
 export default function StartCapture() {
+  // Phase: 'briefing' → 'siteType' → checklist steps
+  const [phase, setPhase] = useState('briefing');
+
+  // --- Briefing state ---
+  const [briefingLocation, setBriefingLocation] = useState(null);
+  const [briefingLocationError, setBriefingLocationError] = useState(null);
+  const [briefingWeather, setBriefingWeather] = useState(null);
+  const [briefingWeatherLoading, setBriefingWeatherLoading] = useState(false);
+  const [briefingGenerated, setBriefingGenerated] = useState(false);
+  const [briefingLoading, setBriefingLoading] = useState(false);
+  const [briefingResult, setBriefingResult] = useState(null);
+
+  // Auto-fetch location on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setBriefingLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        (err) => setBriefingLocationError(err.message)
+      );
+    } else {
+      setBriefingLocationError('Geolocation not supported');
+    }
+  }, []);
+
+  // Auto-fetch weather once we have location
+  useEffect(() => {
+    if (!briefingLocation) return;
+    setBriefingWeatherLoading(true);
+    const { lat, lon } = briefingLocation;
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_gusts_10m,weather_code&hourly=wind_speed_10m&forecast_days=1`)
+      .then(r => r.json())
+      .then(data => {
+        setBriefingWeather({
+          temp: data.current?.temperature_2m,
+          wind: data.current?.wind_speed_10m,
+          gusts: data.current?.wind_gusts_10m,
+          code: data.current?.weather_code,
+        });
+      })
+      .catch(() => {})
+      .finally(() => setBriefingWeatherLoading(false));
+  }, [briefingLocation]);
+
+  const generateBriefing = () => {
+    if (!briefingLocation) return;
+    setBriefingLoading(true);
+    const now = new Date();
+    const hour = now.getHours();
+    const envMatch = classifyEnvironment(briefingLocation.lat, briefingLocation.lon);
+    const envType = envMatch?.type || (hour >= 5 && hour < 10 ? 'LOW' : hour >= 10 && hour < 14 ? 'MODERATE' : hour >= 14 && hour < 19 ? 'MODERATE' : 'LOW');
+    const env = ENV_CONFIG[envType] || ENV_CONFIG.LOW;
+    const wind = briefingWeather?.wind ?? null;
+    const gusts = briefingWeather?.gusts ?? null;
+
+    // Time windows
+    const timeWindows = [
+      { label: '05:00 – 09:00', status: 'optimal', note: 'Low wind, high satellite density, optimal light' },
+      { label: '09:00 – 11:00', status: 'good', note: 'Good conditions, slight wind increase' },
+      { label: '11:00 – 15:00', status: 'marginal', note: 'Increasing thermals, potential GPS drift' },
+      { label: '15:00 – 18:00', status: 'marginal', note: 'Afternoon wind, satellite geometry degrades' },
+      { label: '18:00+', status: 'dark', note: 'Low light, not recommended' },
+    ];
+
+    // GPS risk
+    const gpsRisk = envType === 'AIRPORT' ? 'HIGH' : envType === 'URBAN_CANYON' ? 'HIGH' : envType === 'HIGH_INTERFERENCE' ? 'MEDIUM-HIGH' : envType === 'HARBOUR' ? 'MEDIUM' : 'LOW';
+    const windWarning = gusts != null && gusts > 40 ? '⛔ Gusts exceed safe limit (40 km/h). DO NOT FLY.' : wind != null && wind > 30 ? '⚠️ Wind approaching limit. Monitor closely.' : wind != null && wind > 20 ? '✅ Wind acceptable. Watch for gusts.' : '✅ Wind conditions favourable.';
+    const currentWindow = timeWindows.find((_, i) => {
+      const starts = [5, 9, 11, 15, 18];
+      return hour >= starts[i] && hour < (starts[i + 1] ?? 24);
+    }) || timeWindows[timeWindows.length - 1];
+
+    setBriefingResult({ env, envType, envZone: envMatch?.zone, gpsRisk, windWarning, timeWindows, currentWindow, wind, gusts, hour });
+    setBriefingLoading(false);
+    setBriefingGenerated(true);
+  };
+
+  const siteTypeSelectionPhase = phase === 'siteType';
+
   const [siteType, setSiteType] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [checkedItems, setCheckedItems] = useState({});
@@ -407,26 +556,12 @@ export default function StartCapture() {
     }
   }, [user, pilotId]);
 
-  // Request location permission on mount
+  // Reuse briefing location for checklist location tracking
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-          setLocationError(null);
-        },
-        (error) => {
-          setLocationError(error.message);
-          console.error('Location error:', error);
-        }
-      );
-    } else {
-      setLocationError('Geolocation not supported');
+    if (briefingLocation) {
+      setLocation({ latitude: briefingLocation.lat, longitude: briefingLocation.lon });
     }
-  }, []);
+  }, [briefingLocation]);
   
   const STEPS = siteType === 'rooftop' ? ROOFTOP_STEPS : TOWER_STEPS;
   const STEP_CONFIGS = siteType === 'rooftop' ? ROOFTOP_CONFIGS : TOWER_CONFIGS;
@@ -595,6 +730,130 @@ export default function StartCapture() {
   ];
 
   const allBatterySwapChecked = batterySwapItems.every(item => batterySwapChecks[item.id]) && batterySwapGpsComplete;
+
+  // ── Phase: Location Briefing ──────────────────────────────────────────────
+  if (phase === 'briefing') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white flex items-center justify-center p-5">
+        <div className="max-w-lg w-full space-y-5">
+          {/* Header */}
+          <div className="text-center">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6941e5b42ede03ae0cffdd74/bcd43d370_image.png" alt="SiteSee" className="h-8 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold mb-1">Location Briefing</h1>
+            <p className="text-slate-400 text-sm">Pre-flight environment assessment</p>
+          </div>
+
+          {/* Location status */}
+          {!briefingLocation && !briefingLocationError && (
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 text-center">
+              <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <p className="text-sm text-blue-300 font-medium">Getting your location…</p>
+            </div>
+          )}
+          {briefingLocationError && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-center">
+              <AlertTriangle className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+              <p className="text-sm text-amber-300 font-medium">Location unavailable</p>
+              <p className="text-xs text-amber-300/70 mb-3">Enable location in browser settings for a full briefing</p>
+              <Button onClick={() => setPhase('siteType')} className="bg-slate-700 hover:bg-slate-600 text-sm">
+                Skip Briefing & Continue
+              </Button>
+            </div>
+          )}
+
+          {briefingLocation && !briefingGenerated && (
+            <div className="space-y-4">
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-emerald-300 font-medium">Location acquired</p>
+                  <p className="text-xs text-emerald-300/70">{briefingLocation.lat.toFixed(4)}, {briefingLocation.lon.toFixed(4)}</p>
+                </div>
+                {briefingWeatherLoading && <div className="ml-auto w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />}
+                {briefingWeather && !briefingWeatherLoading && (
+                  <div className="ml-auto text-right">
+                    <p className="text-xs text-slate-300">{briefingWeather.wind != null ? `${briefingWeather.wind} km/h` : '—'}</p>
+                    <p className="text-xs text-slate-500">wind</p>
+                  </div>
+                )}
+              </div>
+              <Button onClick={generateBriefing} disabled={briefingLoading} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
+                <Navigation className="w-4 h-4 mr-2" />
+                Generate Location Briefing
+              </Button>
+              <button onClick={() => setPhase('siteType')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
+                Skip and proceed to capture →
+              </button>
+            </div>
+          )}
+
+          {/* Briefing Card */}
+          {briefingGenerated && briefingResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              {/* Environment type */}
+              <div className={`border rounded-2xl p-4 ${briefingResult.env.bg} ${briefingResult.env.border}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{briefingResult.env.emoji}</span>
+                  <span className={`font-bold text-base ${briefingResult.env.color}`}>{briefingResult.env.label}</span>
+                </div>
+                {briefingResult.envZone && <p className="text-xs text-slate-400 mb-2">Detected zone: {briefingResult.envZone}</p>}
+                <p className="text-sm text-slate-300">{briefingResult.env.keyRule}</p>
+              </div>
+
+              {/* Weather + GPS risk row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3">
+                  <div className="flex items-center gap-1 mb-1">
+                    <Wind className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="text-xs text-slate-400 font-medium">Wind</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">{briefingResult.wind != null ? `${briefingResult.wind}` : '—'}<span className="text-xs font-normal text-slate-400 ml-1">km/h</span></p>
+                  {briefingResult.gusts != null && <p className="text-xs text-slate-500">Gusts {briefingResult.gusts} km/h</p>}
+                </div>
+                <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-3">
+                  <div className="flex items-center gap-1 mb-1">
+                    <Satellite className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="text-xs text-slate-400 font-medium">GPS Risk</span>
+                  </div>
+                  <p className={`text-base font-bold ${briefingResult.gpsRisk === 'LOW' ? 'text-emerald-400' : briefingResult.gpsRisk === 'MEDIUM' ? 'text-yellow-400' : 'text-red-400'}`}>{briefingResult.gpsRisk}</p>
+                </div>
+              </div>
+
+              {/* Wind warning */}
+              <div className={`rounded-xl p-3 border text-sm ${briefingResult.windWarning.startsWith('⛔') ? 'bg-red-500/10 border-red-500/30 text-red-300' : briefingResult.windWarning.startsWith('⚠️') ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'}`}>
+                {briefingResult.windWarning}
+              </div>
+
+              {/* Time windows */}
+              <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm font-semibold text-slate-300">Recommended Flight Windows</span>
+                </div>
+                <div className="space-y-2">
+                  {briefingResult.timeWindows.map((w, i) => (
+                    <div key={i} className={`flex items-center justify-between rounded-lg px-3 py-2 border text-xs ${w === briefingResult.currentWindow ? STATUS_STYLE[w.status] + ' ring-1 ring-current' : STATUS_STYLE[w.status]}`}>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-medium">{w.label}</span>
+                        {w === briefingResult.currentWindow && <span className="text-[10px] font-bold uppercase opacity-80">NOW</span>}
+                      </div>
+                      <span className="opacity-80 ml-2 text-right max-w-[140px]">{w.note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <Button onClick={() => setPhase('siteType')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
+                Briefing Acknowledged — Continue
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // Site Type Selection
   if (!siteType) {
