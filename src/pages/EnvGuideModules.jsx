@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, Lock, TreePine, Building2, Zap, Layers, Waves } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, CheckCircle2, PlayCircle, X, TreePine, Building2, Zap, Layers, Waves } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MODULES = [
@@ -83,8 +83,16 @@ const MODULES = [
   },
 ];
 
+const INTRO_VIDEOS = [
+  { id: 'tpUksqWptbM', title: 'Environment Guide Overview', description: 'Introduction to the 5 GPS environment types' },
+  { id: '1LtFvDnWOSo', title: 'Low & Moderate Interference', description: 'Open and suburban environments' },
+  { id: 'dZc8fFSB5LU', title: 'High Interference & Urban Canyon', description: 'Dense commercial and CBD environments' },
+  { id: 'OhAjtWlqQaA', title: 'Harbour & Airport Proximity', description: 'Specialist environments' },
+];
+
 export default function EnvGuideModules() {
   const navigate = useNavigate();
+  const [activeVideo, setActiveVideo] = useState(null);
 
   const completedModules = MODULES.map(m => {
     try {
@@ -129,6 +137,32 @@ export default function EnvGuideModules() {
           )}
         </div>
 
+        {/* Intro Videos */}
+        <div className="mb-8">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Watch First</p>
+          <div className="grid grid-cols-2 gap-3">
+            {INTRO_VIDEOS.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setActiveVideo(v)}
+                className="relative rounded-xl overflow-hidden border border-slate-700 hover:border-blue-500/50 transition-all group"
+              >
+                <img
+                  src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`}
+                  alt={v.title}
+                  className="w-full aspect-video object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                  <PlayCircle className="w-10 h-10 text-white drop-shadow-lg" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 px-3 py-2">
+                  <p className="text-white text-xs font-semibold leading-tight">{v.title}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Module Cards */}
         <div className="space-y-4">
           {MODULES.map((mod, index) => {
@@ -165,6 +199,38 @@ export default function EnvGuideModules() {
             );
           })}
         </div>
+
+        {/* Video Modal */}
+        <AnimatePresence>
+          {activeVideo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/95 flex flex-col"
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+                <div>
+                  <p className="font-semibold text-white">{activeVideo.title}</p>
+                  <p className="text-sm text-slate-400">{activeVideo.description}</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setActiveVideo(null)} className="text-slate-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              <div className="flex-1 flex items-center justify-center p-4">
+                <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${activeVideo.id}?rel=0&modestbranding=1&autoplay=1`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {completedCount === MODULES.length && (
           <motion.div

@@ -24,12 +24,6 @@ export default function LocationQuality() {
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
 
-  // Redirect pilots away from this page
-  if (!isLoading && permissions.level === 'pilot') {
-    window.location.href = '/';
-    return null;
-  }
-  
   const regionStats = useMemo(() => {
     const byRegion = {};
     
@@ -52,6 +46,12 @@ export default function LocationQuality() {
       topFlagReason: Object.entries(r.flagReasons).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None'
     })).sort((a, b) => b.failureRate - a.failureRate);
   }, [missions]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   if (isLoading) {
     return (

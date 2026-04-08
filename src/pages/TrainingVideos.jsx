@@ -6,6 +6,37 @@ import { ArrowLeft, X, BookOpen, FileText, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import VideoCard from '@/components/VideoCard';
 
+const ENV_VIDEOS = [
+  {
+    id: 'env-1',
+    title: "Site Environment Guide — Overview",
+    description: "Introduction to the 5 GPS environment types pilots encounter in the field and how each one affects data quality.",
+    thumbnail: "https://img.youtube.com/vi/tpUksqWptbM/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/tpUksqWptbM"
+  },
+  {
+    id: 'env-2',
+    title: "Low & Moderate Interference Environments",
+    description: "Understanding open and suburban environments — what to watch for and when things go wrong.",
+    thumbnail: "https://img.youtube.com/vi/1LtFvDnWOSo/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/1LtFvDnWOSo"
+  },
+  {
+    id: 'env-3',
+    title: "High Interference & Urban Canyon",
+    description: "The invisible GPS failure modes at dense commercial sites and CBD high-rise corridors.",
+    thumbnail: "https://img.youtube.com/vi/dZc8fFSB5LU/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/dZc8fFSB5LU"
+  },
+  {
+    id: 'env-4',
+    title: "Harbour Multipath & Airport Proximity",
+    description: "Specialist environments — water surface multipath and controlled airspace compliance.",
+    thumbnail: "https://img.youtube.com/vi/OhAjtWlqQaA/hqdefault.jpg",
+    videoUrl: "https://www.youtube.com/embed/OhAjtWlqQaA"
+  },
+];
+
 const VIDEOS = [
   {
     id: 1,
@@ -208,6 +239,31 @@ export default function TrainingVideos() {
             </p>
           </motion.div>
         </Link>
+
+        {/* Site Environment Guide Videos */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-8"
+        >
+          <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-xl p-4 mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Site Environment Guide</h2>
+            <p className="text-sm text-blue-200/80">GPS environments · 5 types · Know before you fly</p>
+          </div>
+          <div className="space-y-3">
+            {ENV_VIDEOS.map((video, index) => (
+              <VideoCard
+                key={video.id}
+                title={video.title}
+                description={video.description}
+                thumbnail={video.thumbnail}
+                index={index}
+                onClick={() => setSelectedVideo(video)}
+              />
+            ))}
+          </div>
+        </motion.div>
 
         {/* Rooftop Mission v9.7.0 Section */}
         <motion.div

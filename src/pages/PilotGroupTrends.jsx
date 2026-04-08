@@ -26,12 +26,6 @@ export default function PilotGroupTrends() {
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
 
-  // Redirect pilots away from this page
-  if (!isLoading && permissions.level === 'pilot') {
-    window.location.href = '/';
-    return null;
-  }
-  
   const groupStats = useMemo(() => {
     const byGroup = {};
     
@@ -72,6 +66,12 @@ export default function PilotGroupTrends() {
       }))
     })).sort((a, b) => b.total - a.total);
   }, [missions]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   if (isLoading) {
     return (

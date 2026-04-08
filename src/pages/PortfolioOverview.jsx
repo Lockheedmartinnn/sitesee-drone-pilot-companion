@@ -82,12 +82,6 @@ export default function PortfolioOverview() {
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
 
-  // Redirect pilots away from this page
-  if (!isLoading && permissions.level === 'pilot') {
-    window.location.href = '/';
-    return null;
-  }
-  
   const filteredMissions = useMemo(() => {
     return missions.filter(m => {
       if (filters.country !== 'all' && m.country !== filters.country) return false;
@@ -271,6 +265,12 @@ export default function PortfolioOverview() {
       .sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate))
       .slice(0, 10);
   }, [filteredMissions]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   if (isLoading) {
     return (

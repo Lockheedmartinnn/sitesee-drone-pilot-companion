@@ -24,12 +24,6 @@ export default function EquipmentCorrelation() {
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
 
-  // Redirect pilots away from this page
-  if (!isLoading && permissions.level === 'pilot') {
-    window.location.href = '/';
-    return null;
-  }
-  
   const droneStats = useMemo(() => {
     const byDrone = {};
     missions.forEach(m => {
@@ -67,6 +61,12 @@ export default function EquipmentCorrelation() {
       topFlagReason: Object.entries(c.flagReasons).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None'
     })).sort((a, b) => b.total - a.total);
   }, [missions]);
+
+  // Redirect pilots away from this page
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
   
   if (isLoading) {
     return (

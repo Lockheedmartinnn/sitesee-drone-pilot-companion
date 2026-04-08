@@ -40,6 +40,54 @@ export default function AuditLog() {
     queryFn: () => base44.entities.ChecklistActivity.list('-created_date', 1000),
   });
 
+  // Combine all data into a unified activity feed
+  const allActivities = useMemo(() => {
+    const activities = [];
+    logs.forEach(log => {
+      activities.push({
+        id: `log-${log.id}`,
+        timestamp: log.created_date,
+        user_email: log.user_email,
+        action: log.action,
+        details: log.details,
+        type: 'audit_log'
+      });
+    });
+    chatSessions.forEach(session => {
+      activities.push({
+        id: `session-start-${session.id}`,
+        timestamp: session.session_started_at,
+        user_email: session.user_email,
+        action: 'chatbot_session_start',
+        details: `${session.total_messages} messages`,
+        type: 'chat_session'
+      });
+      if (session.session_ended_at) {
+        activities.push({
+          id: `session-end-${session.id}`,
+          timestamp: session.session_ended_at,
+          user_email: session.user_email,
+          action: 'chatbot_session_end',
+          details: `${session.total_messages} messages`,
+          type: 'chat_session'
+        });
+      }
+    });
+    chatMessages.forEach(msg => {
+      if (msg.message_type === 'user') {
+        activities.push({
+          id: `msg-${msg.id}`,
+          timestamp: msg.message_timestamp,
+          user_email: msg.user_email,
+          action: 'chatbot_message_sent',
+          details: msg.message_content.substring(0, 100) + (msg.message_content.length > 100 ? '...' : ''),
+          type: 'chat_message'
+        });
+      }
+    });
+    return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  }, [logs, chatSessions, chatMessages]);
+
   // Redirect non-managers away from this page
   useEffect(() => {
     if (!isLoading && !permissions.canManageCompany) {
@@ -188,63 +236,6 @@ export default function AuditLog() {
     chatbot_session_end: 'text-indigo-400',
     chatbot_message_sent: 'text-pink-400'
   };
-
-  // Combine all data into a unified activity feed
-  const allActivities = useMemo(() => {
-    const activities = [];
-
-    // Add audit logs
-    logs.forEach(log => {
-      activities.push({
-        id: `log-${log.id}`,
-        timestamp: log.created_date,
-        user_email: log.user_email,
-        action: log.action,
-        details: log.details,
-        type: 'audit_log'
-      });
-    });
-
-    // Add chat sessions
-    chatSessions.forEach(session => {
-      activities.push({
-        id: `session-start-${session.id}`,
-        timestamp: session.session_started_at,
-        user_email: session.user_email,
-        action: 'chatbot_session_start',
-        details: `${session.total_messages} messages`,
-        type: 'chat_session'
-      });
-
-      if (session.session_ended_at) {
-        activities.push({
-          id: `session-end-${session.id}`,
-          timestamp: session.session_ended_at,
-          user_email: session.user_email,
-          action: 'chatbot_session_end',
-          details: `${session.total_messages} messages`,
-          type: 'chat_session'
-        });
-      }
-    });
-
-    // Add chat messages
-    chatMessages.forEach(msg => {
-      if (msg.message_type === 'user') {
-        activities.push({
-          id: `msg-${msg.id}`,
-          timestamp: msg.message_timestamp,
-          user_email: msg.user_email,
-          action: 'chatbot_message_sent',
-          details: msg.message_content.substring(0, 100) + (msg.message_content.length > 100 ? '...' : ''),
-          type: 'chat_message'
-        });
-      }
-    });
-
-    // Sort by timestamp descending
-    return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  }, [logs, chatSessions, chatMessages]);
 
   if (isLoading) {
     return (

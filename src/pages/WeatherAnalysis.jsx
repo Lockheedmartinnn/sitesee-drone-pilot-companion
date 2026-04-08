@@ -64,11 +64,6 @@ export default function WeatherAnalysis() {
     return filterMissionsByAccess(allMissions, permissions, user.email, user);
   }, [allMissions, permissions, user]);
 
-  if (!isLoading && permissions.level === 'pilot') {
-    window.location.href = '/';
-    return null;
-  }
-
   // Weather pattern prediction by month
   const weatherByMonth = useMemo(() => {
     const byMonth = {};
@@ -293,6 +288,11 @@ export default function WeatherAnalysis() {
 
     return { timeOfDay, month: currentMonth, predictions };
   }, [missions, locationWeatherPatterns]);
+
+  if (!isLoading && permissions.level === 'pilot') {
+    window.location.href = '/';
+    return null;
+  }
 
   const weatherIcons = {
     Clear: <Sun className="w-5 h-5 text-yellow-400" />,
