@@ -115,8 +115,20 @@ export default function ChecklistAnalytics() {
         return groupName;
       }
     }
-    // Fallback to company value if provided
-    return companyValue || 'Pilot Group 1';
+    // Known company value mappings
+    const knownMappings = {
+      'Pilot Group 1': 'Pilot Group 1',
+      'Pilot Group 2': 'Pilot Group 2',
+      'waveconn': 'Pilot Group 2',
+      'fortysouth': 'Pilot Group 3',
+      'Pilot Group 3': 'Pilot Group 3',
+      'Pilot Group 4': 'Pilot Group 4',
+      'Pilot Group 5': 'Pilot Group 5'
+    };
+    if (companyValue && knownMappings[companyValue]) {
+      return knownMappings[companyValue];
+    }
+    return 'Unknown';
   };
 
   // Get user's pilot group from email
@@ -245,7 +257,9 @@ export default function ChecklistAnalytics() {
     const completedSessions = filteredSessions.filter(s => s.stepsCompleted >= 8).length;
     const shortChecklists = filteredSessions.filter(s => s.durationSec < 1500).length; // Under 25 min
 
-    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortChecklists };
+    const unknownSessions = filteredSessions.filter(s => s.company === 'Unknown').length;
+
+    return { totalSessions, uniquePilots, avgDuration, completedSessions, shortChecklists, unknownSessions };
   }, [filteredSessions]);
 
   // Pilot performance data
@@ -624,7 +638,22 @@ export default function ChecklistAnalytics() {
               <p className="text-xs text-slate-400">Short (&lt;25m)</p>
             </div>
             <p className="text-2xl font-bold text-red-400">{stats.shortChecklists}</p>
+          </motion.div>
+
+          {stats.unknownSessions > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="bg-slate-800/50 border border-orange-500/40 rounded-xl p-4"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="w-4 h-4 text-orange-400" />
+                <p className="text-xs text-slate-400">Unknown YTD</p>
+              </div>
+              <p className="text-2xl font-bold text-orange-400">{stats.unknownSessions}</p>
             </motion.div>
+          )}
         </div>
 
         {/* Filters */}
@@ -747,9 +776,20 @@ export default function ChecklistAnalytics() {
                       return acc;
                     }, {})
                   ).sort((a, b) => b[1] - a[1]).map(([company, count]) => (
-                    <div key={company} className="flex items-center justify-between">
-                      <span className="text-slate-300">{getCompanyDisplayName(company)}</span>
-                      <span className="text-white font-semibold">{count} checklists</span>
+                    <div key={company} className={cn(
+                      "flex items-center justify-between rounded-lg px-3 py-2",
+                      company === 'Unknown' ? "bg-orange-500/10 border border-orange-500/30" : ""
+                    )}>
+                      <span className={cn(
+                        company === 'Unknown' ? "text-orange-300 flex items-center gap-2" : "text-slate-300"
+                      )}>
+                        {company === 'Unknown' && <AlertTriangle className="w-4 h-4" />}
+                        {company === 'Unknown' ? 'Unknown (unlabelled pilots)' : getCompanyDisplayName(company)}
+                      </span>
+                      <span className={cn(
+                        "font-semibold",
+                        company === 'Unknown' ? "text-orange-400" : "text-white"
+                      )}>{count} checklists</span>
                     </div>
                   ))}
                 </div>
