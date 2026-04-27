@@ -723,6 +723,18 @@ export default function ChecklistAnalytics() {
                 >
                   Pilot Group 5
                 </Button>
+                {stats.unknownSessions > 0 && (
+                  <Button
+                    variant={companyFilter === 'Unknown' ? 'default' : 'outline'}
+                    onClick={() => setCompanyFilter('Unknown')}
+                    size="sm"
+                    className={cn(
+                      companyFilter === 'Unknown' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-orange-500/20 border-orange-500/50 text-orange-300 hover:bg-orange-500/30'
+                    )}
+                  >
+                    Unknown ({stats.unknownSessions})
+                  </Button>
+                )}
               </div>
             </div>
           )}
