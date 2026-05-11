@@ -43,6 +43,7 @@ import ProgressBar from '@/components/ProgressBar';
 import ChecklistItem from '@/components/ChecklistItem';
 import Timer from '@/components/Timer';
 import InfoCard from '@/components/InfoCard';
+import PreMissionFocusCheck from '@/components/PreMissionFocusCheck';
 
 import { cn } from '@/lib/utils';
 
@@ -784,7 +785,7 @@ export default function StartCapture() {
                 <Navigation className="w-4 h-4 mr-2" />
                 Generate Location Briefing
               </Button>
-              <button onClick={() => setPhase('checklist')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
+              <button onClick={() => setPhase('focus')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
                 Skip and proceed to capture →
               </button>
             </div>
@@ -847,7 +848,7 @@ export default function StartCapture() {
               </div>
 
               {/* CTA */}
-              <Button onClick={() => setPhase('checklist')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
+              <Button onClick={() => setPhase('focus')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
                 Briefing Acknowledged — Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -856,6 +857,11 @@ export default function StartCapture() {
         </div>
       </div>
     );
+  }
+
+  // Focus Check Phase
+  if (phase === 'focus') {
+    return <PreMissionFocusCheck onProceed={() => setPhase('checklist')} />;
   }
 
   // Site Type Selection
