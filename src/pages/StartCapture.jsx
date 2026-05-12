@@ -532,6 +532,7 @@ export default function StartCapture() {
   const [initialSetupComplete, setInitialSetupComplete] = useState(false);
   const [needsPanorama, setNeedsPanorama] = useState(null);
   const [needsOrtho, setNeedsOrtho] = useState(null);
+  const [showFocusCheck, setShowFocusCheck] = useState(false);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   
   const { data: user } = useQuery({
@@ -621,6 +622,12 @@ export default function StartCapture() {
   const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 && siteType === 'rooftop' ? step6CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked))))));
   
   const nextStep = () => {
+    // Intercept after step 2 (Camera Setup) to show focus check
+    if (currentStep === 2 && !showFocusCheck) {
+      setShowFocusCheck(true);
+      return;
+    }
+
     // Log step navigation and step completion time
     const nextStepNum = currentStep === 6 && needsPanorama === false ? 8 : (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true ? 8 : currentStep + 1);
     logActivity('step_navigation', `step_${currentStep}_to_${nextStepNum}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[nextStepNum - 1]}`, 'next');
@@ -785,7 +792,7 @@ export default function StartCapture() {
                 <Navigation className="w-4 h-4 mr-2" />
                 Generate Location Briefing
               </Button>
-              <button onClick={() => setPhase('focus')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
+              <button onClick={() => setPhase('checklist')} className="w-full text-center text-sm text-slate-500 hover:text-slate-400 py-1">
                 Skip and proceed to capture →
               </button>
             </div>
@@ -848,7 +855,7 @@ export default function StartCapture() {
               </div>
 
               {/* CTA */}
-              <Button onClick={() => setPhase('focus')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
+              <Button onClick={() => setPhase('checklist')} className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-base font-semibold">
                 Briefing Acknowledged — Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -859,10 +866,7 @@ export default function StartCapture() {
     );
   }
 
-  // Focus Check Phase
-  if (phase === 'focus') {
-    return <PreMissionFocusCheck onProceed={() => setPhase('checklist')} />;
-  }
+
 
   // Site Type Selection
   if (phase === 'siteType') {
@@ -946,6 +950,10 @@ export default function StartCapture() {
         </div>
       </div>
     );
+  }
+
+  if (showFocusCheck) {
+    return <PreMissionFocusCheck onProceed={() => { setShowFocusCheck(false); setCurrentStep(3); }} />;
   }
 
   return (
