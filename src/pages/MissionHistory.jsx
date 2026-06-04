@@ -84,7 +84,14 @@ function LocalMissionCard({ mission, onViewReport }) {
               <MapPin className="w-4 h-4 text-slate-400" />
               <div>
                 <p className="text-xs text-slate-500">Location</p>
-                <p className="text-sm text-white font-mono">{mission.latitude.toFixed(6)}, {mission.longitude.toFixed(6)}</p>
+                <a
+                  href={`https://www.google.com/maps?q=${mission.latitude},${mission.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-white font-mono underline hover:text-blue-400"
+                >
+                  {mission.latitude.toFixed(6)}, {mission.longitude.toFixed(6)}
+                </a>
               </div>
             </div>
           )}
