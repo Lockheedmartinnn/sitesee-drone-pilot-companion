@@ -1,0 +1,46 @@
+{
+  "name": "ChecklistTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "GPS",
+        "SCALEPOINT",
+        "PRE_FLIGHT",
+        "UPLOAD"
+      ],
+      "description": "Checklist category"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_title": {
+            "type": "string"
+          },
+          "step_instruction": {
+            "type": "string"
+          },
+          "pass_fail": {
+            "type": "boolean"
+          },
+          "notes_required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Checklist steps"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "steps"
+  ]
+}

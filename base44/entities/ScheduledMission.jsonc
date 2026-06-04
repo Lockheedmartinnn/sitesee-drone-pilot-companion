@@ -1,0 +1,55 @@
+{
+  "name": "ScheduledMission",
+  "type": "object",
+  "properties": {
+    "site_id": {
+      "type": "string"
+    },
+    "site_name": {
+      "type": "string"
+    },
+    "suburb": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "diff": {
+      "type": "string",
+      "enum": [
+        "green",
+        "yellow",
+        "orange"
+      ]
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "scheduled_time": {
+      "type": "string",
+      "default": "07:00"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "confirmed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "planned"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "ai_generated": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "site_name",
+    "scheduled_date"
+  ]
+}

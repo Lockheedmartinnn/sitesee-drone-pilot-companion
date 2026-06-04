@@ -1,0 +1,153 @@
+{
+  "name": "MissionLog",
+  "type": "object",
+  "properties": {
+    "mission_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of mission"
+    },
+    "country": {
+      "type": "string",
+      "description": "Country"
+    },
+    "region": {
+      "type": "string",
+      "description": "Region"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude coordinate"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude coordinate"
+    },
+    "customer": {
+      "type": "string",
+      "description": "Customer (towerco)"
+    },
+    "pilot_group": {
+      "type": "string",
+      "description": "Pilot group or vendor organization"
+    },
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier"
+    },
+    "site_type": {
+      "type": "string",
+      "enum": [
+        "Tower",
+        "Rooftop",
+        "Other"
+      ],
+      "description": "Type of site"
+    },
+    "drone_model": {
+      "type": "string",
+      "description": "Drone model used"
+    },
+    "camera_model": {
+      "type": "string",
+      "description": "Camera model used"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "Pass",
+        "Rework",
+        "Fail"
+      ],
+      "description": "Mission outcome"
+    },
+    "flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether mission was flagged for issues"
+    },
+    "primary_flag_reason": {
+      "type": "string",
+      "enum": [
+        "Leaning",
+        "Ghosting",
+        "Non-Georeferenced",
+        "GPS instability",
+        "Exposure inconsistency",
+        "Focus issue",
+        "Missing coverage",
+        "Upload / processing issue",
+        "Weather interruption",
+        "Equipment fault",
+        "Time pressure / rushing",
+        "Unknown"
+      ],
+      "description": "Primary reason for flagging"
+    },
+    "secondary_factors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Wind",
+          "Sun glare / sun angle",
+          "Low satellite count",
+          "Battery swaps",
+          "Rooftop complexity",
+          "Obstructions"
+        ]
+      },
+      "description": "Secondary contributing factors"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "weather_condition": {
+      "type": "string",
+      "enum": [
+        "Clear",
+        "Cloudy",
+        "Windy",
+        "Rain"
+      ],
+      "description": "Weather condition during mission"
+    },
+    "time_of_day": {
+      "type": "string",
+      "enum": [
+        "Morning",
+        "Midday",
+        "Afternoon"
+      ],
+      "description": "Time of day"
+    },
+    "satellite_count_band": {
+      "type": "string",
+      "enum": [
+        "<28",
+        "28-31",
+        "32+"
+      ],
+      "description": "Satellite count range"
+    },
+    "data_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "imported"
+      ],
+      "default": "manual",
+      "description": "Source of this record - manual entry or bulk import"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Lock record from editing (for imported historical data)"
+    }
+  },
+  "required": [
+    "mission_date",
+    "outcome"
+  ]
+}

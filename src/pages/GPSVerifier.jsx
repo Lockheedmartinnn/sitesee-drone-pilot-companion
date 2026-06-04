@@ -97,7 +97,7 @@ export default function GPSVerifier() {
     if (finalShift < 0.5) {
       return {
         label: 'OK',
-        message: 'Altitude / Y-axis GPS data appears to be in tolerance',
+        message: 'Altitude / Z-Axis GPS data appears to be in tolerance',
         color: 'bg-green-500/20 border-green-500 text-green-400',
         badgeColor: 'bg-green-500 text-white'
       };
@@ -151,7 +151,7 @@ export default function GPSVerifier() {
             <AlertTriangle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-300 space-y-1">
               <p className="font-semibold">Important Limitation:</p>
-              <p>This tool only analyzes <strong>vertical (Y-axis) altitude</strong> shifts. It cannot detect horizontal (X/Y position) GPS drift.</p>
+              <p>This tool only analyzes <strong>vertical (Z-Axis) altitude</strong> shifts. It cannot detect horizontal (X/Y position) GPS drift.</p>
               <p>A passing result here does NOT guarantee full GPS stability — always verify tower centering visually in your captures.</p>
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function GPSVerifier() {
               <li>1. Upload images captured <strong>before</strong> the battery change to Segment A</li>
               <li>2. Upload images captured <strong>after</strong> the battery change to Segment B</li>
               <li>3. Review the altitude shift analysis and status indicator</li>
-              <li>4. Remember: This only checks altitude (Y-axis). Always verify tower centering visually.</li>
+              <li>4. Remember: This only checks altitude (Z-Axis). Always verify tower centering visually.</li>
             </ol>
           </div>
         )}

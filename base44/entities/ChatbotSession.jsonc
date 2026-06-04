@@ -1,0 +1,41 @@
+{
+  "name": "ChatbotSession",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who initiated the chat session"
+    },
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company/pilot group"
+    },
+    "session_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the chat session was opened"
+    },
+    "session_ended_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the chat session was closed"
+    },
+    "total_messages": {
+      "type": "integer",
+      "default": 0,
+      "description": "Total number of messages in this session"
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "Base44 conversation ID for linking messages"
+    }
+  },
+  "required": [
+    "user_email",
+    "session_started_at"
+  ]
+}

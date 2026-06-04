@@ -1,0 +1,74 @@
+{
+  "name": "ChecklistActivity",
+  "type": "object",
+  "properties": {
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier"
+    },
+    "pilot_email": {
+      "type": "string",
+      "description": "Pilot email"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company/pilot group"
+    },
+    "site_type": {
+      "type": "string",
+      "enum": [
+        "tower",
+        "rooftop"
+      ],
+      "description": "Site type being captured"
+    },
+    "step_number": {
+      "type": "integer",
+      "description": "Checklist step number (1-8)"
+    },
+    "step_name": {
+      "type": "string",
+      "description": "Name of the step"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "checkbox_toggle",
+        "yes_no_decision",
+        "timer_complete",
+        "step_navigation"
+      ],
+      "description": "Type of action performed"
+    },
+    "item_id": {
+      "type": "string",
+      "description": "ID of checklist item or decision"
+    },
+    "item_label": {
+      "type": "string",
+      "description": "Label of item or decision prompt"
+    },
+    "new_state": {
+      "type": "string",
+      "description": "New state after action (checked/unchecked, yes/no)"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Location latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Location longitude"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier for grouping activities"
+    }
+  },
+  "required": [
+    "pilot_email",
+    "site_type",
+    "step_number",
+    "action_type"
+  ]
+}

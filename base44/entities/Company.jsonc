@@ -1,0 +1,81 @@
+{
+  "name": "Company",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "description": "Company/organization name"
+    },
+    "pilot_group": {
+      "type": "string",
+      "description": "Pilot group identifier (e.g., wavecon, QNSI)"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "trial",
+        "active",
+        "cancelled",
+        "past_due"
+      ],
+      "default": "trial",
+      "description": "Current subscription status"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "premium",
+        "enterprise"
+      ],
+      "default": "free",
+      "description": "Subscription tier"
+    },
+    "base_price": {
+      "type": "number",
+      "default": 29,
+      "description": "Base monthly subscription price"
+    },
+    "price_per_pilot": {
+      "type": "number",
+      "default": 10,
+      "description": "Additional cost per pilot per month"
+    },
+    "included_pilots": {
+      "type": "number",
+      "default": 2,
+      "description": "Number of pilots included in base price"
+    },
+    "max_pilots": {
+      "type": "number",
+      "description": "Maximum allowed pilots (null = unlimited for enterprise)"
+    },
+    "billing_email": {
+      "type": "string",
+      "description": "Email for billing notifications"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When trial period ends"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Current billing period end date"
+    }
+  },
+  "required": [
+    "company_name",
+    "pilot_group"
+  ]
+}

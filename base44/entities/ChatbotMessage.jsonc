@@ -1,0 +1,43 @@
+{
+  "name": "ChatbotMessage",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Foreign key to ChatbotSession"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User who sent the message"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "user",
+        "assistant"
+      ],
+      "description": "Who sent the message"
+    },
+    "message_content": {
+      "type": "string",
+      "description": "The actual message text"
+    },
+    "message_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the message was sent"
+    },
+    "had_image_attachment": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the message included an image"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_email",
+    "message_type",
+    "message_content",
+    "message_timestamp"
+  ]
+}

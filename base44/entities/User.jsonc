@@ -1,0 +1,28 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company/pilot group (e.g., QNSI, waveconn)"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "pilot",
+        "ops_manager",
+        "admin"
+      ],
+      "default": "pilot",
+      "description": "User access level"
+    }
+  },
+  "required": [
+    "pilot_id",
+    "company"
+  ]
+}

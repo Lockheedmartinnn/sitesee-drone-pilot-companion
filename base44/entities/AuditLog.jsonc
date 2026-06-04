@@ -1,0 +1,44 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who performed action"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "mission_log_create",
+        "mission_log_update",
+        "mission_log_delete",
+        "mission_event_create",
+        "checklist_complete",
+        "user_invited",
+        "export_data",
+        "settings_changed"
+      ],
+      "description": "Action performed"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Type of entity affected"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "ID of affected entity"
+    },
+    "details": {
+      "type": "string",
+      "description": "Additional context"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address of user"
+    }
+  },
+  "required": [
+    "user_email",
+    "action"
+  ]
+}

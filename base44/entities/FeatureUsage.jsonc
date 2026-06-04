@@ -1,0 +1,59 @@
+{
+  "name": "FeatureUsage",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who used the feature"
+    },
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company/pilot group"
+    },
+    "feature_name": {
+      "type": "string",
+      "enum": [
+        "chatbot",
+        "gps_verifier",
+        "start_capture",
+        "mission_history",
+        "checklist_analytics",
+        "quick_reference",
+        "scenarios",
+        "training_videos",
+        "mission_markup_quiz",
+        "standard_capture_checklist",
+        "profile"
+      ],
+      "description": "Which feature was used"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "page_view",
+        "tool_use",
+        "quiz_attempt",
+        "video_watch",
+        "export_data"
+      ],
+      "description": "Type of action performed"
+    },
+    "session_duration_seconds": {
+      "type": "integer",
+      "description": "How long the feature was used (if applicable)"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Additional context (JSON string)"
+    }
+  },
+  "required": [
+    "user_email",
+    "feature_name",
+    "action_type"
+  ]
+}

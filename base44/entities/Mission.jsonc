@@ -1,0 +1,148 @@
+{
+  "name": "Mission",
+  "type": "object",
+  "properties": {
+    "mission_id": {
+      "type": "string",
+      "description": "Unique mission identifier from job_id"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client or customer name"
+    },
+    "site_name": {
+      "type": "string",
+      "description": "Site name"
+    },
+    "site_id": {
+      "type": "string",
+      "description": "Site identifier"
+    },
+    "country": {
+      "type": "string",
+      "description": "Country"
+    },
+    "region": {
+      "type": "string",
+      "description": "Region"
+    },
+    "province": {
+      "type": "string",
+      "description": "Province"
+    },
+    "location_code": {
+      "type": "string",
+      "description": "Location code extracted from site name"
+    },
+    "raw_status": {
+      "type": "string",
+      "description": "Raw status from source system"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "FAILURE"
+      ],
+      "description": "Mission outcome classification - must be explicitly set"
+    },
+    "failure_reason": {
+      "type": "string",
+      "enum": [
+        "Leaning",
+        "Ghosting",
+        "Non-Georeferenced",
+        "Other"
+      ],
+      "description": "Reason for failure if outcome is FAILURE"
+    },
+    "failure_notes": {
+      "type": "string",
+      "description": "Additional notes if failure_reason is Other"
+    },
+    "capture_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the mission was captured (parsed from metadata)"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Mission start time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Mission end time"
+    },
+    "status_changed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When status was last changed"
+    },
+    "last_updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "pilot_name": {
+      "type": "string",
+      "description": "Pilot name (manual entry - Phase 1 interim solution)"
+    },
+    "pilot_email": {
+      "type": "string",
+      "description": "Pilot email (manual entry - Phase 1 interim solution)"
+    },
+    "pilot_group": {
+      "type": "string",
+      "description": "Pilot group or vendor organization"
+    },
+    "drone_make": {
+      "type": "string",
+      "description": "Drone manufacturer (e.g., DJI)"
+    },
+    "drone_model": {
+      "type": "string",
+      "description": "Drone model (e.g., M3E)"
+    },
+    "image_size": {
+      "type": "string",
+      "description": "Image resolution"
+    },
+    "number_of_files": {
+      "type": "integer",
+      "description": "Number of images captured"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Site latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Site longitude"
+    },
+    "raw_metadata": {
+      "type": "string",
+      "description": "Raw metadata JSON for future analysis"
+    },
+    "data_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "imported"
+      ],
+      "default": "imported",
+      "description": "Source of this record"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": true,
+      "description": "Lock record from editing (true for imported data)"
+    }
+  },
+  "required": [
+    "mission_id",
+    "site_name",
+    "outcome"
+  ]
+}

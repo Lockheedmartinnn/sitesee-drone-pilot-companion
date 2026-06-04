@@ -1,0 +1,62 @@
+{
+  "name": "MissionEvent",
+  "type": "object",
+  "properties": {
+    "mission_id": {
+      "type": "string",
+      "description": "Foreign key to Mission"
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "STATUS_CHANGE",
+        "FAILURE_LABEL",
+        "SUCCESS_LABEL",
+        "GPS_STABILISATION",
+        "SCALEPOINT_CHECK",
+        "UPLOAD",
+        "NOTE",
+        "OTHER"
+      ],
+      "description": "Type of event"
+    },
+    "event_label": {
+      "type": "string",
+      "description": "Short label for timeline display"
+    },
+    "details": {
+      "type": "string",
+      "description": "Full event details and notes"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "IMPORT",
+        "PILOT_INPUT",
+        "OPS_INPUT",
+        "SYSTEM"
+      ],
+      "description": "Source of the event"
+    },
+    "lat": {
+      "type": "number",
+      "description": "Latitude if applicable"
+    },
+    "lon": {
+      "type": "number",
+      "description": "Longitude if applicable"
+    }
+  },
+  "required": [
+    "mission_id",
+    "event_time",
+    "event_type",
+    "event_label",
+    "source"
+  ]
+}

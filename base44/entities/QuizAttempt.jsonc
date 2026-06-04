@@ -1,0 +1,43 @@
+{
+  "name": "QuizAttempt",
+  "type": "object",
+  "properties": {
+    "quiz_id": {
+      "type": "string",
+      "description": "Quiz identifier"
+    },
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot who took the quiz"
+    },
+    "score": {
+      "type": "number",
+      "description": "Score percentage (0-100)"
+    },
+    "total_questions": {
+      "type": "integer",
+      "description": "Total number of questions"
+    },
+    "correct_answers": {
+      "type": "integer",
+      "description": "Number of correct answers"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When quiz was completed"
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "Whether quiz was passed (70%+)"
+    }
+  },
+  "required": [
+    "quiz_id",
+    "score",
+    "total_questions",
+    "correct_answers",
+    "completed_at",
+    "passed"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "LocalMissionLog",
+  "type": "object",
+  "properties": {
+    "pilot_id": {
+      "type": "string",
+      "description": "Pilot identifier from user profile"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company/pilot group from user profile"
+    },
+    "pilot_identifier": {
+      "type": "string",
+      "description": "Optional self-declared identifier for personal reference only"
+    },
+    "job_id": {
+      "type": "string",
+      "description": "Optional job reference for personal tracking"
+    },
+    "completion_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the checklist was completed"
+    },
+    "checklist_completed": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the full checklist was completed"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Personal notes about this capture"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude coordinate of capture location"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude coordinate of capture location"
+    }
+  },
+  "required": [
+    "completion_timestamp"
+  ]
+}

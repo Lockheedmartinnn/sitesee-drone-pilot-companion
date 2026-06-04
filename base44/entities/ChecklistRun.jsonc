@@ -1,0 +1,56 @@
+{
+  "name": "ChecklistRun",
+  "type": "object",
+  "properties": {
+    "mission_id": {
+      "type": "string",
+      "description": "Foreign key to Mission"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Foreign key to ChecklistTemplate"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether checklist is completed"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Completion timestamp"
+    },
+    "overall_result": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INCOMPLETE"
+      ],
+      "default": "INCOMPLETE",
+      "description": "Overall checklist result"
+    },
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_index": {
+            "type": "number"
+          },
+          "pass_fail": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Step-by-step responses"
+    }
+  },
+  "required": [
+    "mission_id",
+    "template_id"
+  ]
+}
