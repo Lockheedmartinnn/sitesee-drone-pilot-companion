@@ -780,7 +780,14 @@ export default function StartCapture() {
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-emerald-300 font-medium">Location acquired</p>
-                  <p className="text-xs text-emerald-300/70">{briefingLocation.lat.toFixed(4)}, {briefingLocation.lon.toFixed(4)}</p>
+                  <a
+                    href={`https://www.google.com/maps?q=${briefingLocation.lat},${briefingLocation.lon}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-emerald-300/70 underline hover:text-emerald-300"
+                  >
+                    {briefingLocation.lat.toFixed(4)}, {briefingLocation.lon.toFixed(4)}
+                  </a>
                 </div>
                 {briefingWeatherLoading && <div className="ml-auto w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />}
                 {briefingWeather && !briefingWeatherLoading && (
