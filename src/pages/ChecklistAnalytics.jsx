@@ -1267,7 +1267,15 @@ export default function ChecklistAnalytics() {
                     {/* Location */}
                     {session.activities[0]?.latitude && session.activities[0]?.longitude && (
                       <div className="text-sm text-slate-400">
-                        <span className="font-medium text-slate-300">Location:</span> {session.activities[0].latitude.toFixed(6)}, {session.activities[0].longitude.toFixed(6)}
+                        <span className="font-medium text-slate-300">Location:</span>{' '}
+                        <a
+                          href={`https://www.google.com/maps?q=${session.activities[0].latitude},${session.activities[0].longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-white hover:text-blue-400"
+                        >
+                          {session.activities[0].latitude.toFixed(6)}, {session.activities[0].longitude.toFixed(6)}
+                        </a>
                       </div>
                     )}
 
@@ -1299,11 +1307,19 @@ export default function ChecklistAnalytics() {
                           </div>
                           
                           {/* Step Location */}
-                          {stepLocation && (
-                            <div className="text-xs text-slate-500 mb-2">
-                              📍 {stepLocation.lat.toFixed(6)}, {stepLocation.lon.toFixed(6)}
-                            </div>
-                          )}
+                           {stepLocation && (
+                             <div className="text-xs text-slate-500 mb-2">
+                               📍{' '}
+                               <a
+                                 href={`https://www.google.com/maps?q=${stepLocation.lat},${stepLocation.lon}`}
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 className="underline text-slate-300 hover:text-blue-400"
+                               >
+                                 {stepLocation.lat.toFixed(6)}, {stepLocation.lon.toFixed(6)}
+                               </a>
+                             </div>
+                           )}
                           
                           {/* GPS Timer Info */}
                           {timerStart && (
