@@ -190,7 +190,7 @@ export default function PreMissionFocusCheck({ onProceed }) {
             background are sharp. Blurry images will result in a failed job.
           </p>
           <a
-            href="https://learn.sitesee.io/hc/en-us/articles/360052096411-Uploading-Images"
+            href="https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132686379/SiteSee+Web+Portal+Legacy+-+Upload+images"
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
