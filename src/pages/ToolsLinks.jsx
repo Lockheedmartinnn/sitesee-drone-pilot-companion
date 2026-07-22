@@ -44,15 +44,15 @@ const LINKS = [
       {
         icon: BookOpen,
         title: "How to Capture",
-        description: "Complete capture documentation and guides",
-        url: "https://learn.sitesee.io/hc/en-us/sections/360011082631-How-to-Capture",
+        description: "Complete capture documentation and guides (Confluence)",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132424197/SiteSee+Web+Portal+Legacy+-+Getting+Started",
         color: "text-blue-400 bg-blue-500/20"
       },
       {
         icon: Settings,
         title: "Web Portal Guide",
-        description: "Portal documentation and user guides",
-        url: "https://learn.sitesee.io/hc/en-us/sections/360011118711-Web-Portal",
+        description: "Portal documentation and user guides (Confluence)",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132981249/SiteSee+Web+Portal+Legacy",
         color: "text-violet-400 bg-violet-500/20"
       },
       {
