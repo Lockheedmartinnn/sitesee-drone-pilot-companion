@@ -259,7 +259,7 @@ const TOWER_CONFIGS = {
   9: {
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
-    uploadGuideUrl: "https://learn.sitesee.io/hc/en-us/articles/360052096411-Uploading-Images",
+    uploadGuideUrl: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132686379/SiteSee+Web+Portal+Legacy+-+Upload+images",
     info: {
       title: "Image Quality Check (Before Uploading)",
       message: "✓ All images are JPEG with correct aspect ratio (largest pixels)\n✓ Consistent exposure across entire set (ISO, aperture, shutter speed must not vary)\n✓ Randomly check sharpness at 100% zoom for each mission component\n✓ Tower centred in frame — not cut off at edges\n✓ Shadow side not too dark; bright side not overexposed\n✓ If GCPs used: verify they are clearly visible in multiple images\n\n⚠ Do NOT skip this step — complete it BEFORE uploading files"
@@ -412,7 +412,7 @@ const ROOFTOP_CONFIGS = {
   9: { // This is the re-indexed Post-Flight QC for Rooftop
     title: "Post-Flight QC",
     subtitle: "Quality check before leaving site",
-    uploadGuideUrl: "https://learn.sitesee.io/hc/en-us/articles/360052096411-Uploading-Images",
+    uploadGuideUrl: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132686379/SiteSee+Web+Portal+Legacy+-+Upload+images",
     info: {
       title: "Image Quality Check (Before Uploading)",
       message: "✓ All images are JPEG with correct aspect ratio (largest pixels)\n✓ Consistent exposure across entire set (ISO, aperture, shutter speed must not vary)\n✓ Randomly check sharpness at 100% zoom for each mission component\n✓ Equipment/antennas adequately in frame\n✓ Shadow side not too dark; bright side not overexposed\n✓ If GCPs used: verify they are clearly visible in multiple images\n\n⚠ Do NOT skip this step — complete it BEFORE uploading files"
