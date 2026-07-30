@@ -151,8 +151,7 @@ export default function GPSVerifier() {
             <AlertTriangle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-300 space-y-1">
               <p className="font-semibold">Important Limitation:</p>
-              <p>This tool only analyzes <strong>vertical (Z-Axis) altitude</strong> shifts. It cannot detect horizontal (X/Y position) GPS drift.</p>
-              <p>A passing result here does NOT guarantee full GPS stability — always verify tower centering visually in your captures.</p>
+              <p>This tool only analyzes <strong>vertical (Z-Axis) altitude</strong> shifts. It cannot detect horizontal (X/Y position) GPS drift. Therefore, a passing result here does not guarantee successful processing of the image set.</p>
             </div>
           </div>
         </div>
