@@ -101,7 +101,7 @@ export default function GPSVerifier() {
         color: 'bg-green-500/20 border-green-500 text-green-400',
         badgeColor: 'bg-green-500 text-white'
       };
-    } else if (finalShift < 2.0) {
+    } else if (finalShift < 4.0) {
       return {
         label: 'Caution',
         message: 'Moderate altitude shift detected',
