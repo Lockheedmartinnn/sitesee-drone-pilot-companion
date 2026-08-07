@@ -94,7 +94,7 @@ export default function GPSVerifier() {
     : 0;
 
   const getStatus = () => {
-    if (finalShift < 0.5) {
+    if (finalShift < 2.0) {
       return {
         label: 'OK',
         message: 'Altitude / Z-Axis GPS data appears to be in tolerance',
