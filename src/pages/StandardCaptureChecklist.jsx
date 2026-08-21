@@ -116,6 +116,15 @@ export default function StandardCaptureChecklist() {
               <p className="font-semibold text-white mb-1">Communication:</p>
               <p>Communicate with SiteSee's point of contact with information and schedule of site visits if needed via Jira support (Also contactable by email: don.kaluarachchi@sitesee.com.au)</p>
             </div>
+            <div>
+              <p className="font-semibold text-white mb-1">Sensor Calibration:</p>
+              <ul className="space-y-1 ml-4">
+                <li>• <strong>Compass:</strong> Calibrate before capture — away from metal, powerlines & reinforced concrete</li>
+                <li>• <strong>IMU:</strong> Calibrate before your first capture or after long travel (e.g. interstate) — on a flat, stable surface</li>
+                <li>• <strong>Gimbal:</strong> Auto-calibrate on a flat, level surface if the horizon looks tilted</li>
+                <li>• <strong>Vision sensors:</strong> Calibrate via DJI Assistant 2 (Enterprise) if obstacle avoidance acts erratically</li>
+              </ul>
+            </div>
           </div>
         </Section>
 
@@ -176,6 +185,10 @@ export default function StandardCaptureChecklist() {
             <p><strong>M2P:</strong> Give drone minimum 2 minutes for GPS to stabilize if there have been GPS problems</p>
             <p><strong>M3E:</strong> Let drone stabilize after turn-on. Leave on takeoff spot for 2 mins in open area with line of sight to sky, no obstacles (trees/buildings)</p>
             <p><strong>Rooftop v9.7.0:</strong> GPS stabilization MUST be performed at ground level before takeoff due to 1-second capture interval</p>
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mt-3">
+              <p className="text-amber-200 font-semibold mb-1">Battery Change — Compass Recalibration</p>
+              <p className="text-sm">Re-calibrate compass after EVERY battery change, before GPS stabilisation. Calibrate away from metal structures and powerlines.</p>
+            </div>
           </div>
         </Section>
 
