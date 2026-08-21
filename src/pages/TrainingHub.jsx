@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import ActionCard from '@/components/ActionCard';
 import WeatherWidget from '@/components/WeatherWidget';
+import { AlertTriangle, Shield } from 'lucide-react';
 
 export default function TrainingHub() {
   const navigate = useNavigate();
@@ -48,6 +49,14 @@ export default function TrainingHub() {
       description: 'Field bible with essential checklists',
       onClick: () => navigate(createPageUrl('QuickReference')),
       variant: 'default'
+    },
+    {
+      icon: AlertTriangle,
+      title: 'Safety Documentation',
+      description: 'Obstacle avoidance, MSA, calibration — updated capture docs',
+      onClick: () => navigate(createPageUrl('ToolsLinks')),
+      variant: 'warning',
+      badge: 'UPDATED'
     },
     {
       icon: Map,
@@ -117,8 +126,10 @@ export default function TrainingHub() {
         { title: 'Rooftop Safety Procedures', url: '#' }
       ],
       docs: [
-        { title: 'Rooftop Capture Manual (PDF)', url: '#' },
-        { title: 'Rooftop Checklist', url: createPageUrl('QuickReference') }
+        { title: 'Rooftop Mission Capture v9.8.0', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3133407344/How+to+Capture+-+Rooftop+Mission+Capture+v+9.8.0', tag: 'UPDATED' },
+        { title: 'Obstacle Avoidance — MUST READ', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3585245186/How+to+Capture+-+Obstacle+Avoidance', tag: 'NEW' },
+        { title: 'Using the Mavic 3 E with Dronelink', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3133177936/How+to+Capture+-+Using+the+Mavic+3+E+with+Dronelink', tag: 'UPDATED' },
+        { title: 'Rooftop Checklist — Quick Reference', url: createPageUrl('QuickReference'), internal: true }
       ]
     },
     tower: {
@@ -127,8 +138,10 @@ export default function TrainingHub() {
         { title: 'Tower Marking Tutorial', url: '#' }
       ],
       docs: [
-        { title: 'Tower Capture Manual (PDF)', url: '#' },
-        { title: 'Tower Checklist', url: createPageUrl('QuickReference') }
+        { title: 'Scanlink Tower v2.1.21', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132915725/How+to+Capture+-+Automatic+Image+Acquisition+Mission+Capture+with+Scanlink+-+Tower+v2.1.21', tag: 'UPDATED' },
+        { title: 'Obstacle Avoidance — MUST READ', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3585245186/How+to+Capture+-+Obstacle+Avoidance', tag: 'NEW' },
+        { title: 'Using the Mavic 3 E with Dronelink', url: 'https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3133177936/How+to+Capture+-+Using+the+Mavic+3+E+with+Dronelink', tag: 'UPDATED' },
+        { title: 'Tower Checklist — Quick Reference', url: createPageUrl('QuickReference'), internal: true }
       ]
     }
   };
@@ -223,21 +236,32 @@ export default function TrainingHub() {
                 Documentation
               </h2>
               <div className="grid grid-cols-1 gap-3">
-                {contentData[selectedCategory].docs.map((doc, index) => (
-                  <a
-                    key={index}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-emerald-400" />
-                      <span className="text-white font-medium">{doc.title}</span>
-                    </div>
-                    <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-white" />
-                  </a>
-                ))}
+                {contentData[selectedCategory].docs.map((doc, index) => {
+                  const Wrapper = doc.internal ? Link : 'a';
+                  const wrapperProps = doc.internal
+                    ? { to: doc.url }
+                    : { href: doc.url, target: '_blank', rel: 'noopener noreferrer' };
+                  return (
+                    <Wrapper
+                      key={index}
+                      {...wrapperProps}
+                      className="flex items-center justify-between p-4 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-emerald-400" />
+                        <span className="text-white font-medium">{doc.title}</span>
+                        {doc.tag && (
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            doc.tag === 'NEW' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                          }`}>
+                            {doc.tag}
+                          </span>
+                        )}
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                    </Wrapper>
+                  );
+                })}
               </div>
             </div>
           </div>
