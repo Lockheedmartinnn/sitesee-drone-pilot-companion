@@ -261,7 +261,7 @@ const TOWER_CONFIGS = {
     batterySwap: true,
     info: {
       title: "Battery Swap Protocol",
-      message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Wait 5 min GPS stabilisation\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Re-center tower before resuming"
+      message: "If battery swap needed:\n1. Land safely\n2. Install new battery\n3. Calibrate compass (away from metal/powerlines)\n4. Wait 5 min GPS stabilisation\n5. Verify GPS stability with Altitude Verifier\n6. Re-verify camera settings\n7. Re-center tower before resuming"
     }
   },
   9: {
@@ -417,7 +417,7 @@ const ROOFTOP_CONFIGS = {
     batterySwap: true,
     info: {
       title: "Battery Swap Protocol - CRITICAL",
-      message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Wait 5 min GPS stabilization\n4. Verify GPS stability with Altitude Verifier\n5. Re-verify camera settings\n6. Takeoff from same spot - cannot recenter mission"
+      message: "1. Land at EXACT SAME LOCATION as initial takeoff\n2. Install new battery\n3. Calibrate compass (away from metal/powerlines)\n4. Wait 5 min GPS stabilization\n5. Verify GPS stability with Altitude Verifier\n6. Re-verify camera settings\n7. Takeoff from same spot - cannot recenter mission"
     }
   },
   9: { // This is the re-indexed Post-Flight QC for Rooftop
