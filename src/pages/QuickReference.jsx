@@ -135,6 +135,7 @@ export default function QuickReference() {
                 'Land drone safely',
                 'Swap to fresh battery',
                 'Power on and wait for boot',
+                'Calibrate compass (away from metal/powerlines)',
                 'Start GPS timer (2 min minimum)',
                 'Verify camera settings unchanged',
                 'Re-centre tower marker',
