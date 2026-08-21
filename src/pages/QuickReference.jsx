@@ -88,6 +88,43 @@ export default function QuickReference() {
             </div>
           </Section>
           
+          {/* Obstacle Avoidance & MSA */}
+          <Section title="Obstacle Avoidance & MSA" icon={Shield}>
+            <InfoCard variant="danger" className="mb-4" title="Do NOT rely on obstacle avoidance">
+              <p>You remain the RPIC at all times. The M3E can be expected NOT to detect thin objects — Yagi antennas, powerlines, branches.</p>
+            </InfoCard>
+            
+            <div className="space-y-1">
+              <RuleItem positive>Set the MSA ABOVE any powerlines (10–15m recommended)</RuleItem>
+              <RuleItem positive>Enable Obstacle Avoidance in DJI Pilot 2 — Brake, all directions</RuleItem>
+              <RuleItem positive>Braking distance 0.6m / warning distance 1.2m (adjust as needed)</RuleItem>
+              <RuleItem positive>Review the 3D mission flight path vs marked obstacles BEFORE flight</RuleItem>
+              <RuleItem positive>Give marked obstacles a boundary buffer of 1m or more</RuleItem>
+              <RuleItem positive>Be ready to pause the mission and negotiate obstacles manually, then resume</RuleItem>
+              <RuleItem>Never rely on sensors near reflective, transparent or pure-colour surfaces</RuleItem>
+              <RuleItem>Never expect detection in low light (&lt;15 lux) or above 15 m/s</RuleItem>
+            </div>
+            
+            <InfoCard variant="info" title="Full guidance" className="mt-4">
+              <p>Read "How to Capture – Obstacle Avoidance" on the SiteSee knowledge base (see Tools & Links) before your next capture.</p>
+            </InfoCard>
+          </Section>
+          
+          {/* Sensor Calibration */}
+          <Section title="Sensor Calibration" icon={Compass}>
+            <p className="text-sm text-slate-400 mb-4">
+              SiteSee assumes calibrated hardware. Calibration affects location data — critical for digital twin capture.
+            </p>
+            <div className="space-y-1">
+              <RuleItem positive>Compass: calibrate before capture, and after each battery change before stabilisation</RuleItem>
+              <RuleItem positive>IMU: calibrate before your first capture, and after travelling far (e.g. interstate)</RuleItem>
+              <RuleItem positive>Gimbal: auto-calibrate on a flat, level surface if the horizon looks tilted</RuleItem>
+              <RuleItem positive>Vision sensors: calibrate via DJI Assistant 2 (Enterprise) if OA acts erratically</RuleItem>
+              <RuleItem>Never calibrate the compass near powerlines, metal structures or reinforced concrete</RuleItem>
+              <RuleItem>Never calibrate the IMU on a vibrating surface</RuleItem>
+            </div>
+          </Section>
+          
           {/* Battery Swap Checklist */}
           <Section title="Battery Swap Checklist" icon={Battery}>
             <p className="text-sm text-slate-400 mb-4">
