@@ -1260,7 +1260,7 @@ export default function StartCapture() {
             )}
             
             {/* Warning Card */}
-            {config.warning && currentStep !== 5 && 
+            {config.warning && currentStep !== 5 && currentStep !== totalSteps && 
              !((currentStep === 3 && usingScalePoint === null) || (currentStep === 4 && usingGCP === null)) && (
               <InfoCard variant="warning" title={config.warning.title} className="mb-4">
                 <p className="whitespace-pre-line">{config.warning.message}</p>
