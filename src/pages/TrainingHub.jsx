@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
   PlayCircle, 
@@ -9,11 +9,12 @@ import {
   Map, 
   MessageSquare,
   ArrowLeft,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
 import ActionCard from '@/components/ActionCard';
 import WeatherWidget from '@/components/WeatherWidget';
-import { AlertTriangle, Shield } from 'lucide-react';
 
 export default function TrainingHub() {
   const navigate = useNavigate();
