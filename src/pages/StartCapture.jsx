@@ -141,6 +141,7 @@ const TOWER_CONFIGS = {
       { id: 'batteries', label: '3+ batteries fully charged', sublabel: '95-100% each + remote 95-100%', critical: true },
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
+      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'DJI Pilot 2: Brake, all directions — do NOT rely on it', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
   },
@@ -218,14 +219,19 @@ const TOWER_CONFIGS = {
     items: [
       { id: 'tower_type', label: 'Tower type selected', sublabel: 'Correct type for this site' },
       { id: 'mission_name', label: 'Mission name entered', sublabel: 'Using Site ID' },
-      { id: 'msa_set', label: 'MSA set (10-15m)', sublabel: 'Minimum Safe Altitude', critical: true },
+      { id: 'msa_set', label: 'MSA set (10-15m) — ABOVE powerlines', sublabel: 'Minimum Safe Altitude must clear any powerlines', critical: true },
       { id: 'rad_height', label: 'RAD height marked', sublabel: '0° gimbal - equipment level' },
       { id: 'tower_height', label: 'Tower height marked', sublabel: '0° gimbal' },
       { id: 'tower_center', label: 'Tower center marked', sublabel: '-90° gimbal', critical: true },
       { id: 'tower_edge', label: 'Tower edge marked', sublabel: '-90° gimbal (radius ~4.5m for SST)' },
-      { id: 'obstacles_checked', label: 'Obstacles checked & marked', sublabel: 'All boundaries marked' },
-      { id: 'obstacle_altitude', label: 'Obstacle altitudes set', sublabel: '+4m buffer from actual height' }
-    ]
+      { id: 'obstacles_checked', label: 'Obstacles checked & marked', sublabel: 'Boundary buffer of 1m+ around each obstacle' },
+      { id: 'obstacle_altitude', label: 'Obstacle altitudes set', sublabel: '+4m buffer from actual height' },
+      { id: 'flight_plan_reviewed', label: '3D flight plan reviewed before flight', sublabel: 'Check path vs marked obstacles — be ready to pause & fly around manually', critical: true }
+    ],
+    warning: {
+      title: "Obstacle Avoidance — Do NOT Rely On It",
+      message: "⚠️ You remain the RPIC — never rely solely on automatic obstacle avoidance\n⚠️ The M3E can be expected NOT to detect thin objects: Yagi antennas, powerlines, branches\n⚠️ Set the MSA ABOVE any powerlines\n⚠️ Sensors fail on reflective/transparent surfaces, in low light (<15 lux) and at speeds >15 m/s"
+    }
   },
   7: {
     title: "Panorama Setup",
@@ -288,7 +294,7 @@ const ROOFTOP_CONFIGS = {
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
-      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'Verify in DJI Go/Pilot app', critical: true },
+      { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'DJI Pilot 2: Brake, all directions (0.6m brake / 1.2m warn) — do NOT rely on it', critical: true },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true },
       { id: 'gimbal_assist', label: 'Gimbal assist settings enabled', sublabel: 'Turn on Heading/Gimbal Altitude, Grid, Reticle' }
     ]
@@ -374,13 +380,14 @@ const ROOFTOP_CONFIGS = {
       { id: 'boundary_marked', label: 'Planar boundary marked in order', sublabel: 'Clockwise OR anti-clockwise, corners in sequence (not zig-zag)', critical: true },
       { id: 'antenna_components_monitored', label: 'Monitor antenna components in frame', sublabel: 'Planar is lower - ensure equipment visible' },
       { id: 'equipment_marked', label: 'Equipment/antenna locations marked', sublabel: 'Mark radius of antenna (no offset needed)', critical: true },
-      { id: 'obstacles_marked', label: 'Obstacles marked if present', sublabel: 'Buildings, obstructions with buffer' },
+      { id: 'obstacles_marked', label: 'Obstacles marked if present', sublabel: 'Boundary buffer of 1m+ around each obstacle' },
       { id: 'antenna_interval', label: 'Antenna component interval: 1 second', sublabel: 'Keep interval mode at 1s', critical: true },
-      { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true }
+      { id: 'same_takeoff', label: 'Takeoff location noted', sublabel: 'Must use SAME spot for battery swaps', critical: true },
+      { id: 'flight_plan_reviewed', label: '3D flight plan reviewed before flight', sublabel: 'Check path vs marked obstacles — be ready to pause & fly around manually', critical: true }
     ],
     warning: {
       title: "IMPORTANT: V9.8.0 Updates",
-      message: "⚠ Planar height AUTO-CALCULATED\n⚠ Planar boundary extends uniformly (all shapes)\n⚠ Mark boundary in order (clockwise OR anti-clockwise)\n⚠ Antenna radius: NO manual offset needed\n⚠ Ortho component: Set ~30m above rooftop height — mark too low and the app will throw an error\n⚠ Monitor camera settings during pano/ortho (may switch to auto)"
+      message: "⚠ Planar height AUTO-CALCULATED\n⚠ Planar boundary extends uniformly (all shapes)\n⚠ Mark boundary in order (clockwise OR anti-clockwise)\n⚠ Antenna radius: NO manual offset needed\n⚠ Ortho component: Set ~30m above rooftop height — mark too low and the app will throw an error\n⚠ Monitor camera settings during pano/ortho (may switch to auto)\n⚠ Do NOT rely on obstacle avoidance — the M3E may not detect thin objects (Yagi antennas, powerlines, branches). Check the 3D flight path vs marked obstacles BEFORE flight"
     }
   },
   7: { // This is the new Panorama Setup for Rooftop
