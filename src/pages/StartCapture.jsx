@@ -142,6 +142,8 @@ const TOWER_CONFIGS = {
       { id: 'drone_inspection', label: 'Visual/physical inspection', sublabel: 'Drone, propeller, battery, motor' },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'DJI Pilot 2: Brake, all directions — do NOT rely on it', critical: true },
+      { id: 'compass_calibration', label: 'Compass calibrated', sublabel: 'Before capture — away from metal, powerlines & reinforced concrete', critical: true },
+      { id: 'imu_calibration', label: 'IMU calibrated (if needed)', sublabel: 'Required before first capture or after long travel (e.g. interstate)' },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true }
     ]
   },
@@ -210,7 +212,7 @@ const TOWER_CONFIGS = {
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
@@ -295,6 +297,8 @@ const ROOFTOP_CONFIGS = {
       { id: 'roof_access', label: 'Rooftop access confirmed', sublabel: 'Verify safe access', critical: true },
       { id: 'dji_status', label: 'DJI app status check', sublabel: 'Firmware, sensors, compass, GPS, HD transmission', critical: true },
       { id: 'obstacle_avoidance', label: 'Obstacle Avoidance ON', sublabel: 'DJI Pilot 2: Brake, all directions (0.6m brake / 1.2m warn) — do NOT rely on it', critical: true },
+      { id: 'compass_calibration', label: 'Compass calibrated', sublabel: 'Before capture — away from metal, powerlines & reinforced concrete', critical: true },
+      { id: 'imu_calibration', label: 'IMU calibrated (if needed)', sublabel: 'Required before first capture or after long travel (e.g. interstate)' },
       { id: 'recording', label: 'Screen recording ON', sublabel: 'From hover start to mission end', critical: true },
       { id: 'gimbal_assist', label: 'Gimbal assist settings enabled', sublabel: 'Turn on Heading/Gimbal Altitude, Grid, Reticle' }
     ]
@@ -364,7 +368,7 @@ const ROOFTOP_CONFIGS = {
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after stabilization, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after stabilization, do NOT fly - troubleshoot GPS issue first"
     }
   },
   6: {
