@@ -43,10 +43,31 @@ const LINKS = [
     items: [
       {
         icon: BookOpen,
-        title: "How to Capture",
-        description: "Complete capture documentation and guides (Confluence)",
-        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132424197/SiteSee+Web+Portal+Legacy+-+Getting+Started",
+        title: "How to Capture — Obstacle Avoidance (NEW)",
+        description: "MUST READ — OA limitations, thin objects, MSA above powerlines",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3585245186/How+to+Capture+-+Obstacle+Avoidance",
+        color: "text-red-400 bg-red-500/20"
+      },
+      {
+        icon: BookOpen,
+        title: "How to Capture — Mavic 3 E with Dronelink",
+        description: "Updated: OA setup + compass/IMU/gimbal/vision calibration guides",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3133177936/How+to+Capture+-+Using+the+Mavic+3+E+with+Dronelink",
         color: "text-blue-400 bg-blue-500/20"
+      },
+      {
+        icon: BookOpen,
+        title: "How to Capture — Rooftop Mission v9.8.0",
+        description: "Updated: MSA, obstacles & flight path review before flight",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3133407344/How+to+Capture+-+Rooftop+Mission+Capture+v+9.8.0",
+        color: "text-emerald-400 bg-emerald-500/20"
+      },
+      {
+        icon: BookOpen,
+        title: "How to Capture — Scanlink Tower (v2.1.21)",
+        description: "Updated: MSA above powerlines, obstacle marking & flight plan review",
+        url: "https://sitesee.atlassian.net/wiki/spaces/CSE/pages/3132915725/How+to+Capture+-+Automatic+Image+Acquisition+Mission+Capture+with+Scanlink+-+Tower+v2.1.21",
+        color: "text-cyan-400 bg-cyan-500/20"
       },
       {
         icon: Settings,
