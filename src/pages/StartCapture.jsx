@@ -172,17 +172,18 @@ const TOWER_CONFIGS = {
     subtitle: "Critical for accurate measurements",
     info: {
       title: "Good Placement Requirements",
-      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
+      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)\n✓ NOT in partial shade — consistent lighting across both April Tags\n\nSee SiteSee's ScalePoint Do's & Don'ts for further guidance."
     },
     warning: {
       title: "Bad Placement to AVOID",
-      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
+      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation\n✗ In partial shade or shadow — causes exposure inconsistency"
     },
     items: [
       { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
       { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
       { id: 'scalepoint_distance', label: 'ScalePoint positioned appropriately', sublabel: 'Typical range: 10-20m from tower base' },
-      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
+      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true },
+      { id: 'scalepoint_no_shade', label: 'ScalePoint NOT in partial shade', sublabel: 'Consistent lighting across both April Tags — see Do\'s & Don\'ts', critical: true }
     ]
   },
   4: {
@@ -328,17 +329,18 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Critical for accurate measurements",
     info: {
       title: "Good Placement Requirements",
-      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)"
+      message: "✓ Clearly in line of sight during mission\n✓ Not obstructed by fences, buildings, trees\n✓ On flat, even surface\n✓ Both April Tags fully visible (no grass/leaves covering)\n✓ NOT in partial shade — consistent lighting across both April Tags\n\nSee SiteSee's ScalePoint Do's & Don'ts for further guidance."
     },
     warning: {
       title: "Bad Placement to AVOID",
-      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation"
+      message: "✗ Under trees or near tall structures\n✗ On elevated/angled surfaces\n✗ Too close to fences or shelters\n✗ April Tags partially covered by vegetation\n✗ In partial shade or shadow — causes exposure inconsistency"
     },
     items: [
       { id: 'scalepoint_clear_view', label: 'ScalePoint in clear line of sight', sublabel: 'Visible from drone at all mission angles', critical: true },
       { id: 'scalepoint_flat', label: 'Placed on flat, even surface', sublabel: 'No angles, slopes, or obstructions' },
       { id: 'scalepoint_distance', label: 'ScalePoint positioned appropriately', sublabel: 'Typical range: 10-20m from tower base' },
-      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true }
+      { id: 'april_tags_visible', label: 'Both April Tags fully visible', sublabel: 'No grass, leaves, or debris covering tags', critical: true },
+      { id: 'scalepoint_no_shade', label: 'ScalePoint NOT in partial shade', sublabel: 'Consistent lighting across both April Tags — see Do\'s & Don\'ts', critical: true }
     ]
   },
   4: {
