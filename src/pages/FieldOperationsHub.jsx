@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Rocket, Satellite, MessageSquare, BookOpen, Map, Navigation } from 'lucide-react';
+import { Rocket, Satellite, MessageSquare, BookOpen, Map, Navigation, Clock } from 'lucide-react';
 import ActionCard from '@/components/ActionCard';
 import WeatherWidget from '@/components/WeatherWidget';
 
@@ -30,6 +30,14 @@ export default function FieldOperationsHub() {
       description: 'Verify battery swap GPS stability and altitude consistency',
       onClick: () => navigate(createPageUrl('GPSVerifier')),
       variant: 'warning'
+    },
+    {
+      icon: Clock,
+      title: 'GPS Stabilization Timer',
+      description: 'Quick-access 2-min countdown timer — runs in background',
+      onClick: () => navigate(createPageUrl('GpsTimer')),
+      variant: 'primary',
+      badge: 'NEW'
     },
     {
       icon: MessageSquare,

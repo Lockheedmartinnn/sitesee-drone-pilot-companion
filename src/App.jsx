@@ -16,6 +16,7 @@ import EnvGuide2 from './pages/EnvGuide2';
 import EnvGuide3 from './pages/EnvGuide3';
 import EnvGuide4 from './pages/EnvGuide4';
 import EnvGuide5 from './pages/EnvGuide5';
+import GpsTimer from './pages/GpsTimer';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -74,6 +75,7 @@ const AuthenticatedApp = () => {
       <Route path="/EnvGuide3" element={<LayoutWrapper currentPageName="EnvGuide3"><EnvGuide3 /></LayoutWrapper>} />
       <Route path="/EnvGuide4" element={<LayoutWrapper currentPageName="EnvGuide4"><EnvGuide4 /></LayoutWrapper>} />
       <Route path="/EnvGuide5" element={<LayoutWrapper currentPageName="EnvGuide5"><EnvGuide5 /></LayoutWrapper>} />
+      <Route path="/GpsTimer" element={<LayoutWrapper currentPageName="GpsTimer"><GpsTimer /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

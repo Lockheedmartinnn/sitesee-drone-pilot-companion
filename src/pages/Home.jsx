@@ -8,7 +8,8 @@ import {
   PlayCircle, 
   Map, 
   ExternalLink,
-  Satellite
+  Satellite,
+  Clock
 } from 'lucide-react';
 import ActionButton from '@/components/ActionButton';
 
@@ -71,6 +72,21 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
+            <Link to={createPageUrl('GpsTimer')}>
+              <ActionButton
+                icon={Clock}
+                label="GPS Stabilization Timer"
+                sublabel="Quick-start 2-min countdown (runs in background)"
+                variant="warning"
+              />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.25 }}
+          >
             <Link to={createPageUrl('FieldOperationsHub')}>
               <ActionButton
                 icon={Rocket}
@@ -83,7 +99,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.25 }}
+            transition={{ delay: 0.3 }}
           >
             <Link to={createPageUrl('TrainingHub')}>
               <ActionButton

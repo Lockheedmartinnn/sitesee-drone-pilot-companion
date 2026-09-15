@@ -46,6 +46,7 @@ import InfoCard from '@/components/InfoCard';
 import PreMissionFocusCheck from '@/components/PreMissionFocusCheck';
 
 import { cn } from '@/lib/utils';
+import { resetGpsTimer, isGpsTimerComplete } from '@/hooks/useGpsTimer';
 
 // ─── Location Briefing helpers ───────────────────────────────────────────────
 
@@ -208,11 +209,11 @@ const TOWER_CONFIGS = {
     subtitle: "Wait for stable satellite lock",
     info: {
       title: "Model-Specific Instructions",
-      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 5 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 5 min after takeoff"
+      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 2 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 2 min after takeoff"
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after 5 minutes, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\n• Wait for the full 2-minute stabilization timer before takeoff\n• If GPS does not stabilize after 2 minutes, troubleshoot before flying"
     }
   },
   6: {
@@ -364,11 +365,11 @@ const ROOFTOP_CONFIGS = {
     subtitle: "Wait for stable satellite lock",
     info: {
       title: "Model-Specific Instructions",
-      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover after takeoff"
+      message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 2 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 2 min after takeoff"
     },
     warning: {
       title: "CRITICAL: Battery Change Protocol",
-      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\nGPS Signal Requirements:\n• Must reach 26-32 satellites\n• If not reached after stabilization, do NOT fly - troubleshoot GPS issue first"
+      message: "⚠️ SUBSEQUENT BATTERY CHANGES MUST BE DONE AT THE SAME TAKEOFF SPOT WHERE YOU COMPLETED YOUR INITIAL STABILISATION\n\n⚠️ Re-calibrate compass after EVERY battery change before stabilisation\n\n• Wait for the full 2-minute stabilization timer before takeoff\n• If GPS does not stabilize after 2 minutes, troubleshoot before flying"
     }
   },
   6: {
@@ -526,8 +527,6 @@ export default function StartCapture() {
   const [currentStep, setCurrentStep] = useState(1);
   const [checkedItems, setCheckedItems] = useState({});
   const [gpsTimerComplete, setGpsTimerComplete] = useState(false);
-  const [satelliteCheckPassed, setSatelliteCheckPassed] = useState(null);
-  const [gpsTimerMinutes, setGpsTimerMinutes] = useState(5);
   const [timerKey, setTimerKey] = useState(0);
   const [finalDecision, setFinalDecision] = useState(null);
   const [showPostMissionForm, setShowPostMissionForm] = useState(false);
@@ -553,23 +552,18 @@ export default function StartCapture() {
     queryFn: () => base44.auth.me(),
   });
   
-  // Set GPS timer duration based on company
-  // Pilot Group 1 = 5 min, everyone else (including no company) = 2 min
-  useEffect(() => {
-    const companyName = user?.company?.trim();
-    console.log('Setting GPS timer - User company:', user?.company, 'Normalized:', companyName, 'Timer will be:', companyName === 'Pilot Group 1' ? 5 : 2, 'minutes');
-    if (companyName === 'Pilot Group 1') {
-      setGpsTimerMinutes(5);
-    } else {
-      setGpsTimerMinutes(2);
-    }
-  }, [user]);
-  
   useEffect(() => {
     if (user?.email && !pilotId) {
       setPilotId(user.email);
     }
   }, [user, pilotId]);
+
+  // Sync gpsTimerComplete from background timer when entering step 5
+  useEffect(() => {
+    if (currentStep === 5 && !gpsTimerComplete && isGpsTimerComplete()) {
+      setGpsTimerComplete(true);
+    }
+  }, [currentStep, gpsTimerComplete]);
 
   // Reuse briefing location for checklist location tracking
   useEffect(() => {
@@ -631,7 +625,7 @@ export default function StartCapture() {
   // Step 8 can proceed if: battery change answered NO and all items checked
   const step8CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
   // Step 5 can proceed if: timer complete AND satellite check passed
-  const step5CanProceed = isAdmin || (gpsTimerComplete && satelliteCheckPassed === true);
+  const step5CanProceed = isAdmin || gpsTimerComplete;
   const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 && siteType === 'rooftop' ? step6CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked))))));
   
   const nextStep = () => {
@@ -642,7 +636,7 @@ export default function StartCapture() {
     }
 
     // Log step navigation and step completion time
-    const nextStepNum = currentStep === 6 && needsPanorama === false ? 8 : (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true ? 8 : currentStep + 1);
+    const nextStepNum = currentStep === 6 && needsPanorama === false ? 8 : (currentStep === 5 && initialSetupComplete && gpsTimerComplete ? 8 : currentStep + 1);
     logActivity('step_navigation', `step_${currentStep}_to_${nextStepNum}`, `Navigated from ${STEPS[currentStep - 1]} to ${STEPS[nextStepNum - 1]}`, 'next');
     
     // Mark initial setup complete after step 7 (before flight execution)
@@ -663,7 +657,7 @@ export default function StartCapture() {
         // Go to panorama step (step 7)
         setCurrentStep(7);
       }
-    } else if (currentStep === 5 && initialSetupComplete && satelliteCheckPassed === true) {
+    } else if (currentStep === 5 && initialSetupComplete && gpsTimerComplete) {
       // Battery swap GPS - skip to flight execution (step 8)
       setCurrentStep(8);
       setNeedsBatteryChange(null);
@@ -715,9 +709,11 @@ export default function StartCapture() {
         latitude: coords?.latitude || null,
         longitude: coords?.longitude || null
       });
+      resetGpsTimer();
       setMissionComplete(true);
     } catch (error) {
       console.error('Failed to submit mission log:', error);
+      resetGpsTimer();
       setMissionComplete(true);
     }
   };
@@ -1032,7 +1028,7 @@ export default function StartCapture() {
                 </InfoCard>
 
                 <Timer 
-                  targetMinutes={user?.company?.trim() === 'Pilot Group 1' ? 5 : 2}
+                  targetMinutes={2}
                   onStart={() => {
                     logActivity('timer_start', 'gps_stabilisation_battery_swap', 'GPS Stabilisation Timer (Battery Swap)', 'started');
                   }}
@@ -1040,7 +1036,7 @@ export default function StartCapture() {
                     setBatterySwapGpsComplete(true);
                     logActivity('timer_complete', 'gps_stabilisation_battery_swap', 'GPS Stabilisation Timer (Battery Swap)', 'completed');
                   }}
-                  label={`GPS Stabilisation (${user?.company?.trim() === 'Pilot Group 1' ? 5 : 2} min)`}
+                  label="GPS Stabilisation (2 min)"
                 />
 
                 <Link to={createPageUrl('GPSVerifier')} target="_blank">
@@ -1095,7 +1091,7 @@ export default function StartCapture() {
 
                 <Timer 
                   key={timerKey}
-                  targetMinutes={gpsTimerMinutes}
+                  targetMinutes={2}
                   onStart={() => {
                     logActivity('timer_start', 'gps_stabilisation', 'GPS Stabilisation Timer', 'started');
                   }}
@@ -1106,51 +1102,13 @@ export default function StartCapture() {
                   onSkip={() => {
                     logActivity('timer_complete', 'gps_stabilisation', 'GPS Stabilisation Timer', 'skipped_by_admin');
                   }}
-                  label={`GPS Stabilisation Timer (${gpsTimerMinutes} min)${user?.company?.trim() === 'Pilot Group 1' ? ' [Pilot Group 1]' : ''}`}
+                  label="GPS Stabilisation Timer (2 min)"
                   isAdmin={user?.email === 'Steve.ryan@sitesee.io' || user?.email === 'Yatesh.pawar@sitesee.com.au'}
                 />
                 
-                {/* Satellite Check Question (after timer completes) */}
-                {gpsTimerComplete && satelliteCheckPassed === null && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <InfoCard variant="info" title="Satellite Count Check">
-                      <p className="mb-4">Did you reach 26-32 satellites?</p>
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={() => {
-                            setSatelliteCheckPassed(true);
-                            logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'yes');
-                          }}
-                          className="flex-1 bg-emerald-500 hover:bg-emerald-600"
-                        >
-                          <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Yes
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setGpsTimerComplete(false);
-                            setSatelliteCheckPassed(null);
-                            setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
-                            setTimerKey(prev => prev + 1);
-                            logActivity('yes_no_decision', 'satellite_count', 'Did you reach 26-32 satellites?', 'no');
-                          }}
-                          variant="outline"
-                          className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10"
-                        >
-                          <XCircle className="w-4 h-4 mr-2" />
-                          No
-                        </Button>
-                      </div>
-                    </InfoCard>
-                  </motion.div>
-                )}
-                
-                {satelliteCheckPassed === true && (
-                  <InfoCard variant="success" title="GPS Ready">
-                    <p>Satellite count confirmed. GPS is stable. Proceed to next step.</p>
+                {gpsTimerComplete && (
+                  <InfoCard variant="success" title="GPS Stabilization Complete">
+                    <p>Stabilization timer finished. Proceed to the next step.</p>
                   </InfoCard>
                 )}
                 
@@ -1601,24 +1559,14 @@ export default function StartCapture() {
                     <Button
                       onClick={() => {
                         logActivity('yes_no_decision', 'battery_change', 'Do you need to change the battery?', 'yes');
-                        // If initial setup complete, skip to GPS step and then back to flight execution (Step 8)
-                        if (initialSetupComplete) {
-                          setCurrentStep(5);
-                          setGpsTimerComplete(false);
-                          setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
-                          setTimerKey(prev => prev + 1);
-                          setNeedsBatteryChange(null);
-                        } else {
-                          // First time, go through full flow
-                          setCurrentStep(5);
-                          setGpsTimerComplete(false);
-                          setSatelliteCheckPassed(null);
-                          setGpsTimerMinutes(user?.company?.trim() === 'Pilot Group 1' ? 5 : 2);
-                          setTimerKey(prev => prev + 1);
-                          setCheckedItems({}); // Reset checked items for step 5
-                          setNeedsBatteryChange(null);
+                        resetGpsTimer();
+                        setCurrentStep(5);
+                        setGpsTimerComplete(false);
+                        setTimerKey(prev => prev + 1);
+                        if (!initialSetupComplete) {
+                          setCheckedItems({});
                         }
+                        setNeedsBatteryChange(null);
                       }}
                       className="flex-1 bg-amber-500 hover:bg-amber-600"
                     >

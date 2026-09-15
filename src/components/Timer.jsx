@@ -1,81 +1,86 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useGpsTimer } from '@/hooks/useGpsTimer';
 
-export default function Timer({ 
-  targetMinutes = 5, 
+export default function Timer({
+  targetMinutes = 2,
   onComplete,
   onSkip,
   onStart,
   label = "GPS Stabilisation Timer",
   isAdmin = false
 }) {
-  const [seconds, setSeconds] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  
-  const targetSeconds = targetMinutes * 60;
-  
-  // Admin quick-set function
-  const quickSet = useCallback((mins) => {
-    setSeconds(mins * 60);
-    setIsComplete(true);
-    setIsRunning(false);
-    onComplete?.();
-  }, [onComplete]);
-  const progress = Math.min((seconds / targetSeconds) * 100, 100);
-  
+  const {
+    elapsedSeconds,
+    progress,
+    isComplete,
+    isRunning,
+    isStarted,
+    start,
+    pause,
+    resume,
+    reset,
+    completeNow,
+    targetSeconds,
+  } = useGpsTimer(targetMinutes);
+
+  const onStartRef = useRef(onStart);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onStartRef.current = onStart; }, [onStart]);
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+
+  // Fire onStart when timer transitions to running (not on mount if already running)
+  const prevRunning = useRef(isRunning);
   useEffect(() => {
-    let interval;
-    if (isRunning && !isComplete) {
-      interval = setInterval(() => {
-        setSeconds(prev => {
-          const next = prev + 1;
-          if (next >= targetSeconds) {
-            setIsComplete(true);
-            setIsRunning(false);
-            onComplete?.();
-          }
-          return next;
-        });
-      }, 1000);
+    if (isRunning && !prevRunning.current) {
+      onStartRef.current?.();
     }
-    return () => clearInterval(interval);
-  }, [isRunning, isComplete, targetSeconds, onComplete]);
-  
+    prevRunning.current = isRunning;
+  }, [isRunning]);
+
+  // Fire onComplete when timer completes (including on mount if already complete)
+  const prevComplete = useRef(false);
+  useEffect(() => {
+    if (isComplete && !prevComplete.current) {
+      onCompleteRef.current?.();
+    }
+    prevComplete.current = isComplete;
+  }, [isComplete]);
+
   const formatTime = (totalSeconds) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-  
-  const reset = useCallback(() => {
-    setSeconds(0);
-    setIsRunning(false);
-    setIsComplete(false);
-  }, []);
-  
-  const toggleTimer = useCallback(() => {
+
+  const handleToggle = useCallback(() => {
     if (isComplete) {
-      reset();
-      setHasStarted(false);
+      start();
+    } else if (isRunning) {
+      pause();
+    } else if (isStarted) {
+      resume();
     } else {
-      const willStart = !isRunning;
-      if (willStart && !hasStarted) {
-        setHasStarted(true);
-        onStart?.();
-      }
-      setIsRunning(prev => !prev);
+      start();
     }
-  }, [isComplete, reset, isRunning, hasStarted, onStart]);
+  }, [isComplete, isRunning, isStarted, start, pause, resume]);
+
+  const handleReset = useCallback(() => {
+    reset();
+  }, [reset]);
+
+  const handleSkip = useCallback(() => {
+    completeNow();
+    onSkip?.();
+  }, [completeNow, onSkip]);
 
   return (
     <div className={cn(
       "rounded-3xl p-6 transition-all duration-500",
-      isComplete 
+      isComplete
         ? "bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/30"
         : "bg-gradient-to-br from-slate-800 to-slate-800/50 border-2 border-slate-700/50"
     )}>
@@ -85,17 +90,14 @@ export default function Timer({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              quickSet(targetMinutes);
-              onSkip?.();
-            }}
+            onClick={handleSkip}
             className="text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
           >
             Skip ({targetMinutes}m)
           </Button>
         )}
       </div>
-      
+
       {/* Circular Progress */}
       <div className="relative w-40 h-40 mx-auto mb-6">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -139,7 +141,7 @@ export default function Timer({
                 key="time"
                 className="text-4xl font-bold text-white tabular-nums"
               >
-                {formatTime(seconds)}
+                {formatTime(elapsedSeconds)}
               </motion.span>
             )}
           </AnimatePresence>
@@ -150,25 +152,25 @@ export default function Timer({
           )}
         </div>
       </div>
-      
+
       {/* Controls */}
       <div className="flex items-center justify-center gap-3">
         <Button
           variant="outline"
           size="icon"
-          onClick={reset}
+          onClick={handleReset}
           className="w-12 h-12 rounded-full border-slate-600 bg-slate-800 hover:bg-slate-700"
         >
           <RotateCcw className="w-5 h-5 text-slate-300" />
         </Button>
         <Button
-          onClick={toggleTimer}
+          onClick={handleToggle}
           className={cn(
             "w-16 h-16 rounded-full transition-all duration-300",
-            isComplete 
+            isComplete
               ? "bg-emerald-500 hover:bg-emerald-600"
-              : isRunning 
-                ? "bg-amber-500 hover:bg-amber-600" 
+              : isRunning
+                ? "bg-amber-500 hover:bg-amber-600"
                 : "bg-blue-500 hover:bg-blue-600"
           )}
         >
@@ -180,14 +182,14 @@ export default function Timer({
         </Button>
         <div className="w-12 h-12" /> {/* Spacer for balance */}
       </div>
-      
+
       {isComplete && (
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center text-emerald-400 font-medium mt-4"
         >
-          GPS should be stable. Verify ~32 satellites.
+          GPS stabilization complete. Ready to proceed.
         </motion.p>
       )}
     </div>
