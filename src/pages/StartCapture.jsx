@@ -207,7 +207,7 @@ const TOWER_CONFIGS = {
   },
   5: {
     title: "GPS Stabilisation",
-    subtitle: "Wait for stable satellite lock",
+    subtitle: "Wait for GPS stabilization",
     info: {
       title: "Model-Specific Instructions",
       message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 2 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 2 min after takeoff"
@@ -364,7 +364,7 @@ const ROOFTOP_CONFIGS = {
   },
   5: {
     title: "GPS Stabilisation",
-    subtitle: "Wait for stable satellite lock",
+    subtitle: "Wait for GPS stabilization",
     info: {
       title: "Model-Specific Instructions",
       message: "GPS drift causes misaligned images and failures. Follow procedure for your drone model:\n\n• M3E (Mavic 3 Enterprise): Power on drone and stabilize on ground with propellers OFF for 2 min before takeoff\n• M2E (Mavic 2 Enterprise): Stabilize at hover for 2 min after takeoff"
@@ -626,7 +626,7 @@ export default function StartCapture() {
   const step7CanProceed = isAdmin || needsPanorama === false || (needsPanorama === true && allItemsChecked);
   // Step 8 can proceed if: battery change answered NO and all items checked
   const step8CanProceed = isAdmin || (needsBatteryChange === false && allItemsChecked);
-  // Step 5 can proceed if: timer complete AND satellite check passed
+  // Step 5 can proceed if: timer complete
   const step5CanProceed = isAdmin || gpsTimerComplete;
   const canProceed = isAdmin || (currentStep === 3 ? step3CanProceed : (currentStep === 4 ? step4CanProceed : (currentStep === 5 ? step5CanProceed : (currentStep === 6 && siteType === 'rooftop' ? step6CanProceed : (currentStep === 7 ? step7CanProceed : (currentStep === 8 ? step8CanProceed : allItemsChecked))))));
   
