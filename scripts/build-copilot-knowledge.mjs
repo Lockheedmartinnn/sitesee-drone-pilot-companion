@@ -147,7 +147,7 @@ function extract(source) {
       const name = p.node.name?.name;
       if (SKIP_KEYS.has(name)) { p.skip(); return; }
       const v = p.node.value;
-      if (v?.type === 'StringLiteral' && TEXT_KEYS.has(name)) push(v.start, v.value);
+      if (v?.type === 'StringLiteral' && TEXT_KEYS.has(name)) push(v.start, v.value, name === 'title' || name === 'heading');
     },
     JSXElement(p) {
       const hasText = p.node.children.some((c) => c.type === 'JSXText' && c.value.trim());
