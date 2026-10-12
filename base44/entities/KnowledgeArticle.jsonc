@@ -1,0 +1,71 @@
+{
+  "name": "KnowledgeArticle",
+  "properties": {
+    "content": {
+      "description": "Full article text in markdown",
+      "type": "string"
+    },
+    "is_active": {
+      "default": true,
+      "description": "Whether the copilot may use this article",
+      "type": "boolean"
+    },
+    "page_id": {
+      "description": "Confluence page ID or app page ID",
+      "type": "string"
+    },
+    "source_type": {
+      "default": "manual",
+      "description": "Where the article came from",
+      "enum": [
+        "confluence",
+        "app",
+        "manual"
+      ],
+      "type": "string"
+    },
+    "source_updated": {
+      "description": "When the source was last modified (ISO date)",
+      "type": "string"
+    },
+    "space_key": {
+      "description": "Confluence space key, if from Confluence",
+      "type": "string"
+    },
+    "title": {
+      "description": "Article title",
+      "type": "string"
+    },
+    "url": {
+      "description": "Link to the original source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}
