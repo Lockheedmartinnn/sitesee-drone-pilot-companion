@@ -1,0 +1,57 @@
+{
+  "name": "Training Copilot self-test",
+  "description": "Maintenance check: runs a fixed set of pilot questions through the copilot and writes the answers to the askCopilot function log.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 0 1 1 *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "do": [
+      {
+        "test": {
+          "call": "invoke_backend_function",
+          "then": "end",
+          "with": {
+            "args": {
+              "questions": [
+                "How long to stabilise for",
+                "What are the camera settings",
+                "what shutter speed should i use",
+                "where do I put the GCPs",
+                "what is the planar heights",
+                "how to set the msa",
+                "How do I capture panoramas",
+                "what do I do on a battery swap",
+                "My images are out of focus",
+                "How do I do a rip and replace in NexDT?",
+                "Did I mark the roof correctly",
+                "I am hungry"
+              ],
+              "self_test_key": "Cg2f3AZveM5I3Sjc_DRF-02f-CLe_4GMTeEq3pEEUrg"
+            },
+            "function_name": "askCopilot"
+          }
+        }
+      }
+    ],
+    "document": {
+      "dsl": "1.0.0",
+      "name": "copilot-self-test",
+      "namespace": "base44",
+      "version": "1.0.0"
+    }
+  }
+}
