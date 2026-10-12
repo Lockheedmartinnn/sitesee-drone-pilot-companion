@@ -1,0 +1,41 @@
+{
+  "name": "Sync Training Copilot knowledge",
+  "description": "Daily refresh of the Training Copilot's knowledge base: the app's checklist and training guidance, plus the SiteSee capture documentation on Confluence once connected.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "23 3 * * *",
+      "one_time_date": null,
+      "timezone": "Australia/Sydney",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "do": [
+      {
+        "sync": {
+          "call": "invoke_backend_function",
+          "then": "end",
+          "with": {
+            "args": {},
+            "function_name": "syncKnowledge"
+          }
+        }
+      }
+    ],
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sync-copilot-knowledge",
+      "namespace": "base44",
+      "version": "1.0.0"
+    }
+  }
+}
